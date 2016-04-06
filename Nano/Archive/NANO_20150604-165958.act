@@ -1,0 +1,79 @@
+; NANO LEAGUE BASEBALL by Jason Gruetzmacher
+
+define numTeams="64", selectEsc="28", select1="65", selectN="69"
+
+proc loadTeams()
+  ; Grab the list of teams from the disk
+  
+  byte array linput(45),temp
+  ;type team=[byte array id(2), year(4), city(13), nickname(17), abbr(3)]
+  ;team array teams(64)
+  int flag,cntr
+  
+  ; ID-2|Year-4|City-13|Nickname-17|Abbreviation-3
+  open(1,"D2:TEAMS.DAT", 4, 0)
+  flag=1
+  cntr=1
+  do
+    inputsd(1, linput)
+    temp=strb(linput(41))
+    printe(temp)
+    ;teams(cntr).id=
+    ;id=PrintF("%C%C",linput(1),linput(2))
+    ;year=printf("%C%C%C%C",linput(4),linput(5),linput(6),linput(7))
+    ;abbr=printf("%C%C%C",linput(41),linput(42),linput(43))
+    cntr==+1
+    
+    until EOF(1)
+  od
+  
+  printf("%S%E",id(1))
+  
+  close(1)
+return
+
+proc presentMenu()
+  byte keypress=764,keyvalue=763,choice   ;keymem contains the memory address for key presses
+  printe("A. Full Tournament")
+  printe("B. Half Tournament")
+  printe("C. Quarter Finals")
+  printe("D. Semi Finals")
+  printe("E. Finals")
+  printe("ESC. Quit")
+  printe(" ")
+  printe("Choice?")
+  
+  do
+    while keypress=255 do od
+    choice=keypress
+    getd(7) ;this looks to see 
+    
+    until choice=selectEsc or (keyvalue>=select1 and keyvalue<=selectN)
+  od
+  
+  PrintF("%C",keyvalue)
+return
+
+proc main()
+  
+  ;presentMenu()
+  printe("Start Load Teams")
+  loadTeams()
+  printe("Finish Load Teams")
+return
+
+; - means to store player data for a team (15 batters/10 pitchers)
+; - select two teams to play
+; - load player data into memory
+; - select starting pitchers/lineup
+; - simulate game
+; - pitcher vs batter outcome (Fly Ball, Ground Ball, BB, Kc, Ks, HBP)
+;  - fly ball:  infield/outfield, in play/out of play, caught(error?)/hit
+;  - ground ball: infield/outfield, in play/out of play, caught(error?)/hit
+;  - running game:  stolen base/take extra base?
+ 
+; ##.DAT:  25 FIELDING, 25 HITTING, 10 PITCHING records
+; FIELDING: ID-2|Name-15|B-1|T-1|POS-5|Chances-4|Errors-2
+; HITTING: ID-2|PA-3|AB-3|H-3|2B-2|3B-2|HR-2|SB-3|CS-2|BB-3|SO-3
+; PITCHING: ID-2|G-2|IP-5|H-3|ER-3|HR-2|BB-3|SO-3|HBP-2|WP-2
+

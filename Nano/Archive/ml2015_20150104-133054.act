@@ -1,0 +1,15 @@
+; MICROLEAGUE 2015 by Jason Gruetzmacher
+
+; - means to store player data for a team (15 batters/10 pitchers)
+; - select two teams to play
+; - load player data into memory
+; - select starting pitchers/lineup
+; - simulate game
+; - pitcher vs batter outcome (Fly Ball, Ground Ball, BB, Kc, Ks, HBP)
+;  - fly ball:  infield/outfield, in play/out of play, caught(error?)/hit
+;  - ground ball: infield/outfield, in play/out of play, caught(error?)/hit
+;  - running game:  stolen base/take extra base?
+  
+;- hitter data: PA, AB, H, 2B, 3B, HR, SB, CS, BB, SO (calc avg/obp/slg/ops)
+;- pitcher data: G, IP, H, ER, HR, BB, SO, HBP, WP, FIP (calc ERA)
+

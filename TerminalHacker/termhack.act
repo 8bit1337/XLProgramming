@@ -1,0 +1,58 @@
+; TERMINAL HACKER for Fallout 3 by Jason Gruetzmacher
+; Read more at http://www.gamershell.com/faqs/fallout3hackingguide/1.0/#UB5dZhqxBzQqMT4H.99
+; define variable="value"
+
+proc main()
+  CHAR ARRAY allwords(255)
+  ;CHAR ARRAY word1(12), word2(12), word3(12), word4(12), word5(12)
+  ;CHAR ARRAY word6(12), word7(12), word8(12), word9(12), word10(12)
+  ;CHAR ARRAY word11(12), word12(12), word13(12), word14(12), word15(12)
+  INT wordlen, x=0
+  BYTE bgcolor, leftmar, rightmar, fontcolor
+
+  ;configure the screen
+  leftmar=peek(82)
+  rightmar=peek(83)
+  bgcolor=peek(710)
+  fontcolor=peek(708)
+  poke(82,0)  ;sets the left margin to 0
+  poke(83,40) ;sets the right margin to 40
+  poke(710, 0) ;sets the background colour
+  printf("%B",fontcolor)
+  ;get the list of all potential passwords
+
+  printe("Enter each potential password, separated by a space:")
+  inputs(allwords)
+  ;set allwords="like hate okay"
+  ;set allwords="PARTNERSHIPS REPRIMANDING CIVILIZATION APPRECIATION CONVERSATION CIRCUMSTANCE PURIFICATION SECLUSIONIST CONSTRUCTION DISAPPEARING TRANSMISSION APPREHENSIVE ENCOUNTERING"
+  printe(allwords)
+
+  ;do
+  ;  x==+1
+  ;  printf("%I%E",x)  
+  ;  until allwords(x)=" "
+  ;od
+  ;wordlen=x
+  
+  ;printf("wordlen: %I%E",wordlen)
+
+;PARTNERSHIPS 
+;REPRIMANDING 
+;CIVILIZATION 
+;APPRECIATION 
+;CONVERSATION 
+;CIRCUMSTANCE 
+;PURIFICATION 
+;SECLUSIONIST 
+;CONSTRUCTION 
+;DISAPPEARING 
+;TRANSMISSION 
+;APPREHENSIVE 
+;ENCOUNTERING
+
+;PARTNERSHIPS REPRIMANDING CIVILIZATION APPRECIATION CONVERSATION CIRCUMSTANCE PURIFICATION SECLUSIONIST CONSTRUCTION DISAPPEARING TRANSMISSION APPREHENSIVE ENCOUNTERING
+  poke(82, leftmar)
+  poke(83, rightmar)
+  poke(710, bgcolor)
+  printe("prereturn")
+return

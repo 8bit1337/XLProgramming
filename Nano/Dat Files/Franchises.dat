@@ -1,0 +1,583 @@
+<franchises>
+   <franchise title="Angels">
+      <era title="1961-1964">
+         <city>Los Angeles</city>
+         <shortname>LAA</shortname>
+         <longname>Los Angeles Angels</longname>
+         <league>AL</league>
+      </era>
+      <era title="1965-1968">
+         <city>California</city>
+         <shortname>CAL</shortname>
+         <longname>California Angels</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-1996">
+         <city>California</city>
+         <shortname>CAL</shortname>
+         <longname>California Angels</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+      <era title="1997-2004">
+         <city>Anaheim</city>
+         <shortname>ANA</shortname>
+         <longname>Anaheim Angels</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+      <era title="2005-9999">
+         <city>Los Angeles</city>
+         <shortname>LAA</shortname>
+         <longname>Los Angeles Angels of Anaheim</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Astros">
+      <era title="1962-1964">
+         <city>Houston</city>
+         <shortname>HOU</shortname>
+         <longname>Houston Colt .45's</longname>
+         <league>NL</league>
+      </era>
+      <era title="1965-1968">
+         <city>Houston</city>
+         <shortname>HOU</shortname>
+         <longname>Houston Astros</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-1993">
+         <city>Houston</city>
+         <shortname>HOU</shortname>
+         <longname>Houston Astros</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+      <era title="1994-2012">
+         <city>Houston</city>
+         <shortname>HOU</shortname>
+         <longname>Houston Astros</longname>
+         <league>NL</league>
+         <division>Central</division>
+      </era>
+      <era title="2013-9999">
+         <city>Houston</city>
+         <shortname>HOU</shortname>
+         <longname>Houston Astros</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Athletics">
+      <era title="1901-1954">
+         <city>Philadelphia</city>
+         <shortname>PHA</shortname>
+         <longname>Philadelphia Athletics</longname>
+         <league>AL</league>
+      </era>
+      <era title="1955-1967">
+         <city>Kansas City</city>
+         <shortname>KCA</shortname>
+         <longname>Kansas City Athletics</longname>
+         <league>AL</league>
+      </era>
+      <era title="1968-1968">
+         <city>Oakland</city>
+         <shortname>OAK</shortname>
+         <longname>Oakland Athletics</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-9999">
+         <city>Oakland</city>
+         <shortname>OAK</shortname>
+         <longname>Oakland Athletics</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Blue Jays">
+      <era title="1977-9999">
+         <city>Toronto</city>
+         <shortname>TOR</shortname>
+         <longname>Toronto Blue Jays</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Braves">
+      <era title="1912-1935">
+         <city>Boston</city>
+         <shortname>BOS NL</shortname>
+         <longname>Boston Braves</longname>
+         <league>NL</league>
+      </era>
+      <era title="1941-1952">
+         <city>Boston</city>
+         <shortname>BOS NL</shortname>
+         <longname>Boston Braves</longname>
+         <league>NL</league>
+      </era>
+      <era title="1953-1965">
+         <city>Milwaukee</city>
+         <shortname>MIL</shortname>
+         <longname>Milwaukee Braves</longname>
+         <league>NL</league>
+      </era>
+      <era title="1966-1968">
+         <city>Atlanta</city>
+         <shortname>ATL</shortname>
+         <longname>Atlanta Braves</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-9999">
+         <city>Atlanta</city>
+         <shortname>ATL</shortname>
+         <longname>Atlanta Braves</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Brewers">
+      <era title="1970-1971">
+         <city>Milwaukee</city>
+         <shortname>MIL</shortname>
+         <longname>Milwaukee Brewers</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+      <era title="1972-1993">
+         <city>Milwaukee</city>
+         <shortname>MIL</shortname>
+         <longname>Milwaukee Brewers</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+      <era title="1994-1997">
+         <city>Milwaukee</city>
+         <shortname>MIL</shortname>
+         <longname>Milwaukee Brewers</longname>
+         <league>AL</league>
+         <division>Central</division>
+      </era>
+      <era title="1998-9999">
+         <city>Milwaukee</city>
+         <shortname>MIL</shortname>
+         <longname>Milwaukee Brewers</longname>
+         <league>NL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Cardinals">
+      <era title="1900-1968">
+         <city>St. Louis</city>
+         <shortname>STL</shortname>
+         <longname>St. Louis Cardinals</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-1993">
+         <city>St. Louis</city>
+         <shortname>STL</shortname>
+         <longname>St. Louis Cardinals</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+      <era title="1994-9999">
+         <city>St. Louis</city>
+         <shortname>STL</shortname>
+         <longname>St. Louis Cardinals</longname>
+         <league>NL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Cubs">
+      <era title="1903-1968">
+         <city>Chicago</city>
+         <shortname>CHC</shortname>
+         <longname>Chicago Cubs</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-1993">
+         <city>Chicago</city>
+         <shortname>CHC</shortname>
+         <longname>Chicago Cubs</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+      <era title="1994-9999">
+         <city>Chicago</city>
+         <shortname>CHC</shortname>
+         <longname>Chicago Cubs</longname>
+         <league>NL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Diamondbacks">
+      <era title="1998-9999">
+         <city>Arizona</city>
+         <shortname>ARI</shortname>
+         <longname>Arizona Diamondbacks</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Dodgers">
+      <era title="1932-1957">
+         <city>Brooklyn</city>
+         <shortname>BRK</shortname>
+         <longname>Brooklyn Dodgers</longname>
+         <league>NL</league>
+      </era>
+      <era title="1958-1968">
+         <city>Los Angeles</city>
+         <shortname>LAD</shortname>
+         <longname>Los Angeles Dodgers</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-9999">
+         <city>Los Angeles</city>
+         <shortname>LAD</shortname>
+         <longname>Los Angeles Dodgers</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Expos">
+      <era title="1969-2004">
+         <city>Montreal</city>
+         <shortname>MON</shortname>
+         <longname>Montreal Expos</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Giants">
+      <era title="1885-1957">
+         <city>New York</city>
+         <shortname>NYG</shortname>
+         <longname>New York Giants</longname>
+         <league>NL</league>
+      </era>
+      <era title="1958-1968">
+         <city>San Francisco</city>
+         <shortname>SF</shortname>
+         <longname>San Francisco Giants</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-9999">
+         <city>San Francisco</city>
+         <shortname>SF</shortname>
+         <longname>San Francisco Giants</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Indians">
+      <era title="1901-1968">
+         <city>Cleveland</city>
+         <shortname>CLE</shortname>
+         <longname>Cleveland Indians</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-1993">
+         <city>Cleveland</city>
+         <shortname>CLE</shortname>
+         <longname>Cleveland Indians</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+      <era title="1994-9999">
+         <city>Cleveland</city>
+         <shortname>CLE</shortname>
+         <longname>Cleveland Indians</longname>
+         <league>AL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Mariners">
+      <era title="1977-9999">
+         <city>Seattle</city>
+         <shortname>SEA</shortname>
+         <longname>Seattle Mariners</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Marlins">
+      <era title="1993-2011">
+         <city>Florida</city>
+         <shortname>FLA</shortname>
+         <longname>Florida Marlins</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+      <era title="2012-9999">
+         <city>Miami</city>
+         <shortname>MIA</shortname>
+         <longname>Miami Marlins</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Mets">
+      <era title="1962-1968">
+         <city>New York</city>
+         <shortname>NYM</shortname>
+         <longname>New York Mets</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-9999">
+         <city>New York</city>
+         <shortname>NYM</shortname>
+         <longname>New York Mets</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Nationals">
+      <era title="2005-9999">
+         <city>Washington</city>
+         <shortname>WAS</shortname>
+         <longname>Washington Nationals</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Orioles">
+      <era title="1954-1968">
+         <city>Baltimore</city>
+         <shortname>BAL</shortname>
+         <longname>Baltimore Orioles</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-9999">
+         <city>Baltimore</city>
+         <shortname>BAL</shortname>
+         <longname>Baltimore Orioles</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Padres">
+      <era title="1969-9999">
+         <city>San Diego</city>
+         <shortname>SD</shortname>
+         <longname>San Diego Padres</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Phillies">
+      <era title="1890-1968">
+         <city>Philadelphia</city>
+         <shortname>PHI</shortname>
+         <longname>Philadelphia Phillies</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-9999">
+         <city>Philadelphia</city>
+         <shortname>PHI</shortname>
+         <longname>Philadelphia Phillies</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Pirates">
+      <era title="1891-1968">
+         <city>Pittsburgh</city>
+         <shortname>PIT</shortname>
+         <longname>Pittsburgh Pirates</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-1993">
+         <city>Pittsburgh</city>
+         <shortname>PIT</shortname>
+         <longname>Pittsburgh Pirates</longname>
+         <league>NL</league>
+         <division>East</division>
+      </era>
+      <era title="1994-9999">
+         <city>Pittsburgh</city>
+         <shortname>PIT</shortname>
+         <longname>Pittsburgh Pirates</longname>
+         <league>NL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Rangers">
+      <era title="1972-9999">
+         <city>Texas</city>
+         <shortname>TEX</shortname>
+         <longname>Texas Rangers</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Devil Rays">
+      <era title="1998-2007">
+         <city>Tampa Bay</city>
+         <shortname>TB</shortname>
+         <longname>Tampa Bay Devil Rays</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Rays">
+      <era title="2008-9999">
+         <city>Tampa Bay</city>
+         <shortname>TB</shortname>
+         <longname>Tampa Bay Rays</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Red Sox">
+      <era title="1908-1968">
+         <city>Boston</city>
+         <shortname>BOS</shortname>
+         <longname>Boston Red Sox</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-9999">
+         <city>Boston</city>
+         <shortname>BOS</shortname>
+         <longname>Boston Red Sox</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+   <franchise title="Reds">
+      <era title="1890-1953">
+         <city>Cincinnati</city>
+         <shortname>CIN</shortname>
+         <longname>Cincinnati Reds</longname>
+         <league>NL</league>
+      </era>
+      <era title="1960-1968">
+         <city>Cincinnati</city>
+         <shortname>CIN</shortname>
+         <longname>Cincinnati Reds</longname>
+         <league>NL</league>
+      </era>
+      <era title="1969-1994">
+         <city>Cincinnati</city>
+         <shortname>CIN</shortname>
+         <longname>Cincinnati Reds</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+      <era title="1994-9999">
+         <city>Cincinnati</city>
+         <shortname>CIN</shortname>
+         <longname>Cincinnati Reds</longname>
+         <league>NL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Rockies">
+      <era title="1993-9999">
+         <city>Colorado</city>
+         <shortname>COL</shortname>
+         <longname>Colorado Rockies</longname>
+         <league>NL</league>
+         <division>West</division>
+      </era>
+   </franchise>
+   <franchise title="Royals">
+      <era title="1969-1993">
+         <city>Kansas City</city>
+         <shortname>KC</shortname>
+         <longname>Kansas City Royals</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+      <era title="1994-9999">
+         <city>Kansas City</city>
+         <shortname>KC</shortname>
+         <longname>Kansas City Royals</longname>
+         <league>AL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Tigers">
+      <era title="1901-1968">
+         <city>Detroit</city>
+         <shortname>DET</shortname>
+         <longname>Detroit Tigers</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-1993">
+         <city>Detroit</city>
+         <shortname>DET</shortname>
+         <longname>Detroit Tigers</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+      <era title="1994-9999">
+         <city>Detroit</city>
+         <shortname>DET</shortname>
+         <longname>Detroit Tigers</longname>
+         <league>AL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Twins">
+      <era title="1961-1969">
+         <city>Minnesota</city>
+         <shortname>MIN</shortname>
+         <longname>Minnesota Twins</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-1993">
+         <city>Minnesota</city>
+         <shortname>MIN</shortname>
+         <longname>Minnesota Twins</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+      <era title="1994-9999">
+         <city>Minnesota</city>
+         <shortname>MIN</shortname>
+         <longname>Minnesota Twins</longname>
+         <league>AL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="White Sox">
+      <era title="1901-1968">
+         <city>Chicago</city>
+         <shortname>CWS</shortname>
+         <longname>Chicago White Sox</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-1993">
+         <city>Chicago</city>
+         <shortname>CWS</shortname>
+         <longname>Chicago White Sox</longname>
+         <league>AL</league>
+         <division>West</division>
+      </era>
+      <era title="1994-9999">
+         <city>Chicago</city>
+         <shortname>CWS</shortname>
+         <longname>Chicago White Sox</longname>
+         <league>AL</league>
+         <division>Central</division>
+      </era>
+   </franchise>
+   <franchise title="Yankees">
+      <era title="1901-1968">
+         <city>New York</city>
+         <shortname>NYY</shortname>
+         <longname>New York Yankees</longname>
+         <league>AL</league>
+      </era>
+      <era title="1969-9999">
+         <city>New York</city>
+         <shortname>NYY</shortname>
+         <longname>New York Yankees</longname>
+         <league>AL</league>
+         <division>East</division>
+      </era>
+   </franchise>
+</franchises>

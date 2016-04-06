@@ -1,0 +1,28 @@
+; MICROLEAGUE 2015 by Jason Gruetzmacher
+
+; - means to store player data for a team (15 batters/10 pitchers)
+; - select two teams to play
+; - load player data into memory
+; - select starting pitchers/lineup
+; - simulate game
+; - pitcher vs batter outcome (Fly Ball, Ground Ball, BB, Kc, Ks, HBP)
+;  - fly ball:  infield/outfield, in play/out of play, caught(error?)/hit
+;  - ground ball: infield/outfield, in play/out of play, caught(error?)/hit
+;  - running game:  stolen base/take extra base?
+ 
+; TEAMS:  68 entries
+; ID-2|Year-4|City-13|Nickname-17|Abbreviation-3
+
+; TEAM:  25 batters, 10 pitchers, 25 fielding records
+
+
+;- hitter data: PA, AB, H, 2B, 3B, HR, SB, CS, BB, SO (calc avg/obp/slg/ops)
+;- pitcher data: G, IP, H, ER, HR, BB, SO, HBP, WP, FIP (calc ERA)
+
+PROC main()
+  BYTE ARRAY rd_Teams(45)
+
+  OPEN #1,4,0,"D2:TEAMS.DAT"
+  INPUT #1, rd_Teams
+  PRINTE(rd_Teams)
+RETURN

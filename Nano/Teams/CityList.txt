@@ -1,0 +1,91 @@
+Angels,1961-1964,Los Angeles,LAA,AL
+Angels,1965-1968,California,CAL,AL
+Angels,1969-1996,California,CAL,AL West
+Angels,1997-2004,Anaheim,ANA,AL West
+Angels,2005-9999,Los Angeles,LAA,AL West
+Astros,1965-1968,Houston,HOU,NL
+Astros,1969-1993,Houston,HOU,NL West
+Astros,1994-2012,Houston,HOU,NL Central
+Astros,2013-9999,Houston,HOU,AL West
+Athletics,1901-1954,Philadelphia,PHA,AL
+Athletics,1955-1967,Kansas City,KC,AL
+Athletics,1968-1968,Oakland,OAK,AL
+Athletics,1969-9999,Oakland,OAK,AL West
+Blue Jays,1977-9999,Toronto,TOR,AL East
+Braves,1912-1952,Boston,BBR,NL
+Braves,1953-1965,Milwaukee,MIL,NL
+Braves,1966-1968,Atlanta,ATL,NL
+Braves,1969-9999,Atlanta,ATL,NL East
+Brewers,1970-1971,Milwaukee,MIL,AL West
+Brewers,1972-1993,Milwaukee,MIL,AL East
+Brewers,1994-1997,Milwaukee,MIL,AL Central
+Brewers,1998-9999,Milwaukee,MIL,NL Central
+Cardinals,1900-1968,St. Louis,STL,NL
+Cardinals,1969-1993,St. Louis,STL,NL East
+Cardinals,1994-9999,St. Louis,STL,NL Central
+Cubs,1903-1968,Chicago,CHC,NL
+Cubs,1969-1993,Chicago,CHC,NL East
+Cubs,1994-9999,Chicago,CHC,NL Central
+Diamondbacks,1998-9999,Arizona,ARI,NL West
+Dodgers,1932-1957,Brooklyn,BRK,NL
+Dodgers,1958-1968,Los Angeles,LAD,NL
+Dodgers,1969-9999,Los Angeles,LAD,NL WEst
+Expos,1969-2004,Montreal,MON,NL East
+Giants,1885-1957,New York,NYG,NL
+Giants,1958-1968,San Francisco,SF,NL
+Giants,1969-9999,San Francisco,SF,NL West
+Indians,1901-1968,Cleveland,CLE,AL
+Indians,1969-1993,Cleveland,CLE,AL East
+Indians,1994-9999,Cleveland,CLE,AL Central
+Mariners,1977-9999,Seattle,SEA,NL West
+Marlins,1993-2011,Florida,FLA,NL East
+Marlins,2012-9999,Miami,MIA,NL East
+Mets,1962-1968,New York,NYM,NL
+Mets,1969-9999,New York,NYM,NL East
+Nationals,2005-9999,Washington,WAS,NL East
+Orioles,1954-1968,Baltimore,BAL,AL
+Orioles,1969-9999,Baltimore,BAL,AL East
+Padres,1969-9999,San Diego,SD,NL West
+Phillies,1890-1968,Philadelphia,PHI,NL
+Phillies,1969-9999,Philadelphia,PHI,NL East
+Pirates,1891-1968,Pittsburgh,PIT,NL
+Pirates,1969-1993,Pittsburgh,PIT,NL East
+Pirates,1994-9999,Pittsburgh,PIT,NL Central
+Rangers,1972-9999,Texas,TEX,AL West
+Devil Rays,1998-2007,Tampa Bay,TB,AL East
+Rays,2008-9999,Tampa Bay,TB,AL East
+Red Sox,1908-1968,Boston,BOS,AL
+Red Sox,1969-9999,Boston,BOS,AL East
+Reds,1890-1953,Cincinnati,CIN,NL
+Reds,1960-1968,Cincinnati,CIN,NL
+Reds,1969-1994,Cincinnati,CIN,NL West
+Reds,1994-9999,Cincinnati,CIN,NL Central
+Rockies,1993-9999,Colorado,COL,NL West
+Royals,1969-1993,Kansas City,AL West
+Royals,1994-9999,Kansas City,AL Central
+Tigers,1901-1968,Detroit,DET,AL
+Tigers,1969-1993,Detroit,DET,AL East
+Tigers,1994-9999,Detroit,DET,AL Central
+Twins,1961-1969,Minnesota,MIN,AL
+Twins,1969-1993,Minnesota,MIN,AL West
+Twins,1994-9999,Minnesota,MIN,AL Central
+White Sox,1901-1968,Chicago,CWS,AL
+White Sox,1969-1993,Chicago,CWS,AL West
+White Sox,1901-1968,Chicago,CWS,AL Central
+Yankees,1901-1968,New York,NYY,AL
+Yankees,1969-9999,New York,NYY,AL East
+
+<franchises>
+   <franchise nick="Yankees">
+      <years span=1901-1968>
+         <city>New York</city>
+         <league>AL</league>
+         <division>AL</division>
+      </years>
+      <years span=1969-9999>
+         <city>New York</city>
+         <league>AL</league>
+         <division>East</division>
+      </years>
+   </franchise>
+</franchises>

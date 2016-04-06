@@ -1,0 +1,105 @@
+; NANO LEAGUE BASEBALL by Jason Gruetzmacher
+
+define numTeams="64", selectEsc="28", select1="65", selectN="69"
+
+proc selectTeams()
+  ; Grab the list of teams from the disk
+  ; the file is laid out like this:
+  ;   ID-2|Year-4|City-13|Nickname-17|Abbreviation-3
+  
+  ;Graphics(10)
+  Position(-2,0)
+  PrintE("01:2002 Angels     17:2006 Cardinals     33:2001 Mariners   49:2004 Red Sox")
+  PrintE("02:1982 Angels     18:2011 Cardinals     34:2003 Marlins    50:1986 Red Sox")
+  PrintE("03:2008 Angels     19:1982 Cardinals     35:1997 Marlins    51:2013 Red Sox")
+  PrintE("04:1980 Astros     20:2003 Cubs          36:1986 Mets       52:2007 Red Sox")
+  PrintE("05:2005 Astros     21:1984 Cubs          37:2000 Mets       53:1975 Reds")
+  PrintE("06:1989 Athletics  22:2001 Diamondbacks  38:2012 Nationals  54:1990 Reds")
+  PrintE("07:2006 Athletics  23:1988 Dodgers       39:1983 Orioles    55:2007 Rockies")
+  PrintE("08:1989 Blue Jays  24:2004 Dodgers       40:1984 Padres     56:2014 Royals")
+  PrintE("09:1985 Blue Jays  25:1981 Dodgers       41:1998 Padres     57:1985 Royals")
+  PrintE("10:1992 Blue Jays  26:1994 Expos         42:2008 Phillies   58:2012 Tigers")
+  PrintE("11:1993 Blue Jays  27:2002 Giants        43:1980 Phillies   59:1984 Tigers")
+  PrintE("12:1991 Braves     28:2014 Giants        44:1993 Phillies   60:1987 Twins ")
+  PrintE("13:1995 Braves     29:2012 Giants        45:2013 Pirates    61:1991 Twins")
+  PrintE("14:2011 Brewers    30:2010 Giants        46:1990 Pirates    62:2005 White Sox")
+  PrintE("15:1980 Brewers    31:2007 Indians       47:2011 Rangers    63:1993 White Sox")
+  PrintE("16:2004 Cardinals  32:1995 Indians       48:2008 Rays       64:1998 Yankees")
+
+ 
+return
+
+proc loadTeamData(byte teamID)
+  card reclen=[$28]  ;each record length in team file $28=40
+  byte array linput(reclen)  ;variable used to import from file
+  card array sectors(64) ;array to note where on disk team is stored, part 1
+  byte array offsets(64) ;array to note where on disk team is stored, part 2
+  card sectemp
+  byte offtemp
+  int cntr=[1]  ;a counter to keep track of which team we're looking at
+  
+  
+  open(1,"D2:TEAMS.DAT", 4, 0)
+
+  while eof(1)=0 do
+    inputsd(1, linput)
+    ; make a note of the sector/offset for each team
+    ;Note(1, sectemp, offtemp)
+
+    ;sectors[cntr]=sectemp
+    ;offsets[cntr]=offtemp
+
+    cntr==+1
+  od
+  
+  printf("sector: %H%E offset: %H%E", sectors(63), offsets(63))
+  
+  close(1)
+return
+
+proc presentMenu()
+  byte keypress=764,keyvalue=763,choice   ;keymem contains the memory address for key presses
+  printe("A. Full Tournament")
+  printe("B. Half Tournament")
+  printe("C. Quarter Finals")
+  printe("D. Semi Finals")
+  printe("E. Finals")
+  printe("ESC. Quit")
+  printe(" ")
+  printe("Choice?")
+  
+  do
+    while keypress=255 do od
+    choice=keypress
+    getd(7) ;this looks to see 
+    
+    until choice=selectEsc or (keyvalue>=select1 and keyvalue<=selectN)
+  od
+  
+  PrintF("%C",keyvalue)
+return
+
+proc main()
+  
+  
+  selectTeams()
+  
+  ;presentMenu()
+  ;loadTeamData()
+return
+
+; - means to store player data for a team (15 batters/10 pitchers)
+; - select two teams to play
+; - load player data into memory
+; - select starting pitchers/lineup
+; - simulate game
+; - pitcher vs batter outcome (Fly Ball, Ground Ball, BB, Kc, Ks, HBP)
+;  - fly ball:  infield/outfield, in play/out of play, caught(error?)/hit
+;  - ground ball: infield/outfield, in play/out of play, caught(error?)/hit
+;  - running game:  stolen base/take extra base?
+ 
+; ##.DAT:  25 FIELDING, 25 HITTING, 10 PITCHING records
+; FIELDING: ID-2|Name-15|B-1|T-1|POS-5|Chances-4|Errors-2
+; HITTING: ID-2|PA-3|AB-3|H-3|2B-2|3B-2|HR-2|SB-3|CS-2|BB-3|SO-3
+; PITCHING: ID-2|G-2|IP-5|H-3|ER-3|HR-2|BB-3|SO-3|HBP-2|WP-2
+

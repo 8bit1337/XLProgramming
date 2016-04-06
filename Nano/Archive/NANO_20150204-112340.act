@@ -1,0 +1,64 @@
+; NANO LEAGUE BASEBALL by Jason Gruetzmacher
+
+DEFINE numTeams="64"
+
+PROC loadTeams()
+  ; Grab the list of teams from the disk
+  
+  BYTE ARRAY linput(45)
+  ;BYTE ARRAY id(2)
+  
+  ; ID-2|Year-4|City-13|Nickname-17|Abbreviation-3
+  Open(1,"D2:TEAMS.DAT", 4, 0)
+  ;INPUTSD(1, linput)
+  ;PRINTE(linput)
+  Do
+    InputSD(1, linput)
+    PrintE(linput)  
+  Until EOF(1)
+  OD
+  
+  CLOSE(1)
+RETURN
+
+PROC presentMenu()
+  BYTE keypress=764,keyvalue=763,choice   ;keymem contains the memory address for key presses
+  PrintE("A. Full Tournament")
+  PrintE("B. Half Tournament")
+  PrintE("C. Quarter Finals")
+  PrintE("D. Semi Finals")
+  PrintE("E. Finals")
+  PrintE("Q. Quit")
+  PrintE("Choice?")
+  
+  Do
+    While keypress=255 Do Od
+    choice=keypress
+    GetD(7) ;this looks to see 
+    PrintF("keypress=%U  keyvalue=%U (^[%C)%E", choice, keyvalue, keyvalue)
+    
+    Until choice=28
+  Od
+RETURN
+
+PROC main()
+  PRINTE("START")
+  presentMenu()
+  loadTeams()
+  
+RETURN
+
+; - means to store player data for a team (15 batters/10 pitchers)
+; - select two teams to play
+; - load player data into memory
+; - select starting pitchers/lineup
+; - simulate game
+; - pitcher vs batter outcome (Fly Ball, Ground Ball, BB, Kc, Ks, HBP)
+;  - fly ball:  infield/outfield, in play/out of play, caught(error?)/hit
+;  - ground ball: infield/outfield, in play/out of play, caught(error?)/hit
+;  - running game:  stolen base/take extra base?
+ 
+; ##.DAT:  25 FIELDING, 25 HITTING, 10 PITCHING records
+; FIELDING: ID-2|Name-15|B-1|T-1|POS-5|Chances-4|Errors-2
+; HITTING: ID-2|PA-3|AB-3|H-3|2B-2|3B-2|HR-2|SB-3|CS-2|BB-3|SO-3
+; PITCHING: ID-2|G-2|IP-5|H-3|ER-3|HR-2|BB-3|SO-3|HBP-2|WP-2
