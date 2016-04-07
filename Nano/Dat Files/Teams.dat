@@ -1,0 +1,386 @@
+<teams>
+   <team title="1980 Astros">
+      <year>1980</year>
+      <franchise>Astros</franchise>
+      <wins>93</wins>
+      <losses>70</losses>
+   </team>
+   <team title="1980 Phillies">
+      <year>1980</year>
+      <franchise>Phillies</franchise>
+      <wins>91</wins>
+      <losses>71</losses>
+   </team>
+   <team title="1981 Dodgers">
+      <year>1981</year>
+      <franchise>Dodgers</franchise>
+      <wins>63</wins>
+      <losses>47</losses>
+   </team>
+   <team title="1982 Angels">
+      <year>1982</year>
+      <franchise>Angels</franchise>
+      <wins>93</wins>
+      <losses>69</losses>
+   </team>
+   <team title="1982 Brewers">
+      <year>1982</year>
+      <franchise>Brewers</franchise>
+      <wins>95</wins>
+      <losses>67</losses>
+   </team>
+   <team title="1982 Cardinals">
+      <year>1982</year>
+      <franchise>Cardinals</franchise>
+      <wins>92</wins>
+      <losses>70</losses>
+   </team>
+   <team title="1983 Orioles">
+      <year>1983</year>
+      <franchise>Orioles</franchise>
+      <wins>94</wins>
+      <losses>64</losses>
+   </team>
+   <team title="1984 Cubs">
+      <year>1984</year>
+      <franchise>Cubs</franchise>
+      <wins>96</wins>
+      <losses>65</losses>
+   </team>
+   <team title="1984 Padres">
+      <year>1984</year>
+      <franchise>Padres</franchise>
+      <wins>92</wins>
+      <losses>70</losses>
+   </team>
+   <team title="1984 Tigers">
+      <year>1984</year>
+      <franchise>Tigers</franchise>
+      <wins>104</wins>
+      <losses>58</losses>
+   </team>
+   <team title="1985 Blue Jays">
+      <year>1985</year>
+      <franchise>Blue Jays</franchise>
+      <wins>99</wins>
+      <losses>62</losses>
+   </team>
+   <team title="1985 Royals">
+      <year>1985</year>
+      <franchise>Royals</franchise>
+      <wins>91</wins>
+      <losses>71</losses>
+   </team>
+   <team title="1986 Mets">
+      <year>1986</year>
+      <franchise>Mets</franchise>
+      <wins>108</wins>
+      <losses>54</losses>
+   </team>
+   <team title="1986 Red Sox">
+      <year>1986</year>
+      <franchise>Red Sox</franchise>
+      <wins>95</wins>
+      <losses>66</losses>
+   </team>
+   <team title="1987 Twins">
+      <year>1987</year>
+      <franchise>Twins</franchise>
+      <wins>85</wins>
+      <losses>77</losses>
+   </team>
+   <team title="1988 Dodgers">
+      <year>1988</year>
+      <franchise>Dodgers</franchise>
+      <wins>94</wins>
+      <losses>67</losses>
+   </team>
+   <team title="1989 Athletics">
+      <year>1989</year>
+      <franchise>Athletics</franchise>
+      <wins>99</wins>
+      <losses>63</losses>
+   </team>
+   <team title="1990 Pirates">
+      <year>1990</year>
+      <franchise>Pirates</franchise>
+      <wins>95</wins>
+      <losses>67</losses>
+   </team>
+   <team title="1990 Reds">
+      <year>1990</year>
+      <franchise>Reds</franchise>
+      <wins>91</wins>
+      <losses>71</losses>
+   </team>
+   <team title="1991 Braves">
+      <year>1991</year>
+      <franchise>Braves</franchise>
+      <wins>94</wins>
+      <losses>68</losses>
+   </team>
+   <team title="1991 Twins">
+      <year>1991</year>
+      <franchise>Twins</franchise>
+      <wins>95</wins>
+      <losses>67</losses>
+   </team>
+   <team title="1992 Blue Jays">
+      <year>1992</year>
+      <franchise>Blue Jays</franchise>
+      <wins>96</wins>
+      <losses>66</losses>
+   </team>
+   <team title="1993 Blue Jays">
+      <year>1993</year>
+      <franchise>Blue Jays</franchise>
+      <wins>95</wins>
+      <losses>67</losses>
+   </team>
+   <team title="1993 White Sox">
+      <year>1993</year>
+      <franchise>White Sox</franchise>
+      <wins>94</wins>
+      <losses>68</losses>
+   </team>
+   <team title="1994 Expos">
+      <year>1994</year>
+      <franchise>Expos</franchise>
+      <wins>74</wins>
+      <losses>40</losses>
+   </team>
+   <team title="1995 Braves">
+      <year>1995</year>
+      <franchise>Braves</franchise>
+      <wins>90</wins>
+      <losses>54</losses>
+   </team>
+   <team title="1995 Indians">
+      <year>1995</year>
+      <franchise>Indians</franchise>
+      <wins>100</wins>
+      <losses>44</losses>
+   </team>
+   <team title="1996 Yankees">
+      <year>1996</year>
+      <franchise>Yankees</franchise>
+      <wins>92</wins>
+      <losses>70</losses>
+   </team>
+   <team title="1997 Marlins">
+      <year>1997</year>
+      <franchise>Marlins</franchise>
+      <wins>92</wins>
+      <losses>70</losses>
+   </team>
+   <team title="1997 Orioles">
+      <year>1997</year>
+      <franchise>Orioles</franchise>
+      <wins>98</wins>
+      <losses>64</losses>
+   </team>
+   <team title="1998 Padres">
+      <year>1998</year>
+      <franchise>Padres</franchise>
+      <wins>98</wins>
+      <losses>64</losses>
+   </team>
+   <team title="1998 Yankees">
+      <year>1998</year>
+      <franchise>Yankees</franchise>
+      <wins>114</wins>
+      <losses>48</losses>
+   </team>
+   <team title="1999 Yankees">
+      <year>1999</year>
+      <franchise>Yankees</franchise>
+      <wins>98</wins>
+      <losses>64</losses>
+   </team>
+   <team title="2000 Yankees">
+      <year>2000</year>
+      <franchise>Yankees</franchise>
+      <wins>87</wins>
+      <losses>74</losses>
+   </team>
+   <team title="2001 Diamondbacks">
+      <year>2001</year>
+      <franchise>Diamondbacks</franchise>
+      <wins>92</wins>
+      <losses>70</losses>
+   </team>
+   <team title="2001 Mariners">
+      <year>2001</year>
+      <franchise>Mariners</franchise>
+      <wins>116</wins>
+      <losses>46</losses>
+   </team>
+   <team title="2002 Angels">
+      <year>2002</year>
+      <franchise>Angels</franchise>
+      <wins>99</wins>
+      <losses>63</losses>
+   </team>
+   <team title="2002 Giants">
+      <year>2002</year>
+      <franchise>Giants</franchise>
+      <wins>95</wins>
+      <losses>66</losses>
+   </team>
+   <team title="2003 Cubs">
+      <year>2003</year>
+      <franchise>Cubs</franchise>
+      <wins>88</wins>
+      <losses>74</losses>
+   </team>
+   <team title="2003 Marlins">
+      <year>2003</year>
+      <franchise>Marlins</franchise>
+      <wins>91</wins>
+      <losses>71</losses>
+   </team>
+   <team title="2004 Cardinals">
+      <year>2004</year>
+      <franchise>Cardinals</franchise>
+      <wins>105</wins>
+      <losses>57</losses>
+   </team>
+   <team title="2004 Red Sox">
+      <year>2004</year>
+      <franchise>Red Sox</franchise>
+      <wins>98</wins>
+      <losses>64</losses>
+   </team>
+   <team title="2005 Astros">
+      <year>2005</year>
+      <franchise>Astros</franchise>
+      <wins>89</wins>
+      <losses>73</losses>
+   </team>
+   <team title="2005 White Sox">
+      <year>2005</year>
+      <franchise>White Sox</franchise>
+      <wins>99</wins>
+      <losses>63</losses>
+   </team>
+   <team title="2006 Athletics">
+      <year>2006</year>
+      <franchise>Athletics</franchise>
+      <wins>93</wins>
+      <losses>69</losses>
+   </team>
+   <team title="2006 Cardinals">
+      <year>2006</year>
+      <franchise>Cardinals</franchise>
+      <wins>83</wins>
+      <losses>78</losses>
+   </team>
+   <team title="2007 Indians">
+      <year>2007</year>
+      <franchise>Indians</franchise>
+      <wins>96</wins>
+      <losses>66</losses>
+   </team>
+   <team title="2007 Red Sox">
+      <year>2007</year>
+      <franchise>Red Sox</franchise>
+      <wins>96</wins>
+      <losses>66</losses>
+   </team>
+   <team title="2007 Rockies">
+      <year>2007</year>
+      <franchise>Rockies</franchise>
+      <wins>90</wins>
+      <losses>73</losses>
+   </team>
+   <team title="2008 Phillies">
+      <year>2008</year>
+      <franchise>Phillies</franchise>
+      <wins>92</wins>
+      <losses>70</losses>
+   </team>
+   <team title="2008 Rays">
+      <year>2008</year>
+      <franchise>Rays</franchise>
+      <wins>97</wins>
+      <losses>65</losses>
+   </team>
+   <team title="2009 Yankees">
+      <year>2009</year>
+      <franchise>Yankees</franchise>
+      <wins>103</wins>
+      <losses>59</losses>
+   </team>
+   <team title="2010 Giants">
+      <year>2010</year>
+      <franchise>Giants</franchise>
+      <wins>92</wins>
+      <losses>70</losses>
+   </team>
+   <team title="2011 Cardinals">
+      <year>2011</year>
+      <franchise>Cardinals</franchise>
+      <wins>90</wins>
+      <losses>72</losses>
+   </team>
+   <team title="2011 Rangers">
+      <year>2011</year>
+      <franchise>Rangers</franchise>
+      <wins>96</wins>
+      <losses>66</losses>
+   </team>
+   <team title="2011 Tigers">
+      <year>2011</year>
+      <franchise>Tigers</franchise>
+      <wins>95</wins>
+      <losses>67</losses>
+   </team>
+   <team title="2012 Giants">
+      <year>2012</year>
+      <franchise>Giants</franchise>
+      <wins>94</wins>
+      <losses>68</losses>
+   </team>
+   <team title="2012 Nationals">
+      <year>2012</year>
+      <franchise>Nationals</franchise>
+      <wins>98</wins>
+      <losses>64</losses>
+   </team>
+   <team title="2013 Pirates">
+      <year>2013</year>
+      <franchise>Pirates</franchise>
+      <wins>94</wins>
+      <losses>68</losses>
+   </team>
+   <team title="2013 Red Sox">
+      <year>2013</year>
+      <franchise>Red Sox</franchise>
+      <wins>97</wins>
+      <losses>65</losses>
+   </team>
+   <team title="2014 Giants">
+      <year>2014</year>
+      <franchise>Giants</franchise>
+      <wins>88</wins>
+      <losses>74</losses>
+   </team>
+   <team title="2015 Blue Jays">
+      <year>2015</year>
+      <franchise>Blue Jays</franchise>
+      <wins>93</wins>
+      <losses>69</losses>
+   </team>
+   <team title="2015 Mets">
+      <year>2015</year>
+      <franchise>Mets</franchise>
+      <wins>90</wins>
+      <losses>72</losses>
+   </team>
+   <team title="2015 Royals">
+      <year>2015</year>
+      <franchise>Royals</franchise>
+      <wins>95</wins>
+      <losses>67</losses>
+   </team>
+</teams>
