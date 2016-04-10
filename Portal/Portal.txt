@@ -5,10 +5,10 @@ REM *** EIMPST will be set as actual letters, the rest become our graphics ***
 120 G$(001,104)="\7E\81\A9\81\7E\38\7C\54\00\00\18\3C\3C\18\00\00\00\7E\42\52\4A\42\7E\00\7E\81\95\81\7E\1C\3E\2A\00\7C\40\78\40\40\7C\00\FF\FF\FF\FF\FF\FF\FF\FF\00\1C\04\F4\F4\04\1C\00\00\00\00\FF\FF\00\00\00\00\7C\10\10\10\10\7C\00\00\00\7E\42\5A\18\18\18\00\38\20\2F\2F\20\38\00\18\24\42\42\42\42\24\18\00\42\66\5A\42\42\42\00"
 130 G$(105,208)="\18\3C\7E\FF\FF\7E\3C\18\18\24\42\81\81\42\24\18\00\78\44\44\78\40\40\00\E7\81\BD\24\24\BD\81\E7\00\3C\42\81\81\42\3C\00\00\3C\40\3C\02\42\3C\00\00\7C\10\10\10\10\10\00\FB\FB\00\DF\DF\DF\00\FB\18\18\18\18\18\18\18\18\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\18\18\18\5A\42\7E\00\00\02\11\88\44\22\10\88\44"
 
-REM *** Move the top of memory back 2+ pages, so we can store our levels and character set ***
+REM *** Move the top of memory back, so we have a place to can store our levels and character set ***
 140 NEW_MEMTOP=PEEK(106)-16
 150 POKE 106,NEW_MEMTOP
-160 GRAPHICS 2
+160 GRAPHICS 2+16
 
 REM *** Create our new character set ***
 170 CHRAM=NEW_MEMTOP
@@ -33,11 +33,48 @@ REM *** Setup the left part of the playfield AaAa = \41\61\C1\E1 ***
 320 POSITION 2,9:PRINT #6;"0000"
 
 REM *** LEVEL 1 ***
-330 L=8:DIM L$(L*L)
-340 L$="uuuufNuuu Q    uu      uf      uu C    fu V    uu Y    uuuufWuuu"
-341 L$="uuuufNuuu \F1    uu      uf      uu C    fu \F6    uu \F9    uuuufWuuu"
+330 L=10:DIM L$(L*L)
+340 L$="uuuuufNuuuu  \F1     uu        uu        uf        uu  C     fu  \F6     uu  \F6     uu  \F9     uuuuufuuuuu"
 350 FOR I = 1 TO L
-360   POSITION 10,2+I-1:PRINT #6;L$(8*(I-1)+1,8*I)
+360   POSITION 9,1+I-1:PRINT #6;L$(L*(I-1)+1,L*I)
 370 NEXT I
 
+REM *** SET PLAYER, TRACK MOVEMENTS ***
+380 DIM P$(2) : REM an array to store the player graphic and what exists under the player, if anything
+390 P=94      : REM the players current position in level, from 0-99
+400 P$(1,1)="W":P$(2,2)=L$(P+1,P+1)
+420 Y = INT(P/L)+1
+430 X = P-L*(Y-1)+9
+440 POSITION X,Y:PRINT #6;P$(1,1)
+
+REM *** GAME LOOP ***
+UP=14:LEFT=11:DOWN=13:RIGHT=7
+WHILE PEEK(764)<>28
+  IF STICK(0)=UP
+    POSITION X,Y:PRINT #6;P$(2,2)
+    P$(2,2)=L$(something)
+    
+  END
+
+WEND
+GR.0
 END
+
+REM *** LEVEL 1 NEW ***
+REM DIM B$(1)  : REM The default border style, f or u
+REM DIM L1$(3) : REM stores the type of laser base, and where it's located
+REM DIM P$(1)  : REM an array to store what exists under the player
+REM B$="u"
+REM P=94
+REM D=6
+REM L1$="\F983":REM Laser pointing up, at position 82
+
+
+REM *** Things I think I can do to make levels easier to build ***
+REM Default outline = f or u
+REM Just place objects through graphics
+REM Variable to track where player starts, needs to keep track of what is under him at start
+REM Variable specifically for lasers.  Limit how many there are.
+REM Lasers should have specific functions:  open doors, create pf spots, eliminate hazards
+
+
