@@ -45,9 +45,11 @@ REM *** GAME LOOP ***
 380 DIM P$(1):U$(1) : REM arrays to store the player graphic and what exists under the player, if anything
 390 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
 400 X = 4 : Y=10
-410 P = (Y-1)*S+X+1
+410 P = (Y-1)*S+X+2
 420 P$ = "W"
-430 U$ = L$(P+1,P+1)
+430 U$ = L$(P,P)
+
+435 MEM = 20*(Y-1)+X-1
 440 POSITION X+9,Y : PRINT #6;P$(1,1)
 
 450 WHILE PEEK(764)<>ESC
@@ -56,21 +58,22 @@ REM *** GAME LOOP ***
   
 480   IF STICK(0)=UP
 490     NEWY = Y-1
-500     P$(1,1) = "W":ENDIF
+500     P$ = "W":ENDIF
 510   IF STICK(0)=LEFT
 520     NEWX = X-1
-530     P$(1,1) = "A":ENDIF
+530     P$ = "A":ENDIF
 540   IF STICK(0)=DOWN
 550     NEWY = Y+1
-560     P$(1,1) = "X":ENDIF
+560     P$ = "X":ENDIF
 570   IF STICK(0)=RIGHT
 580     NEWX = X+1
-590     P$(1,1) = "D"
+590     P$ = "D"
 600   ENDIF
   
 610   IF NEWY < 1:NEWY=1:ENDIF:IF NEWY > S:NEWY=S:ENDIF
 620   IF NEWX < 0:NEWX=0:ENDIF:IF NEWX > S-1:NEWX=S-1:ENDIF
-630   POSITION NEWX+9,NEWY:PRINT #6;P$(1,1)
+
+630   POSITION NEWX+9,NEWY:PRINT #6;P$
 640   X=NEWX:Y=NEWY
 
 WEND
