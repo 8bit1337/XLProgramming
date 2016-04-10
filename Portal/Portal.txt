@@ -11,6 +11,7 @@ REM *** Move the top of memory back, so we have a place to can store our levels 
 160 GRAPHICS 2+16
 
 REM *** Create our new character set ***
+165 SC=DPEEK(88)
 170 CHRAM=NEW_MEMTOP
 180 LVRAM=NEW_MEMTOP+4
 190 CHROM=PEEK(756)
@@ -33,28 +34,44 @@ REM *** Setup the left part of the playfield AaAa = \41\61\C1\E1 ***
 320 POSITION 2,9:PRINT #6;"0000"
 
 REM *** LEVEL 1 ***
-330 L=10:DIM L$(L*L)
+330 S=10:DIM L$(S*S)
 340 L$="uuuuufNuuuu  \F1     uu        uu        uf        uu  C     fu  \F6     uu  \F6     uu  \F9     uuuuufuuuuu"
-350 FOR I = 1 TO L
-360   POSITION 9,1+I-1:PRINT #6;L$(L*(I-1)+1,L*I)
+350 FOR I = 1 TO S
+360   POSITION 9,1+I-1:PRINT #6;L$(S*(I-1)+1,S*I)
 370 NEXT I
-
-REM *** SET PLAYER, TRACK MOVEMENTS ***
-380 DIM P$(2) : REM an array to store the player graphic and what exists under the player, if anything
-390 P=94      : REM the players current position in level, from 0-99
-400 P$(1,1)="W":P$(2,2)=L$(P+1,P+1)
-420 Y = INT(P/L)+1
-430 X = P-L*(Y-1)+9
-440 POSITION X,Y:PRINT #6;P$(1,1)
+REM the game grid should actually start at 29-38, 49,58, etc past SC
 
 REM *** GAME LOOP ***
-UP=14:LEFT=11:DOWN=13:RIGHT=7
-WHILE PEEK(764)<>28
-  IF STICK(0)=UP
-    POSITION X,Y:PRINT #6;P$(2,2)
-    P$(2,2)=L$(something)
-    
-  END
+380 DIM P$(1):U$(1) : REM arrays to store the player graphic and what exists under the player, if anything
+390 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
+400 X = 4 : Y=10
+410 P = (Y-1)*S+X+1
+420 P$ = "W"
+430 U$ = L$(P+1,P+1)
+440 POSITION X+9,Y : PRINT #6;P$(1,1)
+
+450 WHILE PEEK(764)<>ESC
+460   NEWX = X
+470   NEWY = Y
+  
+480   IF STICK(0)=UP
+490     NEWY = Y-1
+500     P$(1,1) = "W":ENDIF
+510   IF STICK(0)=LEFT
+520     NEWX = X-1
+530     P$(1,1) = "A":ENDIF
+540   IF STICK(0)=DOWN
+550     NEWY = Y+1
+560     P$(1,1) = "X":ENDIF
+570   IF STICK(0)=RIGHT
+580     NEWX = X+1
+590     P$(1,1) = "D"
+600   ENDIF
+  
+610   IF NEWY < 1:NEWY=1:ENDIF:IF NEWY > S:NEWY=S:ENDIF
+620   IF NEWX < 0:NEWX=0:ENDIF:IF NEWX > S-1:NEWX=S-1:ENDIF
+630   POSITION NEWX+9,NEWY:PRINT #6;P$(1,1)
+640   X=NEWX:Y=NEWY
 
 WEND
 GR.0
