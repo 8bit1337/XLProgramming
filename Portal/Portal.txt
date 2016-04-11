@@ -1,7 +1,7 @@
 REM *** Character graphics as per xls ***
 REM *** EIMPST will be set as actual letters, the rest become our graphics ***
-100 X = 208
-110 DIM G$(X)
+100 X = 208 : ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
+110 DIM G$(X) : DIM P$(1) : DIM U$(1)
 120 G$(001,104)="\7E\81\A9\81\7E\38\7C\54\00\00\18\3C\3C\18\00\00\00\7E\42\52\4A\42\7E\00\7E\81\95\81\7E\1C\3E\2A\00\7C\40\78\40\40\7C\00\FF\FF\FF\FF\FF\FF\FF\FF\00\1C\04\F4\F4\04\1C\00\00\00\00\FF\FF\00\00\00\00\7C\10\10\10\10\7C\00\00\00\7E\42\5A\18\18\18\00\38\20\2F\2F\20\38\00\18\24\42\42\42\42\24\18\00\42\66\5A\42\42\42\00"
 130 G$(105,208)="\18\3C\7E\FF\FF\7E\3C\18\18\24\42\81\81\42\24\18\00\78\44\44\78\40\40\00\E7\81\BD\24\24\BD\81\E7\00\3C\42\81\81\42\3C\00\00\3C\40\3C\02\42\3C\00\00\7C\10\10\10\10\10\00\FB\FB\00\DF\DF\DF\00\FB\18\18\18\18\18\18\18\18\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\18\18\18\5A\42\7E\00\00\02\11\88\44\22\10\88\44"
 
@@ -17,10 +17,11 @@ REM *** Create our new character set ***
 180 LVRAM=NEW_MEMTOP+4
 190 CHROM=PEEK(756)
 200 POKE 756,CHRAM
+205 SC2=DPEEK(88)
 210 MOVE CHROM*256,CHRAM*256,1024
 220 MOVE ADR(G$),CHRAM*256+(65-32)*8,X
 
-REM *** Set colours:  upper=gray, lower=brown, inverse upper = cyan, inverse lower = red ***
+REM *** Set colours:  upper=gray, lower=brown, inverse upper = cyan, inverse lower = pink ***
 230 POKE 708, 8
 240 POKE 709, 244
 250 POKE 710, 132
@@ -40,7 +41,7 @@ REM *** LEVEL 1 ***
 350 FOR I = 1 TO S
 360   POSITION 9,1+I-1:PRINT #6;L$(S*(I-1)+1,S*I)
 370 NEXT I
-375 POSITION 0,0:PRINT #6;PEEK(SC+36)
+375 POSITION 0,0:PRINT #6;SC
 
 REM This is an attempt at doing the same as above using memory locations.  works except for empty and upper N
 REM 350 FOR I = 1 TO S
@@ -48,10 +49,8 @@ REM 360   MOVE ADR(L$)+S*(I-1), SC+(20*I)+9, S
 REM 370 NEXT I
 
 REM *** GAME LOOP ***
-380 DIM P$(1):DIM U$(1) : REM arrays to store the player graphic and what exists under the player, if anything
-390 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
 400 X = 4 : Y=10
-410 P = (Y-1)*S+X+2
+410 P = S*(Y-1)+X+2
 420 P$ = "W"
 430 U$ = L$(P,P)
 
