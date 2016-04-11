@@ -1,9 +1,25 @@
-REM *** Character graphics as per xls ***
-REM *** EIMPST will be set as actual letters, the rest become our graphics ***
-100 X = 208 : ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
-110 DIM G$(X) : DIM P$(1) : DIM U$(1)
-120 G$(001,104)="\7E\81\A9\81\7E\38\7C\54\00\00\18\3C\3C\18\00\00\00\7E\42\52\4A\42\7E\00\7E\81\95\81\7E\1C\3E\2A\00\7C\40\78\40\40\7C\00\FF\FF\FF\FF\FF\FF\FF\FF\00\1C\04\F4\F4\04\1C\00\00\00\00\FF\FF\00\00\00\00\7C\10\10\10\10\7C\00\00\00\7E\42\5A\18\18\18\00\38\20\2F\2F\20\38\00\18\24\42\42\42\42\24\18\00\42\66\5A\42\42\42\00"
-130 G$(105,208)="\18\3C\7E\FF\FF\7E\3C\18\18\24\42\81\81\42\24\18\00\78\44\44\78\40\40\00\E7\81\BD\24\24\BD\81\E7\00\3C\42\81\81\42\3C\00\00\3C\40\3C\02\42\3C\00\00\7C\10\10\10\10\10\00\FB\FB\00\DF\DF\DF\00\FB\18\18\18\18\18\18\18\18\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\18\18\18\5A\42\7E\00\00\02\11\88\44\22\10\88\44"
+REM *** VARIABLE NAMES ***
+REM --- ESC: value returned when ESC key is pressed
+REM --- UP/LEFT/DOWN/RIGHT: values returned when joystick is pressed in corresponding direction
+REM --- LS: The width and height of each level
+REM --- CS: The number of spots of memory we need for our character set
+REM --- CS$: Character Set graphics, as a long string of ATASCII characters to represent hex codes
+REM --- P$: the character representing the player - W/A/X/D, depending on whether it's looking up/left/down/right
+REM --- U$: the character underneath the player, so that we can restore it after player moves
+REM --- L$: a string to represent the current level
+REM --- MEMTOP:  the top of memory prior to making any changes
+REM --- NEW_MEMTOP:  the new top of memory after we've lowered it to store our character set and music
+REM --- SC:  the first address that stores the screen graphics
+REM --- CHRAM:  the memory location for our custom character graphics
+REM --- LVRAM
+REM --- CHROM:  the memory location in ROM where character graphics are stored
+REM --- PML:  the player's memory location, as it relates to SC
+REM --- X/Y/NEWX/NEWY:  the location in the LSxLS grid where the player is/will move to next
+
+100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7 : LS=10 : CS=208
+110 DIM CS$(CS) : DIM P$(1) : DIM U$(1) : DIM L$(LS*LS)
+120 CS$(001,104)="\7E\81\A9\81\7E\38\7C\54\00\00\18\3C\3C\18\00\00\00\7E\42\52\4A\42\7E\00\7E\81\95\81\7E\1C\3E\2A\00\7C\40\78\40\40\7C\00\FF\FF\FF\FF\FF\FF\FF\FF\00\1C\04\F4\F4\04\1C\00\00\00\00\FF\FF\00\00\00\00\7C\10\10\10\10\7C\00\00\00\7E\42\5A\18\18\18\00\38\20\2F\2F\20\38\00\18\24\42\42\42\42\24\18\00\42\66\5A\42\42\42\00"
+130 CS$(105,208)="\18\3C\7E\FF\FF\7E\3C\18\18\24\42\81\81\42\24\18\00\78\44\44\78\40\40\00\E7\81\BD\24\24\BD\81\E7\00\3C\42\81\81\42\3C\00\00\3C\40\3C\02\42\3C\00\00\7C\10\10\10\10\10\00\FB\FB\00\DF\DF\DF\00\FB\18\18\18\18\18\18\18\18\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\18\18\18\5A\42\7E\00\00\02\11\88\44\22\10\88\44"
 
 REM *** Move the top of memory back, so we have a place to can store our levels and character set ***
 135 MEMTOP = PEEK(106)
@@ -17,9 +33,8 @@ REM *** Create our new character set ***
 180 LVRAM=NEW_MEMTOP+4
 190 CHROM=PEEK(756)
 200 POKE 756,CHRAM
-205 SC2=DPEEK(88)
 210 MOVE CHROM*256,CHRAM*256,1024
-220 MOVE ADR(G$),CHRAM*256+(65-32)*8,X
+220 MOVE ADR(CS$),CHRAM*256+(65-32)*8,CS
 
 REM *** Set colours:  upper=gray, lower=brown, inverse upper = cyan, inverse lower = pink ***
 230 POKE 708, 8
@@ -36,26 +51,17 @@ REM *** Setup the left part of the playfield AaAa = \41\61\C1\E1 ***
 320 POSITION 2,9:PRINT #6;"0000"
 
 REM *** LEVEL 1 ***
-330 S=10:DIM L$(S*S)
+330 P$ = "W" : X = 5 : Y=10
 340 L$="uuuuufNuuuu  \F1     uu        uu        uf        uu  C     fu  \F6     uu  \F6     uu  \F9     uuuuufuuuuu"
-350 FOR I = 1 TO S
-360   POSITION 9,1+I-1:PRINT #6;L$(S*(I-1)+1,S*I)
+350 FOR I = 1 TO LS
+360   POSITION 9,1+I-1:PRINT #6;L$(LS*(I-1)+1,LS*I)
 370 NEXT I
-375 POSITION 0,0:PRINT #6;SC
 
-REM This is an attempt at doing the same as above using memory locations.  works except for empty and upper N
-REM 350 FOR I = 1 TO S
-REM 360   MOVE ADR(L$)+S*(I-1), SC+(20*I)+9, S
-REM 370 NEXT I
-
-REM *** GAME LOOP ***
-400 X = 4 : Y=10
-410 P = S*(Y-1)+X+2
-420 P$ = "W"
-430 U$ = L$(P,P)
-
-435 MEM = 20*(Y-1)+X-1
-440 POSITION X+9,Y : PRINT #6;P$(1,1)
+REM *** GAME LOOP ***  213
+380 PML = 20*Y+X+8
+390 MOVE SC+PML,ADR(U$),1
+395 POSITION 0,0:PRINT #6;U$
+400 POSITION X+8,Y : PRINT #6;P$
 
 450 WHILE PEEK(764)<>ESC
 460   NEWX = X
@@ -78,8 +84,12 @@ REM *** GAME LOOP ***
 610   IF NEWY < 1:NEWY=1:ENDIF:IF NEWY > S:NEWY=S:ENDIF
 620   IF NEWX < 0:NEWX=0:ENDIF:IF NEWX > S-1:NEWX=S-1:ENDIF
 
-630   POSITION NEWX+9,NEWY:PRINT #6;P$
-640   X=NEWX:Y=NEWY
+630   POSITION X+8,Y:PRINT #6;U$
+640   PML = 20*NEWY+NEWX+8
+650   MOVE SC+PML,ADR(U$),1
+
+660   POSITION NEWX+8,NEWY:PRINT #6;P$
+670   X=NEWX:Y=NEWY
 
 WEND
 POKE 106,MEMTOP
