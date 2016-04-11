@@ -6,7 +6,8 @@ REM *** EIMPST will be set as actual letters, the rest become our graphics ***
 130 G$(105,208)="\18\3C\7E\FF\FF\7E\3C\18\18\24\42\81\81\42\24\18\00\78\44\44\78\40\40\00\E7\81\BD\24\24\BD\81\E7\00\3C\42\81\81\42\3C\00\00\3C\40\3C\02\42\3C\00\00\7C\10\10\10\10\10\00\FB\FB\00\DF\DF\DF\00\FB\18\18\18\18\18\18\18\18\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\18\18\18\5A\42\7E\00\00\02\11\88\44\22\10\88\44"
 
 REM *** Move the top of memory back, so we have a place to can store our levels and character set ***
-140 NEW_MEMTOP=PEEK(106)-16
+135 MEMTOP = PEEK(106)
+140 NEW_MEMTOP=MEMTOP-16
 150 POKE 106,NEW_MEMTOP
 160 GRAPHICS 2+16
 
@@ -39,10 +40,15 @@ REM *** LEVEL 1 ***
 350 FOR I = 1 TO S
 360   POSITION 9,1+I-1:PRINT #6;L$(S*(I-1)+1,S*I)
 370 NEXT I
-REM the game grid should actually start at 29-38, 49,58, etc past SC
+375 POSITION 0,0:PRINT #6;PEEK(SC+36)
+
+REM This is an attempt at doing the same as above using memory locations.  works except for empty and upper N
+REM 350 FOR I = 1 TO S
+REM 360   MOVE ADR(L$)+S*(I-1), SC+(20*I)+9, S
+REM 370 NEXT I
 
 REM *** GAME LOOP ***
-380 DIM P$(1):U$(1) : REM arrays to store the player graphic and what exists under the player, if anything
+380 DIM P$(1):DIM U$(1) : REM arrays to store the player graphic and what exists under the player, if anything
 390 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
 400 X = 4 : Y=10
 410 P = (Y-1)*S+X+2
@@ -77,6 +83,7 @@ REM *** GAME LOOP ***
 640   X=NEWX:Y=NEWY
 
 WEND
+POKE 106,MEMTOP
 GR.0
 END
 
