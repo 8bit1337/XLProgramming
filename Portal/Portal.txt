@@ -56,15 +56,12 @@ REM *** LEVEL 1 ***
 350 FOR I = 1 TO LS
 360   POSITION 9,I:PRINT #6;L$(LS*(I-1)+1,LS*I)
 370 NEXT I
-375 POSITION 0,0:PRINT #6;SC
 
 REM *** GAME LOOP ***  213
-380 MOVED = 1 : NEWX = X : NEWY = Y
+380 NEWX = X : NEWY = Y : MOVED = 1 : FIRST = 1
 390 EXEC MOVE_PLAYER
 
 450 WHILE PEEK(764)<>ESC
-455   POSITION 11,0 : PRINT #6;U$
-
 480   IF STICK(0)=UP
 490     MOVED=1 : NEWY=Y-1 : P$="W" : ENDIF
 510   IF STICK(0)=LEFT
@@ -74,10 +71,12 @@ REM *** GAME LOOP ***  213
 570   IF STICK(0)=RIGHT
 580     MOVED=1 : NEWX=X+1 : P$="D" : ENDIF
   
-590   IF NEWY < 1:NEWY=1:MOVED=0:ENDIF:IF NEWY > LS:NEWY=LS:MOVED=0:ENDIF
-600   IF NEWX < 0:NEWX=0:MOVED=0:ENDIF:IF NEWX > LS-1:NEWX=LS-1:MOVED=0:ENDIF
+590   IF NEWX < 0    : NEWX=0    : MOVED=0 : ENDIF
+600   IF NEWX > LS   : NEWX=LS     : MOVED=0 : ENDIF
+610   IF NEWY < 1    : NEWY=1    : MOVED=0 : ENDIF
+620   IF NEWY > LS   : NEWY=LS   : MOVED=0 : ENDIF
   
-620   IF MOVED = 1 : EXEC MOVE_PLAYER : ENDIF
+630   EXEC MOVE_PLAYER
 
 WEND
 POKE 106,MEMTOP
@@ -86,17 +85,24 @@ END
 
 10000 PROC MOVE_PLAYER
 10010   IF MOVED = 1
-10020     REM -- Store whatever is currently at X/Y in U$ --
-10030     PML = SC+8*(20*Y+X+8)
-10040     MOVE PML,ADR(U$),8
-     
-10050     REM -- Print the appropriate player graphic at NEWX/NEWY --
-10060     POSITION NEWX+8,NEWY : PRINT #6;P$
-10070     X=NEWX:Y=NEWY
-    
-10080     MOVED = 0
-10090   ENDIF
-10100 ENDPROC
+10020     REM -- Print the old character in the spot the player is moving from
+10030     IF FIRST = 0
+10040       POSITION X+8,Y : PRINT #6;U$
+10050     ELSE
+10060       FIRST = 0
+10070     ENDIF
+
+10080     REM -- Store whatever is currently at NEWX/NEWY in U$ so that we can re-show it later
+10090     U$ = CHR$(PEEK(SC+(20*NEWY+NEWX+8)))
+
+10100     REM -- Print the appropriate player graphic at NEWX/NEWY
+10110     POSITION NEWX+8,NEWY : PRINT #6;P$
+10120     X=NEWX:Y=NEWY
+
+          REM -- Cleanup
+10130     MOVED = 0
+10140   ENDIF
+10150 ENDPROC
 
 REM *** LEVEL 1 NEW ***
 REM DIM B$(1)  : REM The default border style, f or u
