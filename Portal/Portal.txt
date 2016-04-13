@@ -43,22 +43,23 @@ REM *** Set colours:  upper=gray, lower=brown, inverse upper = cyan, inverse low
 
 REM *** Setup the left part of the playfield AaAa = \41\61\C1\E1 ***
 270 POSITION 2,2:PRINT #6;"test"
-280 POSITION 3,3:PRINT #6;"00"
+280 POSITION 4,3:PRINT #6;"0"
 290 POSITION 2,5:PRINT #6;"step"
-300 POSITION 3,6:PRINT #6;"00"
+300 POSITION 4,6:PRINT #6;"0"
 310 POSITION 2,8:PRINT #6;"time"
-320 POSITION 2,9:PRINT #6;"0000"
+320 POSITION 4,9:PRINT #6;"0"
 
 REM *** LEVEL 1 ***
-330 P$ = "W" : X = 5 : Y=9
+330 L = 1 : P$ = "W" : X = 5 : Y=9
 340 L$="uuuuufNuuuu  \F1     uu        uu        uf        uu  C     fu  \F6     uu  \F6     uu  \F9     uuuuufuuuuu"
 350 FOR I = 1 TO LS
 360   POSITION 9,I:PRINT #6;L$(LS*(I-1)+1,LS*I)
 370 NEXT I
+380 POSITION 4,3:PRINT #6;L
 
-REM *** GAME LOOP ***  213
-380 NEWX = X : NEWY = Y : MOVED = 1 : FIRST = 1
-390 EXEC MOVE_PLAYER
+REM *** GAME LOOP ***
+390 NEWX = X : NEWY = Y : MOVED = 1 : FIRST = 1
+400 EXEC MOVE_PLAYER
 
 450 WHILE PEEK(764)<>ESC
 480   IF STICK(0)=UP
