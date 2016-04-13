@@ -10,7 +10,6 @@ REM --- MEMTOP:  the top of memory prior to making any changes
 REM --- NEW_MEMTOP:  the new top of memory after we've lowered it to store our character set and music
 REM --- SC:  the first address that stores the screen graphics
 REM --- CHRAM:  the memory location for our custom character graphics
-REM --- LVRAM
 REM --- CHROM:  the memory location in ROM where character graphics are stored
 REM --- UADDR/UVAL: the memory address and value for the character underneath the player, so that we can restore it after player moves
 REM --- X/Y/NEWX/NEWY:  the location in the LSxLS grid where the player is/will move to next
@@ -29,7 +28,6 @@ REM *** Move the top of memory back, so we have a place to can store our levels 
 REM *** Create our new character set ***
 165 SC=DPEEK(88)
 170 CHRAM=NEW_MEMTOP
-180 LVRAM=NEW_MEMTOP+4
 190 CHROM=PEEK(756)
 200 POKE 756,CHRAM
 210 MOVE CHROM*256,CHRAM*256,1024
@@ -67,20 +65,22 @@ REM *** GAME LOOP ***
 480   POSITION Z,9:PRINT #6;CURRTIME
 
 490   IF STICK(0)=UP
-500     MOVED=1 : NEWY=Y-1 : P$="W" : ENDIF
+500     MOVED = 1 : NEWY=Y-1 : P$="W" : ENDIF
 510   IF STICK(0)=LEFT
-520     MOVED=1 : NEWX=X-1 : P$="A" : ENDIF
+520     MOVED = 1 : NEWX=X-1 : P$="A" : ENDIF
 540   IF STICK(0)=DOWN
-550     MOVED=1 : NEWY=Y+1 : P$="X" : ENDIF
+550     MOVED = 1 : NEWY=Y+1 : P$="X" : ENDIF
 570   IF STICK(0)=RIGHT
-580     MOVED=1 : NEWX=X+1 : P$="D" : ENDIF
+580     MOVED = 1 : NEWX=X+1 : P$="D" : ENDIF
   
-590   IF NEWX < 1    : NEWX=1    : MOVED=0 : ENDIF
-600   IF NEWX > LS   : NEWX=LS   : MOVED=0 : ENDIF
-610   IF NEWY < 1    : NEWY=1    : MOVED=0 : ENDIF
-620   IF NEWY > LS   : NEWY=LS   : MOVED=0 : ENDIF
+590   NADDR = SC+(20*NEWY+NEWX+8)
+600   NVAL = PEEK(NADDR)
+
+610   IF NVAL>=97 AND NVAL <=122 : REM -- character can't move here
+620     NEWY=Y : NEWX = X : MOVED = 0
+650   ENDIF  
   
-630   EXEC MOVE_PLAYER
+660   EXEC MOVE_PLAYER
 
 WEND
 POKE 106,MEMTOP
