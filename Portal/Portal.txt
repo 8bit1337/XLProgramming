@@ -51,19 +51,23 @@ REM *** Setup the left part of the playfield AaAa = \41\61\C1\E1 ***
 
 REM *** LEVEL 1 ***
 330 L = 1 : P$ = "W" : X = 5 : Y=9
-340 L$="uuuuufNuuuu  \F1     uu        uu        uf        uu  C     fu  \F6     uu  \F6     uu  \F9     uuuuufuuuuu"
+340 L$="uuuuufNuuuu  \F1     uu        urunu        uf        uu  C     fu  \F6     uu  \F6     uu  \F9     uuuuufuuuuu"
 350 FOR I = 1 TO LS
 360   POSITION 9,I:PRINT #6;L$(LS*(I-1)+1,LS*I)
 370 NEXT I
 380 POSITION 4,3:PRINT #6;L
 
 REM *** GAME LOOP ***
-390 NEWX = X : NEWY = Y : MOVED = 1 : FIRST = 1
+390 NEWX = X : NEWY = Y : MOVED = 1 : FIRST = 1 : STARTTIME = TIME/60
 400 EXEC MOVE_PLAYER
 
 450 WHILE PEEK(764)<>ESC
-480   IF STICK(0)=UP
-490     MOVED=1 : NEWY=Y-1 : P$="W" : ENDIF
+460   CURRTIME = INT(TIME/60-STARTTIME)
+470   IF CURRTIME < 10 : Z = 4 : ELSE : IF CURRTIME < 1000: Z = 3 : ELSE : Z=6 : ENDIF : ENDIF
+480   POSITION Z,9:PRINT #6;CURRTIME
+
+490   IF STICK(0)=UP
+500     MOVED=1 : NEWY=Y-1 : P$="W" : ENDIF
 510   IF STICK(0)=LEFT
 520     MOVED=1 : NEWX=X-1 : P$="A" : ENDIF
 540   IF STICK(0)=DOWN
