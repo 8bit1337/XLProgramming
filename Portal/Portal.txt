@@ -84,25 +84,27 @@ END
 
 10000 PROC MOVE_PLAYER
 10010   IF MOVED = 1
-10020     REM -- Print the old character in the spot the player is moving from
-10030     IF FIRST = 0
-10040       POKE UADDR,UVAL
-10050     ELSE
-10060       FIRST = 0
-10070     ENDIF
+10020     IF FIRST = 0 : REMark -- Print the old character in the spot the player is moving from
+10030       POKE UADDR,UVAL
+10040       STEPS = STEPS + 1
+10050       IF STEPS < 10 : Z = 4 : ELSE : IF STEPS < 1000: Z = 3 : ELSE : Z=6 : ENDIF : ENDIF
+10060       POSITION Z,6:PRINT #6;STEPS
+10070     ELSE
+10080       FIRST = 0
+10090     ENDIF
 
-10080     REM -- Store whatever is currently at NEWX/NEWY in U$ so that we can re-show it later
-10085     UADDR = SC+(20*NEWY+NEWX+8)
-10090     UVAL = PEEK(UADDR)
+10099     REM -- Store whatever is currently at NEWX/NEWY in U$ so that we can re-show it later
+10100     UADDR = SC+(20*NEWY+NEWX+8)
+10110     UVAL = PEEK(UADDR)
 
-10100     REM -- Print the appropriate player graphic at NEWX/NEWY
-10110     POSITION NEWX+8,NEWY : PRINT #6;P$
-10120     X=NEWX:Y=NEWY
+10119     REM -- Print the appropriate player graphic at NEWX/NEWY
+10120     POSITION NEWX+8,NEWY : PRINT #6;P$
+10130     X=NEWX:Y=NEWY
 
-          REM -- Cleanup
-10130     MOVED = 0
-10140   ENDIF
-10150 ENDPROC
+10160     MOVED = 0
+10170   ENDIF
+10180 ENDPROC
+
 
 REM *** LEVEL 1 NEW ***
 REM DIM B$(1)  : REM The default border style, f or u
