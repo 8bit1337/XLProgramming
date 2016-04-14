@@ -24,3 +24,60 @@ W \57\77\D7\F7
 X \58\78\D8\F8
 Y \59\79\D9\F9
 Z \5A\7A\DA\FA
+
+FIRST LAYOUT
+A \7E\81\A9\81\7E\38\7C\54 = Player Left
+B \00\7E\42\52\4A\42\7E\00 = Box
+C \00\3C\42\40\40\42\3C\00 = C
+D \7E\81\95\81\7E\1C\3E\2A = Player Right
+E \00\7C\40\78\40\40\7C\00 = E
+F \FF\FF\FF\FF\FF\FF\FF\FF = Friendly Wall
+G \00\1C\04\F4\F4\04\1C\00 = Laser Left
+H \00\00\00\FF\FF\00\00\00 = Horizontal Laser
+I \00\7C\10\10\10\10\7C\00 = I
+J \00\00\7E\42\5A\18\18\18 = Laser Down
+K \00\38\20\2F\2F\20\38\00 = Laser Right
+L \18\24\42\42\42\42\24\18 = Left Portal
+M \00\42\66\5A\42\42\42\00 = M
+N \18\3C\7E\FF\FF\7E\3C\18 = Closed Door
+O \18\24\42\81\81\42\24\18 = Open Door
+P \00\78\44\44\78\40\40\00 = P
+Q \E7\81\BD\24\24\BD\81\E7 = Laser Target
+R \00\3C\42\81\81\42\3C\00 = Right Portal
+S \00\3C\40\3C\02\42\3C\00 = S
+T \00\7C\10\10\10\10\10\00 = T
+U \FB\FB\00\DF\DF\DF\00\FB = Unfriendly Wall
+V \18\18\18\18\18\18\18\18 = Vertical Laser
+W \7E\A5\81\81\7E\3C\7E\5A = Player Up
+X \7E\81\81\A5\7E\3C\7E\5A = Player Down
+Y \18\18\18\5A\42\7E\00\00 = Laser Up
+Z \AA\55\AA\55\AA\55\AA\55 = Hazard
+
+2ND LAYOUT
+A \00\38\44\44\7C\44\44\00 = A
+B \00\7E\42\52\4A\42\7E\00 = Box
+C \00\3C\42\40\40\42\3C\00 = C
+D \7E\81\95\81\7E\1C\3E\2A = Player Right
+E \00\7C\40\78\40\40\7C\00 = E
+F \FF\FF\FF\FF\FF\FF\FF\FF = Friendly Wall
+G \00\3C\40\40\4C\44\38\00 = G
+H \00\00\00\FF\FF\00\00\00 = Horizontal Laser
+I \18\18\18\5A\42\7E\00\00 = Laser Up
+J \00\00\7E\42\5A\18\18\18 = Laser Down
+K \00\38\20\2F\2F\20\38\00 = Laser Right
+L \18\24\42\42\42\42\24\18 = Left Portal
+M \00\1C\04\F4\F4\04\1C\00 = Laser Left
+N \18\3C\7E\FF\FF\7E\3C\18 = Closed Door
+O \18\24\42\81\81\42\24\18 = Open Door
+P \00\78\44\44\78\40\40\00 = P
+Q \7E\81\A9\81\7E\38\7C\54 = Player Left
+R \00\3C\42\81\81\42\3C\00 = Right Portal
+S \00\3C\40\3C\02\42\3C\00 = S
+T \00\7C\10\10\10\10\10\00 = T
+U \FB\FB\00\DF\DF\DF\00\FB = Unfriendly Wall
+V \18\18\18\18\18\18\18\18 = Vertical Laser
+W \7E\A5\81\81\7E\3C\7E\5A = Player Up
+X \7E\81\81\A5\7E\3C\7E\5A = Player Down
+Y \E7\81\BD\24\24\BD\81\E7 = Laser Target
+Z \AA\55\AA\55\AA\55\AA\55 = Hazard
+
