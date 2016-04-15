@@ -1,4 +1,22 @@
 REM *** VARIABLE NAMES ***
+REM To open the door you need to point a laser into each keyhole
+REM lasers are blocked by boxes and barriers
+REM lasers can be reflected by mirrors
+REM lasers can be refracted by prisms
+REM buttons open barriers
+
+REM Red and Gray would be the basic character set.  Blue/Brown would be lowercase obscure letters we don't need
+REM Touch red you die.  (i.e. lasers)
+REM Grey can be manipulated by the user.  (i.e. 'mirrors', blocks)
+REM Brown is impassible (i.e. walls)
+REM Blue can be walked over/through (i.e portals/buttons)
+REM TEXT FOR GAME:  ESCAPE!!  STAGE  STEPS  SECONDS  SCORE  PRESS BUTTON TO CONTINUE START
+
+REM Instead of doors, I will use the friendly wall graphic for closed doors but a different colour.  Open will be the space character
+
+REM The idea is that I want to open as much as the alphabet as possible.    
+REM Right now blue/brown is only 5 chars, which could be Q,U-Z, giving me at least two more graphics to play with in those colour ranges
+
 REM --- ESC: value returned when ESC key is pressed
 REM --- UP/LEFT/DOWN/RIGHT: values returned when joystick is pressed in corresponding direction
 REM --- LS: The width and height of each level
@@ -40,9 +58,10 @@ REM *** Set colours:  upper=gray, lower=brown, inverse upper = cyan, inverse low
 260 POKE 711, 70
 
 REM *** Setup the left part of the playfield AaAa = \41\61\C1\E1 ***
-270 POSITION 2,2:PRINT #6;"stage"
+265 POSITION 0,0:PRINT #6;"\C5\D3\C3\C1\D0\C5!!"
+270 POSITION 2,2:PRINT #6;"cage"
 280 POSITION 4,3:PRINT #6;"0"
-290 POSITION 2,5:PRINT #6;"steps"
+290 POSITION 2,5:PRINT #6;"step"
 300 POSITION 4,6:PRINT #6;"0"
 310 POSITION 2,8:PRINT #6;"secs"
 320 POSITION 4,9:PRINT #6;"0"
