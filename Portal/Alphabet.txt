@@ -82,10 +82,13 @@ Y \E7\81\BD\24\24\BD\81\E7 = Laser Target
 Z \AA\55\AA\55\AA\55\AA\55 = Hazard
 
 THIS SHOULD BE THE DECIMAL CONTENTS FOR THE DEFAULT CHARACTER SET
-15= /
+15= / (has spaces
 16- 25 = 0 to 9
 33- 58 = A to Z
 60 = \
+70 = / (graphical one)
+71 = \ (graphical one)
+82 = -
 97-122 = a to z
 
   1-  8 \0  \0  \0  \0  \0  \0  \0  \0  \0  \24 \24 \24 \24 \0  \24 \0  \0  \102\102\102\0  \0  \0  \0  \0  \102\255\102\102\255\102\0  \24 \62 \96 \60 \6  \124\24 \0  \0  \102\108\24 \48 \102\70 \0  \28 \54 \28 \56 \111\102\59 \0  \0  \24 \24 \24 \0  \0  \0  \0  
