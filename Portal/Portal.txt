@@ -1,42 +1,19 @@
-REM *** VARIABLE NAMES ***
-REM To open the door you need to point a laser into each keyhole
-REM Lasers are powered by fuse boxes
-REM Fuses can be pushed into a fuse box (but not removed)
-REM Fuse boxes can be pushed into place as well
-REM A laser that isn't powered on is gray and can be moved as well
-REM lasers are blocked by fuses and fuse boxes, but redirected by mirrors or forks
-
-REM Red and Gray would be the basic character set.  Blue/Brown would be lowercase obscure letters we don't need
-REM Touch red you die.  (i.e. lasers)
-REM Grey can be manipulated by the user.  (i.e. mirrors, unpowered lasers)
-REM Brown is impassible (i.e. walls)
-REM Blue transports you (i.e portals)
-REM TEXT FOR GAME:  ESCAPE!!  STAGE  STEPS  SECONDS  SCORE  PRESS BUTTON TO BEGIN STAGE START GAME LASERS POWER 
-REM Free letters:  q,v,w,x,y,z
-
-REM Press button to begin stage text prior to starting timers
-REM All walls can take a portal.  Need a proc for building the walls on the outside of the level and to reset the level labels each round.
-REM I want to rethink how levels are input.  Walls and door/player start should be the same for every level.  Then I just need to add a certain number of objects to each level with coordinates and character.  
-
-REM --- ESC: value returned when ESC key is pressed
-REM --- UP/LEFT/DOWN/RIGHT: values returned when joystick is pressed in corresponding direction
-REM --- LS: The width and height of each level
-REM --- CS: The number of spots of memory we need for our character set
-REM --- CS$: Character Set graphics, as a long string of ATASCII characters to represent hex codes
-REM --- P$: the character representing the player - W/A/X/D, depending on whether it's looking up/left/down/right
-REM --- L$: a string to represent the current level
-REM --- MEMTOP:  the top of memory prior to making any changes
-REM --- NEW_MEMTOP:  the new top of memory after we've lowered it to store our character set and music
-REM --- SC:  the first address that stores the screen graphics
-REM --- CHRAM:  the memory location for our custom character graphics
-REM --- CHROM:  the memory location in ROM where character graphics are stored
-REM --- UADDR/UVAL: the memory address and value for the character underneath the player, so that we can restore it after player moves
-REM --- X/Y/NEWX/NEWY:  the location in the LSxLS grid where the player is/will move to next
-
+REM *** INITIALIZE ***
 100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7 : LS=10 : CS=208
+
+
+
+
 110 DIM CS$(CS) : DIM P$(1) : DIM L$(LS*LS)
 120 CS$(001,104)="\00\38\44\44\7C\44\44\00\00\7E\42\52\4A\42\7E\00\00\3C\42\40\40\42\3C\00\7E\81\95\81\7E\1C\3E\2A\00\7C\40\78\40\40\7C\00\FF\FF\FF\FF\FF\FF\FF\FF\00\3C\40\40\4C\44\38\00\00\00\00\FF\FF\00\00\00\18\18\18\5A\42\7E\00\00\00\00\7E\42\5A\18\18\18\00\38\20\2F\2F\20\38\00\18\24\42\42\42\42\24\18\00\1C\04\F4\F4\04\1C\00"
 130 CS$(105,208)="\18\3C\7E\FF\FF\7E\3C\18\18\24\42\81\81\42\24\18\00\78\44\44\78\40\40\00\7E\81\A9\81\7E\38\7C\54\00\3C\42\81\81\42\3C\00\00\3C\40\3C\02\42\3C\00\00\7C\10\10\10\10\10\00\FB\FB\00\DF\DF\DF\00\FB\18\18\18\18\18\18\18\18\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\E7\81\BD\24\24\BD\81\E7\AA\55\AA\55\AA\55\AA\55"
+
+REM ATASCII 86-90 (V-Z)
+REM \E7\C3\99\BD\BD\AD\BD\BD\FB\FB\00\DF\DF\DF\00\FB\E7\C3\81\81\81\81\81\81\FF\E7\C3\C3\C3\C3\E7\FF\FF\FF\C3\81\81\C3\FF\FF
+REM ATASCII 0-10
+REM \7E\81\81\A5\7E\3C\7E\5A\7E\A5\81\81\7E\3C\7E\5A\7E\81\A9\81\7E\38\7C\54\7E\81\95\81\7E\1C\3E\2A\E7\E3\F1\38\1C\8F\C7\E7\E7\C7\8F\1C\38\F1\E3\E7\03\07\0E\1C\38\70\E0\C0\C0\E0\70\38\1C\0E\07\03\3C\18\81\C3\E7\E7\E7\E7\E7\E7\E7\E7\E7\81\18\3C\FC\F8\F1\03\03\F1\F8\FC
+REM ATASCII 11-21
+REM \3F\1F\8F\C0\C0\8F\1F\3F\00\00\00\18\18\00\00\00\FF\99\81\C3\C3\81\99\FF\FF\99\81\DB\DB\81\99\FF\00\7E\5A\5A\18\18\18\18\18\18\18\18\5A\42\7E\00\00\0E\02\FA\FA\02\0E\00\00\00\00\FF\FF\00\00\00\00\70\40\5F\5F\40\70\00\AA\55\AA\55\AA\55\AA\55\E7\81\BD\24\24\BD\81\E7
 
 REM *** Move the top of memory back, so we have a place to can store our levels and character set ***
 135 MEMTOP = PEEK(106)
