@@ -1,7 +1,7 @@
 REM *** INITIALIZE ***
-100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7 : SI=18 : STAGE(SI)
+100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7 : SI=18
 105 PLAYER = 1 : DOOR=4 : LASER1=7 : FUSEBOX1=10 : FUSE1=13 : KEYHOLE1=16
-110 DIM CS$(88)
+110 DIM CS$(88) : DIM STAGE(SI)
 
 REM --- Move the top of memory back ---
 120 MEMTOP = PEEK(106)
@@ -42,10 +42,11 @@ REM Put code here for RESTORE 9000 to bring data statements back to level 1, and
 
 REM *** BEGIN STAGE ***
 320 FOR I = 0 to SI : READ A : STAGE(I)=A : NEXT I
-330 POSITION 3,4 : PRINT #6;STAGE(0)
-340 FOR I = 1 to SI STEP 3
-350   POSITION STAGE(I+1), STAGE(I+2) : PRINT #6;STAGE(I
+330 POSITION 2,3 : PRINT #6;STAGE(0)
+340 FOR I = 1 to SI-2 STEP 3
+350   POSITION STAGE(I+1), STAGE(I+2) : PRINT #6;CHR$(STAGE(I))
 360 NEXT I
+361 POSITION 0,1:PRINT #6;STAGE(1),CHR$(STAGE(1))
 
 REM *** GAME LOOP ***
 370 NEWX=STAGE(PLAYER+1) : NEWY=STAGE(PLAYER+2) : MOVED=1 : FIRST=1 : FIRE=0 : STARTTIME=TIME/60
@@ -87,24 +88,24 @@ GR.0
 END
 
 REM *** STAGE INFORMATION ***
-REM   STAGE , PLAYER  , DOOR    , LASER1  , FUSEBOX1 , FUSE1   , KEYHOLE1
-9001 DATA 1 , 1,14,10 , 86,16,0 , 16,11,7 , 13,11,8  , 12,12,8 , 21,11,2
+REM   STAGE,PLAYER,DOOR,LASER1,FUSEBOX1,FUSE1,KEYHOLE1
+9001 DATA 1,1,14,10,214,16,0,16,11,7,13,11,8,12,12,8,21,11,2
 
 REM   *** SETUP_PLAYFIELD ***
 10000 PROC SETUP_PLAYFIELD
-10010   POSITION 1,0:PRINT #6;"\C5\D3\E3\C1\D0\C5"
+10010   POSITION 1,0:PRINT #6;"\C5\D3\C3\C1\D0\C5"
 10020   POSITION 1,2:PRINT #6;"stage"
 10040   POSITION 1,5:PRINT #6;"steps"
 10060   POSITION 1,8:PRINT #6;"clock"
 
-10080   FOR I = 1 to 12
-10090     POSITION 7+I,0:PRINT #6;"\F7"
-10100     POSITION 7+I,11:PRINT #6;"\F7"
+10080   FOR I = 8 to 18
+10090     POSITION I,0:PRINT #6;"\F7"
+10100     POSITION I,11:PRINT #6;"\F7"
 10110   NEXT I
 
 10120   FOR I = 1 to 10
 10130     POSITION 8,I:PRINT #6;"\F7"
-10140     POSITION 19,I:PRINT #6;"\F7"
+10140     POSITION 18,I:PRINT #6;"\F7"
 10150   NEXT I
 ENDPROC
 
@@ -126,7 +127,7 @@ REM      ENDIF
 ENDPROC
 
 REM   *** FIREPORTAL ***
-10500 PROC FIREPORTAL
+10700 PROC FIREPORTAL
 ENDPROC
 
 REM   *** CHECK_JOYSTICK ***
@@ -152,33 +153,14 @@ REM   *** MOVE_PLAYER ***
 12090     ENDIF
 
           REM -- Store whatever is currently at NEWX/NEWY in U$ so that we can re-show it later
-12010     UADDR = SC+(20*NEWY+NEWX+8)
-12020     UVAL = PEEK(UADDR)
+12100     UADDR = SC+(20*NEWY+NEWX)
+12120     UVAL = PEEK(UADDR)
 
           REM -- Print the appropriate player graphic at NEWX/NEWY
-12030     POSITION NEWX+8,NEWY : PRINT #6;P$
-12040     X=NEWX:Y=NEWY
+12130     POSITION NEWX,NEWY : PRINT #6;STAGE(PLAYER)
+12140     X=NEWX:Y=NEWY
 
-12050     MOVED = 0
-12060   ENDIF
+12150     MOVED = 0
+12160   ENDIF
 ENDPROC
-
-
-REM *** LEVEL 1 NEW ***
-REM DIM B$(1)  : REM The default border style, f or u
-REM DIM L1$(3) : REM stores the type of laser base, and where it's located
-REM DIM P$(1)  : REM an array to store what exists under the player
-REM B$="u"
-REM P=94
-REM D=6
-REM L1$="\F983":REM Laser pointing up, at position 82
-
-
-REM *** Things I think I can do to make levels easier to build ***
-REM Default outline = f or u
-REM Just place objects through graphics
-REM Variable to track where player starts, needs to keep track of what is under him at start
-REM Variable specifically for lasers.  Limit how many there are.
-REM Lasers should have specific functions:  open doors, create pf spots, eliminate hazards
-
 
