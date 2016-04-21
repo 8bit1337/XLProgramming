@@ -1,0 +1,185 @@
+; Turbo Basic XL
+; Turbo Basic XL syntax definition file for version 1.5
+; created by Jason Gruetzmacher on 21-Apr-2016
+
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = Yes
+KeyWordLength =
+BracketChars = {[()]}
+OperatorChars = -+*/<>!~%^&|=@.:,;
+PreprocStart = 
+SyntaxStart =
+SyntaxEnd =
+HexPrefix = 
+CommentStart = 
+CommentEnd = 
+CommentStartAlt = 
+CommentEndAlt = 
+SingleComment = REM
+SingleCommentCol =
+SingleCommentAlt = REM ***
+SingleCommentColAlt =
+SingleCommentEsc =
+StringsSpanLines = Yes
+StringStart = "
+StringEnd = "
+StringAlt = 
+StringEsc = \
+CharStart = 
+CharEnd = 
+CharEsc = \
+
+
+[Keywords 1]
+;Logic/Looping
+AND
+CONT
+DO
+ELSE
+END
+ENDIF
+ENDPROC
+EXEC
+EXOR
+FOR
+GO
+GOSUB
+GOTO
+IF
+LET
+LOOP
+NEXT
+NOT
+ON
+PAUSE
+POP
+PROC
+REPEAT
+RETURN
+STEP
+THEN
+TO
+TRAP
+UNTIL
+WEND
+WHILE
+
+[Keywords 2]
+;Math/Strings
+ABS
+ASC
+ATN
+CHR$
+CLOG
+COS
+DEC
+DEG
+DIV
+EXP
+FRAC
+HEX$
+INSTR
+INT
+LEN
+LOG
+MOD
+RAD
+RAND
+RND
+SGN
+SIN
+SQR
+STR$
+TEXT
+TIME
+TIME$
+TRUNC
+UINSTR
+VAL
+
+[Keywords 3]
+;Graphics/Sound
+CIRCLE
+COLOR
+DRAWTO
+FCOLOR
+FILLTO
+GRAPHICS
+LOCATE
+PAINT
+PLOT
+POSITION
+SETCOLOR
+SOUND
+
+[Keywords 4]
+;Memory
+ADR
+CLR
+COM
+DIM
+DPEEK
+DPOKE
+DSOUND
+MOVE
+-MOVE
+NEW
+PEEK
+POKE
+
+[Keywords 5]
+;Read/Write/Receive Data
+%GET
+%PUT
+BGET
+BLOAD
+BPUT
+BRUN
+CLOAD
+CLOSE
+CSAVE
+DATA
+ENTER
+GET
+INKEY$
+INPUT
+LOAD
+LPRINT
+NOTE
+PADDLE
+POINT
+PRINT
+PTRIG
+PUT
+READ
+RESTORE
+SAVE
+STATUS
+STICK
+STRIG
+XIO
+
+[Keywords 6]
+;DOS/System
+BYE
+CLS
+DEL
+DELETE
+DIR
+DOS
+DUMP
+ERL
+ERR
+FRE
+LIST
+LOCK
+RENAME
+RENUM
+RUN
+STOP
+TRACE
+UNLOCK
