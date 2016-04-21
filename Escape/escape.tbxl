@@ -1,12 +1,18 @@
+REM *********************************
+REM *********************************
+REM ESCAPE (or maybe Cosmic Cages?)
+REM ---------------------------------
+REM by Jason "8BIT 1337" Gruetzmacher
+REM *********************************
+REM *********************************
+
 REM *********************
 REM *** PROGRAM START ***
 REM *********************
-100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7 : SI=18
-105 PLAYER = 1 : DOOR=4 : LASER1=7 : FUSEBOX1=10 : FUSE1=13 : KEYHOLE1=16
-110 DIM CS$(88) : DIM STAGE(SI) : DIM L$(1)
-
-120 EXEC INITIALIZE
-130 EXEC SETUP_PLAYFIELD
+100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7 : GRAY=8 : BLUE=132 : RED=66 : BROWN=244
+110 PLAYER = 1 : DOOR=4 : LASER1=7 : FUSEBOX1=10 : FUSE1=13 : KEYHOLE1=16 : SI=18
+120 DIM CS$(88) : DIM STAGE(SI) : DIM L$(1)
+130 EXEC INITIALIZE
 
 REM *****************
 REM *** GAME LOOP ***
@@ -14,6 +20,7 @@ REM *****************
 REM Put code here for RESTORE 9000 to bring data statements back to level 1, and setup the 'Press button to start' text
 
 REM *** BEGIN STAGE ***
+130 EXEC SETUP_PLAYFIELD
 340 FOR I = 0 to SI : READ A : STAGE(I)=A : NEXT I
 350 POSITION 2,3 : PRINT #6;STAGE(0)
 360 FOR I = 1 to SI-2 STEP 3
@@ -28,22 +35,14 @@ REM *** GAME LOOP ***
 460 WHILE PEEK(764)<>ESC
 470   CURRTIME = INT(TIME/60-STARTTIME)
 480   EXEC UPDATE_PROGRESS
-REM 490   EXEC CHECK_TRIGGER
-REM 500   IF FIRE<>0:EXEC FIREPORTAL:ENDIF
+REM 490   EXEC CHECK_TRIGGER : IF FIRE<>0 : EXEC FIRE_PORTAL : ENDIF
 510   EXEC CHECK_JOYSTICK
   
 REM   -- Stage Complete! --
 REM  IF NVAL=56 : stage completed!
 
 REM   -- Player Dies! --
-650   IF NVAL>=225 AND NVAL<=332 : REM -- character dies!
-655     X = NEWX-2:IF X>6:X=6:ENDIF
-656     Y = NEWY-1:IF Y<0:Y=0:ENDIF
-660     POSITION X+8,Y:PRINT #6;"@!#?@!"
-665     EXEC MOVE_PLAYER
-670     WHILE PEEK(764)<>ESC:WEND
-680     EXIT
-690   ENDIF
+
       
 REM   -- Can't Move Here --
 700   IF NVAL>=33 AND NVAL<=122
@@ -91,21 +90,21 @@ REM ************************
 REM ***********************
 REM   *** CHECK_TRIGGER ***
 REM ***********************
-REM 5800 PROC CHECK_TRIGGER
-REM   -- Button has been pushed --
-REM      IF STRING(0)=0
-REM        IF STICK(0)=LEFT
-REM          FIRE=121
-REM        IF STICK(0)=RIGHT
-REM          FIRE=122
-REM      ENDIF
-REM ENDPROC
+5800 PROC CHECK_TRIGGER
+5810   IF STRIG(0)=0
+5820     IF STICK(0)=LEFT
+5830       FIRE=121
+5840     IF STICK(0)=RIGHT
+5850       FIRE=122
+5860   ENDIF
+5870 ENDPROC
 
 REM ********************
 REM  *** FIRE_PORTAL ***
 REM ********************
-REM 6100 PROC FIRE_PORTAL
-REM ENDPROC
+6100 PROC FIRE_PORTAL
+6110  I=0
+6120 ENDPROC
 
 REM ***********************
 REM  *** CHECK_JOYSTICK ***
@@ -126,30 +125,51 @@ REM  *** MOVE_PLAYER ***
 REM ********************
 6700 PROC MOVE_PLAYER
 6710   IF NEWX<>0 OR NEWY<>0
-REM      Take a look at what the next two objects in line with the current move are
-6712     ADDR1 = SC+20*(Y+NEWY)+(X+NEWX)
-6714     VALU1 = PEEK(NADDR)
-6716     ADDR2 = SC+20*(Y+2*NEWY)+(X+2*NEWX)
-6718     VALU2 = PEEK(NADDR)
 
-6720     IF FIRST = 0 : REMark -- Print the old character in the spot the player is moving from
-6730       POKE ADDR1,VALU1
-6740       STEPS = STEPS + 1
-6770     ELSE
-6780       FIRST = 0
-6790     ENDIF
+6740     LOCATE (Y+NEWY),(X+NEWX), C
+6750     IF C=RED : EXEC LOSE_LIFE : ENDIF
+6760     IF C=BLUE : EXEC USE_PORTAL : ENDIF
+6770     IF C=GRAY : EXEC PUSH_BLOCK : ENDIF
+6780     IF C=BROWN : NEWX=0 : NEWY=0 : ENDIF
 
-REM      -- Store whatever is currently at NEWX/NEWY in UVAL so that we can re-show it later
-6800     ADDR0 = SC+20*(Y+NEWY)+(X+NEWX)
-6820     VALU0 = PEEK(ADDR0)
-
-REM      -- Print the appropriate player graphic at NEWX/NEWY
-6830     POSITION X+NEWX,Y+NEWY : PRINT #6;CHR$(STAGE(PLAYER))
-6840     X=X+NEWX : Y=Y+NEWY
-
-6850     NEWX = 0 : NEWY=0
+6790     X=X+NEWX : Y=Y+NEWY
+6800     POSITION X,Y : PRINT #6;CHR$(STAGE(PLAYER))
+6810     NEWX=0 : NEWY=0
 6860   ENDIF
 6870 ENDPROC
+
+PROC LOSE_LIFE
+  LIVES = LIVES - 1
+  IF X>14 : X=14 : ENDIF
+  POSITION X,Y-1 : PRINT #6;"@!#?@!"
+  WHILE IF STRIG(0)<>0:WEND
+ENDPROC
+
+PROC USE_PORTAL
+  I = 0
+ENDPROC
+
+PROC PUSH_BLOCK
+  LOCATE (Y+2*NEWY),(X+2*NEWX), C
+  IF C=BROWN
+    NEWX=0 : NEWY=0 
+  ELSE
+    IF C=RED
+      EXEC LOSE_LIFE
+    ELSE
+      IF C=BLUE
+        EXEC USE_PORTAL
+      ELSE
+        IF C=GRAY
+          EXEC PUSH_BLOCK : ENDIF
+      ENDIF
+    ENDIF
+  ENDIF
+ENDPROC
+  
+  
+ENDPROC
+
 
 REM *******************
 REM  *** INITIALIZE ***
@@ -191,10 +211,10 @@ REM    --- MEMLOC = 54-63
 8200   MOVE ADR(CS$),CHRAM*256+(54)*8,80
 
 REM   --- Set colours:  upper=gray, lower=cyan, inverse upper = red/pink, inverse lower = brown ---
-8210   POKE 708, 8
-8220   POKE 709, 132
-8230   POKE 710, 66
-8240   POKE 711, 244
+8210   POKE 708, GRAY
+8220   POKE 709, BLUE
+8230   POKE 710, RED
+8240   POKE 711, BROWN
 8250 ENDPROC
 
 
