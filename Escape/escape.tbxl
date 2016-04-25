@@ -22,6 +22,7 @@ REM Put code here for RESTORE 9000 to bring data statements back to level 1, and
 REM *** BEGIN_STAGE ***
 300 #BEGIN_STAGE
 310 EXEC SETUP_PLAYFIELD
+320 EXEC ATTRACT_MODE
 350 FOR I = 0 to SI : READ A : STAGE(I)=A : NEXT I
 360 POSITION 2,3 : PRINT #6;STAGE(0)
 370 FOR I = 1 to SI-2 STEP 3
@@ -144,7 +145,16 @@ REM ******************
 6910   X2=(X1+NEWX) : Y2=(Y1+NEWY)
 6920   CHECK2=PEEK(SC+(20*Y2+X2))
 6930   LOCATE X2,Y2,C2
-
+ 
+REM reorder the lasers into two groups:  those that will destroy a block, those that just stop the laser beam
+IF CHECK1=248 : position 4,1:PRINT#6;"fin " : EXEC COMPLETE_STAGE
+ELSE : IF CHECK1=0 : position 4,1:PRINT#6;"move" : EXEC MOVE_PLAYER
+ELSE : IF CHECK1<=81 : position 4,1:PRINT#6;"push" : EXEC PUSH_BLOCK
+ELSE : IF CHECK1<=122 : position 4,1:PRINT#6;"port" : EXEC USE_PORTAL
+ELSE : IF CHECK1<=223 : position 4,1:PRINT#6;"die " : EXEC LOSE_LIFE
+ELSE : NEWX=0 : NEWY=0
+ENDIF : ENDIF : ENDIF : ENDIF : ENDIF
+ 
 6940   IF CHECK2 >= 246 AND CHECK2 <= 247
 6950     NEWX=0 : NEWY=0 : REM STOP THE MOVE
 6960   ELSE
@@ -181,6 +191,20 @@ REM ********************
 7620 ENDPROC
 
 REM ************************
+REM  *** ATTRACT_MODE ***
+REM ************************
+7800 PROC ATTRACT_MODE
+7810   POSITION 10,4:PRINT #6;"PRESS"
+7820   POSITION 10,5:PRINT #6;"button"
+7830   POSITION 10,6:PRINT #6;"TO START"
+7840   WHILE STRIG(0)<>0:WEND
+7850   POSITION 10,4:PRINT #6;"     "
+7860   POSITION 10,5:PRINT #6;"      "
+7870   POSITION 10,6:PRINT #6;"        "
+7880 ENDPROC
+
+
+REM ************************
 REM  *** SETUP_PLAYFIELD ***
 REM ************************
 8000 PROC SETUP_PLAYFIELD
@@ -195,16 +219,10 @@ REM ************************
 8090   NEXT I
 8100   FOR I = 1 to 10
 8110     POSITION 8,I:PRINT #6;"\F7"
-8120     POSITION 18,I:PRINT #6;"\F7"
-8130   NEXT I
-8140   POSITION 10,4:PRINT #6;"PRESS"
-8150   POSITION 10,5:PRINT #6;"button"
-8160   POSITION 10,6:PRINT #6;"TO START"
-8170   WHILE STRIG(0)<>0:WEND
-8180   POSITION 10,4:PRINT #6;"     "
-8190   POSITION 10,5:PRINT #6;"      "
-8200   POSITION 10,6:PRINT #6;"        "
-8210 ENDPROC
+8120     POSITION 9,I:PRINT #6;"         "
+8130     POSITION 18,I:PRINT #6;"\F7"
+8140   NEXT I
+8150 ENDPROC
 
 REM *******************
 REM  *** INITIALIZE ***
