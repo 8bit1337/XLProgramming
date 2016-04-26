@@ -10,48 +10,67 @@ REM *********************
 REM *** PROGRAM START ***
 REM *********************
 100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
-110 PLAYER = 1 : DOOR=4 : LASER1=7 : FUSEBOX1=10 : FUSE1=13 : KEYHOLE1=16 : SI=18
-130 DIM CS$(88) : DIM STAGE(SI) : DIM LIVES$(1)
+110 DIM CS$(88) : DIM LIVES$(1) : LEVEL$(39) : LASER(2) : POWER(2)
 
-150 EXEC INITIALIZE
+120 EXEC INITIALIZE
+130 EXEC SETUP_PLAYFIELD
+140 EXEC ATTRACT_MODE
 
-REM *****************
-REM *** GAME LOOP ***
-REM *****************
-REM Put code here for RESTORE 9000 to bring data statements back to level 1, and setup the 'Press button to start' text
-
-REM *** BEGIN_STAGE ***
-300 #BEGIN_STAGE
-310 EXEC SETUP_PLAYFIELD
-320 EXEC ATTRACT_MODE
-350 FOR I = 0 to SI : READ A : STAGE(I)=A : NEXT I
-360 POSITION 2,3 : PRINT #6;STAGE(0)
-370 FOR I = 1 to SI-2 STEP 3
-380   POSITION STAGE(I+1), STAGE(I+2) : PRINT #6;CHR$(STAGE(I))
-390 NEXT I
-400 XY=SC+STAGE(PLAYER+1)+20*STAGE(PLAYER+2)
+REM ******************
+REM *** START GAME ***
+REM ******************
+150 EXEC PRESENT_LEVEL
 
 REM *** GAME LOOP ***
-410 NEWXY = 0 : FIRE=0 : STEPS = 0 : STARTTIME=TIME/60 : LIVES = 5
-
-420 WHILE PEEK(764)<>ESC
-430   CURRTIME = INT(TIME/60-STARTTIME)
-440   EXEC UPDATE_PROGRESS
-450   EXEC CHECK_LASERS
-510   EXEC CHECK_TRIGGER : IF FIRE<>0 : EXEC FIRE_PORTAL : ENDIF
-520   EXEC CHECK_JOYSTICK : IF NEWXY<>0 : EXEC CHECK_PLAYER : ENDIF
-530   IF GAMEOVER=1 : EXIT : ENDIF
+160 WHILE PEEK(764)<>ESC
+170   CURRTIME = INT(TIME/60-STARTTIME)
+180   EXEC UPDATE_PROGRESS
+190   EXEC CHECK_LASERS
+200   EXEC CHECK_TRIGGER : IF FIRE<>0 : EXEC FIRE_PORTAL : ENDIF
+210   EXEC CHECK_JOYSTICK : IF NEWXY<>0 : EXEC CHECK_PLAYER : ENDIF
+220   IF GAMEOVER=1 : EXIT : ENDIF
+230 WEND
 
 REM *** CLEAN UP ***
-WEND
-IF GAMEOVER=1 : GOTO BEGIN_STAGE : ENDIF
-POKE 106,MEMTOP
-GR.0
-END
+240 IF GAMEOVER=1 : GOTO BEGIN_STAGE : ENDIF
+250 POKE 106,MEMTOP
+260 GR.0
+270 END
 
-REM ************************
-REM  *** UPDATE_PROGRESS ***
-REM ************************
+REM *********************
+REM *** PRESENT_LEVEL ***
+REM *********************
+1000 PROC PRESENT_LEVEL
+1010   POSITION 2,3 : PRINT #6;LEVEL
+1020   GOSUB 10000+LEVEL
+1030   SCLVL=ADR(LEVEL$)
+
+REM    The first group are the player and door, which every level must have
+1040   POKE SC+PEEK(SCLVL+1),PEEK(SCLVL)
+1050   POKE SC+PEEK(SCLVL+3),PEEK(SCLVL+2)
+
+REM    The second group are objects, which may or may not exist
+1060   FOR I =  4 to 22 STEP 2
+1070     CHR=PEEK(SCLVL+I) : XY = PEEK(SCLVL+I+I)
+1080     IF CHR<>0 : POKE SC+XY,CHR : ENDIF
+1090   NEXT I
+
+REM    The last group are hazards, which are XY coords plus Width and Heights
+1110   FOR I = 33 to 36 STEP 3
+1120     XY = PEEK(SCLVL+I)
+1130     IF XY<>0
+1140       X = PEEK(SCLVL+I+1) : Y=PEEK(SCLVL+I+2)
+1150       FOR J=1 TO X : FOR K=1 TO Y : POKE SC+XY+20*(K-1)+(J-1), 9 : NEXT K : NEXT J
+1160     ENDIF
+1170   NEXT I
+
+1190   XY=PEEK(SCLVL+1) : NEWXY=0 : FIRE=0
+1200 ENDPROC
+ 
+
+REM ***********************
+REM *** UPDATE_PROGRESS ***
+REM ***********************
 2000 PROC UPDATE_PROGRESS
 2010   POSITION 2,9:PRINT #6;CURRTIME
 2020   POSITION 2,6:PRINT #6;STEPS
@@ -202,7 +221,8 @@ REM ************************
 7850   POSITION 10,4:PRINT #6;"     "
 7860   POSITION 10,5:PRINT #6;"      "
 7870   POSITION 10,6:PRINT #6;"        "
-7880 ENDPROC
+7880   LEVEL = 1 : LIVES = 5 : STEPS = 0 : STARTTIME=TIME/60
+7890 ENDPROC
 
 
 REM ************************
@@ -258,8 +278,8 @@ REM    --- MEMLOC = 54-63
 8690   CS$="\E7\C3\99\BD\BD\AD\BD\BD\FB\FB\00\DF\DF\DF\00\FB\E7\C3\81\81\81\81\81\81\FF\E7\C3\C3\C3\C3\E7\FF\FF\FF\C3\81\81\C3\FF\FF\00\70\40\5F\5F\40\70\00\03\07\0E\1C\38\70\E0\C0\C0\E0\70\38\1C\0E\07\03\00\00\00\FF\FF\00\00\00\18\18\18\18\18\18\18\18"
 8700   MOVE ADR(CS$),CHRAM*256+(54)*8,80
 
-REM   --- Set colours:  upper=gray, lower=cyan, inverse upper = red/pink, inverse lower = brown ---
-REM   --- these are different from the values in initialize because those represent what locate will return based on these values
+REM    --- Set colours:  upper=gray, lower=cyan, inverse upper = red/pink, inverse lower = brown ---
+REM    --- these are different from the values in initialize because those represent what locate will return based on these values
 8710   POKE 708, 8
 8720   POKE 709, 132
 8730   POKE 710, 66
@@ -270,12 +290,8 @@ REM   --- these are different from the values in initialize because those repres
 REM *************************
 REM *** STAGE INFORMATION ***
 REM *************************
-REM   STAGE, PLAYER, DOOR, LASER/FUSEBOX/FUSE/KEYHOLE 0, LASER/FUSEBOX/FUSE/KEYHOLE 1, LASER/FUSEBOX/FUSE/KEYHOLE 2, LASER/FUSEBOX/FUSE/KEYHOLE 3, LASER/FUSEBOX/FUSE/KEYHOLE 4
-9010 DATA 1 : REM STAGE
-9011 DATA 36,14,10 : REM PLAYER
-9012 DATA 246,16,0 : REM EXIT
-9013 DATA 61,11,7,58,11,8,81,12,8,170,11,2 : REM LASER 0
-9014 DATA 0,0,0,0,0,0,0,0,0,0,0,0 : REM LASER 1
-9015 DATA 0,0,0,0,0,0,0,0,0,0,0,0 : REM LASER 2
-9016 DATA 0,0,0,0,0,0,0,0,0,0,0,0 : REM LASER 3
-9017 DATA 0,0,0,0,0,0,0,0,0,0,0,0 : REM LASER 4
+10001 LEVEL$="\04\D6\D6\10\1A\AB\31\AC\8A\33\00\00\00\00\00\00\00\00\00\00\00\00\00\00\1D\97\AB\00\00\00\00\00\00\00\00\00\00\00\00" : RETURN
+
+
+
+
