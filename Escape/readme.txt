@@ -33,3 +33,6 @@ REM --- CHRAM:  the memory location for our custom character graphics
 REM --- CHROM:  the memory location in ROM where character graphics are stored
 REM --- UADDR/UVAL: the memory address and value for the character underneath the player, so that we can restore it after player moves
 REM --- X/Y/NEWX/NEWY:  the location in the LSxLS grid where the player is/will move to next
+
+A Machine Language Program that can run in the background to play sound
+http://www.atarimagazines.com/compute/issue78/021_1_Atari_Sound_Commander.php
