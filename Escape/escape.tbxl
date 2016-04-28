@@ -56,22 +56,23 @@ REM    The second group are objects, which may or may not exist
 1090   NEXT I
 
 REM    The third group are the lasers, which we capture along with their power source XY coords
-1100   FOR I=24 to 31 STEP 3
-1110     CHR=PEEK(SCLVL+I) : XY=PEEK(SCLVL+I+1) : POW=PEEK(SCLVL+I+2)
-1120     IF CHR<>0 : J=I/3-8 : POKE SC+XY,CHR : LASER(J)=XY : POWER(J)=POW : ENDIF
-1130   NEXT I
+1100   NL=-1 : REM NL = number of lasers
+1110   FOR I=24 to 31 STEP 3
+1120     CHR=PEEK(SCLVL+I) : XY=PEEK(SCLVL+I+1) : POW=PEEK(SCLVL+I+2)
+1130     IF CHR<>0 : NL=NL+1 : J=I/3-8 : POKE SC+XY,CHR : LASER(J)=XY : POWER(J)=POW : ENDIF
+1140   NEXT I
 
 REM    The last group are hazards, which are XY coords plus Width and Heights
-1140   FOR I=33 to 36 STEP 3
-1150     XY = PEEK(SCLVL+I)
-1160     IF XY<>0
-1170       X = PEEK(SCLVL+I+1) : Y=PEEK(SCLVL+I+2)
-1180       FOR J=1 TO X : FOR K=1 TO Y : POKE SC+XY+20*(K-1)+(J-1), 9 : NEXT K : NEXT J
-1190     ENDIF
-1200   NEXT I
+1150   FOR I=33 to 36 STEP 3
+1160     XY = PEEK(SCLVL+I)
+1170     IF XY<>0
+1180       X = PEEK(SCLVL+I+1) : Y=PEEK(SCLVL+I+2)
+1190       FOR J=1 TO X : FOR K=1 TO Y : POKE SC+XY+20*(K-1)+(J-1), 9 : NEXT K : NEXT J
+1200     ENDIF
+1210   NEXT I
 
-1210   XY=PEEK(SCLVL+1) : NEWXY=0 : FIRE=0
-1220 ENDPROC
+1220   XY=PEEK(SCLVL+1) : NEWXY=0 : FIRE=0
+1230 ENDPROC
  
 
 REM ***********************
@@ -91,17 +92,18 @@ REM  *** CHECK_LASERS ***
 REM *********************
 1500 PROC CHECK_LASERS
 REM Determine if the lasers are powered or not
-1510    FOR I=0 TO 2
-1520      XYL=SC+LASER(I) : GAP=LASER(I)-POWER(I)
-1530      LSR=PEEK(XYL)   : PWR=PEEK(SC+POWER(I))
+1510   IF NL<>-1
+1510     FOR I=0 TO NL
+1520       XYL=SC+LASER(I) : GAP=LASER(I)-POWER(I)
+1530       LSR=PEEK(XYL)   : PWR=PEEK(SC+POWER(I))
 
-1540      IF PWR=27
-1550        IF LSR<=49 : LSR=LSR+128 : POKE XYL, LSR : ENDIF
-1560        IF LSR=156 OR LSR=157 : CHR=191 : ELSE : CHR=190 : ENDIF
-1570      ELSE
-1580        CHR=0
-1590        IF LSR>=137 : POKE XYL, LSR-128 : ENDIF
-1600      ENDIF
+1540       IF PWR=27
+1550         IF LSR<=49 : LSR=LSR+128 : POKE XYL, LSR : ENDIF
+1560         IF LSR=156 OR LSR=157 : CHR=191 : ELSE : CHR=190 : ENDIF
+1570       ELSE
+1580         CHR=0
+1590         IF LSR>=137 : POKE XYL, LSR-128 : ENDIF
+1600       ENDIF
           
 REM 1620      DO
 REM 1640        CHECKL=PEEK(XYL+GAP)
@@ -109,7 +111,8 @@ REM 1650        IF CHECKL=0 THEN EXIT
 REM 1660        POKE XYL+GAP,CHR
 REM 1670        XYL=XYL+GAP
 REM 1680      LOOP
-1690    NEXT I
+1690      NEXT I
+        ENDIF
 1700  ENDPROC
 
 REM ***********************
