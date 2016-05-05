@@ -1,5 +1,19 @@
+REM A=A(ddress of N$), 
+REM B=M(emtop)
+REM C=N(ew Memtop)
+REM D=S(tart of screen memory)
+REM E=X(position of player)
+REM F=P(ointer, in memory, of where the song is)
+REM G=V(oice 0 value)
+REM H=V(oice 1 value)
+REM I=V(oice 2 value)
+REM J=T(otal of the 3 voice values)
+REM K=D(uration to hold the note)
+REM L=L(Index of For/Next loops)
+REM M=C(urrent length of holding the note)
+
 REM *** INITIALIZE ***
-N=72:DIM N$(N),V(2):A=ADR(N$)
+DIM N$(72) : A=ADR(N$)
 N$="\51\40\35\0A\00\00\00\14\51\3C\2F\0A\00\00\00\14\5B\48\3C\0A\00\00\00\14\5B\48\3C\0A\00\00\00\0A\51\40\35\0A\00\00\00\0A\51\40\35\1E\51\3C\2F\0A\00\00\00\14\5B\48\3C\0A\00\00\00\0A\79\48\3C\1E\79\60\51\14\79\6A\51\32"
 M=PEEK(106) : POKE 106,M-16 : N=(M-16)*256 : GRAPHICS 18 : SC=DPEEK(88) : X=229
 
@@ -9,21 +23,23 @@ WHILE PEEK(764)<>28
   IF STICK(0)=7 AND X<239 : POKE SC+X,0 : X=X+1 : ENDIF
   POKE SC+X,62
 
-  T=0
-  FOR I=0 TO 2
-    V(I)=PEEK(A+P+I)
-    SOUND I,V(I),10,10
-    IF C=0:T=T+V(I):ENDIF
-  NEXT I
+  V0=PEEK(A+P)
+  V1=PEEK(A+P+1)
+  V2=PEEK(A+P+2)
+  
+  SOUND 0,V0,10,10
+  SOUND 1,V1,10,10
+  SOUND 2,V2,10,10
+  T=V0+V1+V2
   
   D=INT(PEEK(A+P+3)/5)
   
   MOVE SC,N,199
   MOVE N,SC+20,199
-  FOR I=0 TO 19:POKE SC+I,0:NEXT I
-  IF C=0:POKE SC+INT(T/38),77:ENDIF
+  FOR L=0 TO 19:POKE SC+L,0:NEXT L
+  IF C=0 AND V0<>0 :POKE SC+INT(T/38),77:ENDIF
   
-  C=C+1:IF C=D:C=0:P=P+4:IF P>=N:P=0:ENDIF:ENDIF
+  C=C+1:IF C=D:C=0:P=P+4:IF P>=72:P=0:ENDIF:ENDIF
 WEND
 
 DSOUND
