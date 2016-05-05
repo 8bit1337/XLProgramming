@@ -9,8 +9,7 @@ REM H=V(oice 1 value)
 REM I=V(oice 2 value)
 REM J=T(otal of the 3 voice values)
 REM K=D(uration to hold the note)
-REM L=L(Index of For/Next loops)
-REM M=C(urrent length of holding the note)
+REM L=C(urrent length of holding the note)
 
 REM *** INITIALIZE ***
 DIM N$(72) : A=ADR(N$)
@@ -34,10 +33,10 @@ WHILE PEEK(764)<>28
   
   D=INT(PEEK(A+P+3)/5)
   
-  MOVE SC,N,199
-  MOVE N,SC+20,199
-  FOR L=0 TO 19:POKE SC+L,0:NEXT L
-  IF C=0 AND V0<>0 :POKE SC+INT(T/38),77:ENDIF
+  MOVE SC+20,N,179
+  MOVE N,SC+40,179
+  MOVE SC,SC+20,20
+  IF C=0 AND V0<>0 :POKE SC+INT(T/38),127:ENDIF
   
   C=C+1:IF C=D:C=0:P=P+4:IF P>=72:P=0:ENDIF:ENDIF
 WEND
