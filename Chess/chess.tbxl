@@ -1,0 +1,343 @@
+REM *********************************
+REM *********************************
+REM ESCAPE (or maybe Cosmic Cages?)
+REM ---------------------------------
+REM by Jason "8BIT 1337" Gruetzmacher
+REM *********************************
+REM *********************************
+
+REM *********************
+REM *** PROGRAM START ***
+REM *********************
+100 ESC=28 : UP=14 : LEFT=11 : DOWN=13 : RIGHT=7
+110 DIM CS$(56) : DIM LIVES$(1) : DIM LEVEL$(39) : DIM LASER(2)
+
+120 EXEC INITIALIZE
+130 EXEC SETUP_PLAYFIELD
+140 EXEC ATTRACT_MODE
+
+REM ******************
+REM *** START GAME ***
+REM ******************
+150 EXEC PRESENT_LEVEL
+
+REM *** GAME LOOP ***
+160 WHILE PEEK(764)<>ESC
+170   CURRTIME = INT(TIME/60-STARTTIME)
+180   EXEC UPDATE_PROGRESS
+190   EXEC CHECK_LASERS
+200   EXEC CHECK_JOYSTICK : IF NEWXY<>0 : EXEC CHECK_PLAYER : ENDIF
+210   EXEC CHECK_TRIGGER : IF FIRE<>0 : EXEC FIRE_PORTAL : ENDIF
+220   IF GAMEOVER=1 : EXIT : ENDIF
+230 WEND
+
+REM *** CLEAN UP ***
+240 IF GAMEOVER=1 : GOTO 130 : ENDIF
+250 POKE 106,MEMTOP
+260 GR.0
+270 END
+
+REM *********************
+REM *** PRESENT_LEVEL ***
+REM *********************
+1000 PROC PRESENT_LEVEL
+1010   POSITION 2,3 : PRINT #6;LEVEL
+1020   GOSUB 10000+LEVEL
+1030   SCLVL=ADR(LEVEL$)
+
+REM    The first group are the player and door, which every level must have
+1040   POKE SC+PEEK(SCLVL+1),PEEK(SCLVL)
+1050   POKE SC+PEEK(SCLVL+3),PEEK(SCLVL+2)
+
+REM    The second group are objects, which may or may not exist
+1060   FOR I= 4 to 22 STEP 2
+1070     CHR=PEEK(SCLVL+I) : XY=PEEK(SCLVL+I+1)
+1080     IF CHR<>0 : POKE SC+XY,CHR : ENDIF
+1090   NEXT I
+
+REM    The third group are the lasers, which we capture along with their power source XY coords
+1100   NL=-1 : REM NL = number of lasers
+1110   FOR I=24 to 31 STEP 3
+1120     CHR=PEEK(SCLVL+I) : XY=PEEK(SCLVL+I+1)
+1130     IF CHR<>0 : NL=NL+1 : POKE SC+XY,CHR : LASER(NL)=XY : ENDIF
+1140   NEXT I
+
+REM    The last group are hazards, which are XY coords plus Width and Heights
+1150   FOR I=33 to 36 STEP 3
+1160     XY = PEEK(SCLVL+I)
+1170     IF XY<>0
+1180       X = PEEK(SCLVL+I+1) : Y=PEEK(SCLVL+I+2)
+1190       FOR J=1 TO X : FOR K=1 TO Y : POKE SC+XY+20*(K-1)+(J-1), 9 : NEXT K : NEXT J
+1200     ENDIF
+1210   NEXT I
+
+1220   XY=PEEK(SCLVL+1) : NEWXY=0 : FIRE=0
+1230 ENDPROC
+ 
+
+REM ***********************
+REM *** UPDATE_PROGRESS ***
+REM ***********************
+1300 PROC UPDATE_PROGRESS
+1310   POSITION 2,9:PRINT #6;CURRTIME
+1320   POSITION 2,6:PRINT #6;STEPS
+1330   FOR I = 1 TO 6
+1340     IF I<=LIVES : LIVES$="_" : ELSE : LIVES$=" " : ENDIF
+1350     POSITION I,11:PRINT #6;LIVES$
+1360   NEXT I
+1370 ENDPROC
+
+REM *********************
+REM  *** CHECK_LASERS ***
+REM *********************
+1500 PROC CHECK_LASERS
+1510   IF NL<>-1
+1520   FOR I=0 TO NL
+1530     CHRL=PEEK(SC+LASER(I))
+1540     OGSL=CHRL&3
+REM      Determine if the lasers are powered or not
+1550     IF OSGL=0 : GAP=20 : LSR=157
+1560       ELSE : IF OSGL=1 : GAP=-20 : LSR=157
+1570       ELSE : IF OSGL=2 : GAP=-1 : LSR=156
+1580       ELSE : GAP=1 : LSR=156
+1590     ENDIF : ENDIF : ENDIF
+1600     PWR=PEEK(SC+LASER(I)+GAP)
+  
+REM      Ensure the laser is coloured correctly
+1610     IF PWR=3 : POKE SC+LASER(I), CHRL&7+128
+1620     ELSE : POKE SC+LASER(I), CHRL&7 : LSR=0
+1630     ENDIF
+
+REM      Show/hide the laser beams
+1640     J=0
+1650     DO
+1660       J=J+1
+1670       CHR1=PEEK(SC+LASER(I)-J*GAP)
+1680       IF PWR=3 AND CHR1<>0 : EXIT : 
+             ELSE : IF PWR=0 AND CHR1ENDIF
+1690       POKE SC+LASER(I)-J*GAP,LSR
+1700     LOOP
+1710   NEXT I
+          
+REM 1620      DO
+REM 1640        CHECKL=PEEK(XYL+GAP)
+REM 1650        IF CHECKL=0 THEN EXIT
+REM 1660        POKE XYL+GAP,CHR
+REM 1670        XYL=XYL+GAP
+REM 1680      LOOP
+1720  ENDPROC
+
+REM ***********************
+REM  *** CHECK_JOYSTICK ***
+REM ***********************
+1800 PROC CHECK_JOYSTICK
+1810   IF STICK(0)=UP : NEWXY=-20 : NEWP=60
+1820     ELSE : IF STICK(0)=LEFT : NEWXY=-1 : NEWP=62
+1830     ELSE : IF STICK(0)=DOWN : NEWXY=+20 : NEWP=61
+1840     ELSE : IF STICK(0)=RIGHT : NEWXY=+1 : NEWP=63
+1850   ENDIF : ENDIF : ENDIF : ENDIF
+1860 ENDPROC
+
+REM *******************
+REM *** CHECK_PLAYER ***
+REM *******************
+1900 PROC CHECK_PLAYER
+1910   CHR1=PEEK(SC+XY+NEWXY)
+1920   OGS1=INT(CHR1/64)+1
+1940   IF CHR1=0 : EXEC MOVE_PLAYER
+1950     ELSE : IF OGS1=1 : EXEC PUSH_BLOCK
+1970     ELSE : IF OGS1=2 : EXEC USE_PORTAL
+1980     ELSE : IF OGS1=3 : EXEC LOSE_LIFE
+1990     ELSE : NEWXY=0
+2000   ENDIF : ENDIF : ENDIF : ENDIF
+2010 ENDPROC
+
+REM ********************
+REM *** COMPLETE_STAGE ***
+REM ********************
+2100 PROC COMPLETE_STAGE  
+2110   EXEC MOVE_PLAYER
+2120 ENDPROC
+
+REM *******************
+REM *** MOVE_PLAYER ***
+REM *******************
+2400 PROC MOVE_PLAYER
+2410   POKE SC+XY, 0
+2420   POKE SC+XY+NEWXY, NEWP
+2440   XY=XY+NEWXY : NEWXY=0 : STEPS=STEPS+1
+2450 ENDPROC
+
+REM ******************
+REM *** PUSH_BLOCK ***
+REM ******************
+2500 PROC PUSH_BLOCK
+2510   CHR2=PEEK(SC+XY+2*NEWXY)
+2520   OGS2=INT(CHR2/64)+1
+
+2530   IF CHR2=0 : EXEC MOVE_BLOCK : EXEC MOVE_PLAYER
+2540     ELSE : IF CHR1+CHR2=3 : EXEC ADD_FUSE : EXEC MOVE_PLAYER
+2560     ELSE : IF OGS2=2 : EXEC USE_PORTAL : EXEC MOVE_PLAYER
+2570     ELSE : IF OGS2=3 : EXEC KILL_BLOCK : EXEC MOVE_PLAYER
+2580     ELSE : NEWXY=0
+2590   ENDIF : ENDIF : ENDIF : ENDIF
+
+2600 ENDPROC
+  
+REM ****************
+REM *** ADD_FUSE ***
+REM ****************
+2700 PROC ADD_FUSE
+2710   POKE SC+XY+NEWXY,0
+2720   POKE SC+XY+2*NEWXY,3
+2730 ENDPROC
+
+REM ******************
+REM *** MOVE_BLOCK ***
+REM ******************
+2800 PROC MOVE_BLOCK
+2850   POKE SC+XY+NEWXY,0
+2860   POKE SC+XY+2*NEWXY,CHR1
+2870 ENDPROC
+
+
+REM ********************
+REM *** KILL_BLOCK ***
+REM ********************
+3000 PROC KILL_BLOCK
+3010   POKE SC+XY1,0
+3020 ENDPROC
+
+REM *****************
+REM *** LOSE_LIFE ***
+REM *****************
+3100 PROC LOSE_LIFE
+3110   LIVES = LIVES - 1
+3130   POSITION 1,11 : PRINT #6;"OUCH"
+3140   NEWXY=0
+3150   IF LIVES = 0 : GAMEOVER = 1 : ENDIF
+3160   WHILE STRIG(0)<>0:WEND
+3170 ENDPROC
+
+REM ***********************
+REM   *** CHECK_TRIGGER ***
+REM ***********************
+3300 PROC CHECK_TRIGGER
+3310   IF STRIG(0)=0
+3320     IF STICK(0)=LEFT : FIRE=121
+3330     ELSE : IF STICK(0)=RIGHT : FIRE=122
+3340     ENDIF : ENDIF
+3350   ENDIF
+3390 ENDPROC
+
+REM ********************
+REM  *** FIRE_PORTAL ***
+REM ********************
+3500 PROC FIRE_PORTAL
+3510   I=0
+3520 ENDPROC
+
+REM ******************
+REM *** USE_PORTAL ***
+REM ******************
+3800 PROC ENTER_PORTAL
+3810   I = 0
+3820 ENDPROC
+
+REM ******************
+REM *** USE_PORTAL ***
+REM ******************
+4100 PROC USE_PORTAL
+4110   I = 0
+4120 ENDPROC
+
+REM ************************
+REM  *** ATTRACT_MODE ***
+REM ************************
+8000 PROC ATTRACT_MODE
+8010   POSITION 10,4:PRINT #6;"PRESS"
+8020   POSITION 10,5:PRINT #6;"button"
+8030   POSITION 10,6:PRINT #6;"TO START"
+8040   WHILE STRIG(0)<>0:WEND
+8050   POSITION 10,4:PRINT #6;"     "
+8060   POSITION 10,5:PRINT #6;"      "
+8070   POSITION 10,6:PRINT #6;"        "
+8080   LEVEL = 1 : LIVES = 5 : STEPS = 0 : STARTTIME=TIME/60
+8090 ENDPROC
+
+REM ************************
+REM  *** SETUP_PLAYFIELD ***
+REM ************************
+8300 PROC SETUP_PLAYFIELD
+8310   GAMEOVER=0
+8320   POSITION 1,0:PRINT #6;"\C5\D3\C3\C1\D0\C5"
+8330   POSITION 1,2:PRINT #6;"stage"
+8340   POSITION 1,5:PRINT #6;"steps"
+8350   POSITION 1,8:PRINT #6;"clock"
+8360   FOR I = 8 to 18
+8370     POSITION I,0:PRINT #6;"\F7"
+8380     POSITION I,11:PRINT #6;"\F7"
+8390   NEXT I
+8400   FOR I = 1 to 10
+8410     POSITION 8,I:PRINT #6;"\F7"
+8420     POSITION 9,I:PRINT #6;"         "
+8430     POSITION 18,I:PRINT #6;"\F7"
+8440   NEXT I
+8450 ENDPROC
+
+REM *******************
+REM  *** INITIALIZE ***
+REM *******************
+8500 PROC INITIALIZE
+REM    --- Move the top of memory back and set our memory addresses ---
+8510   MEMTOP = PEEK(106)
+8520   NEW_MEMTOP=MEMTOP-16
+8530   POKE 106,NEW_MEMTOP
+8540   GRAPHICS 2+16
+8550   SC=DPEEK(88)
+8560   CHRAM=NEW_MEMTOP
+8580   CHROM=PEEK(756)
+8590   POKE 756,CHRAM
+8600   MOVE CHROM*256,CHRAM*256,1024
+
+REM    --- Move game graphics into proper space in memory, in chunks to fit the characters being used
+REM    --- MEMLOC 1-7,8-13
+8610   CS$="\00\00\3C\3C\3C\3C\00\00\FF\99\81\C3\C3\81\99\FF\FF\99\81\DB\DB\81\99\FF\18\18\18\18\5A\42\7E\00\00\7E\58\5A\18\18\18\18\00\0E\02\FA\FA\02\0E\00\00\70\40\5F\5F\40\70\00"
+8620   MOVE ADR(CS$),CHRAM*256+(1)*8,56
+8630   CS$="\FB\87\8E\9D\99\99\99\DB\DB\99\99\99\B9\71\E1\DF\FF\81\01\F9\FD\0E\87\FB\DF\E1\70\BF\9F\80\81\FF\AA\55\AA\55\AA\55\AA\55\E7\81\BD\24\24\BD\81\E7"
+8640   MOVE ADR(CS$),CHRAM*256+(8)*8,48
+
+REM    --- MEMLOC = 26-29 ---
+8650   CS$="\03\07\0E\1C\38\70\E0\C0\C0\E0\70\38\1C\0E\07\03\00\00\00\FF\FF\00\00\00\18\18\18\18\18\18\18\18"
+8660   MOVE ADR(CS$),CHRAM*256+(26)*8,32
+
+REM    --- MEMLOC = 42
+8670   CS$="\E7\C3\81\81\81\81\81\81"
+8680   MOVE ADR(CS$),CHRAM*256+(42)*8,8
+
+
+REM    --- MEMLOC = 55-58
+8690   CS$="\FB\FB\00\DF\DF\DF\00\FB\E7\C3\99\BD\BD\AD\BD\BD\FF\E7\C3\C3\C3\C3\E7\FF\FF\FF\C3\81\81\C3\FF\FF"
+8700   MOVE ADR(CS$),CHRAM*256+(55)*8,32
+
+REM    --- MEMLOCK = 60-63
+8710   CS$="\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\7E\81\A9\81\7E\38\7C\54\7E\81\95\81\7E\1C\3E\2A"
+8720   MOVE ADR(CS$),CHRAM*256+(60)*8,32
+
+REM    --- Set colours:  upper=gray, lower=cyan, inverse upper = red/pink, inverse lower = brown ---
+REM    --- these are different from the values in initialize because those represent what locate will return based on these values
+8730   POKE 708, 8
+8740   POKE 709, 132
+8750   POKE 710, 66
+8760   POKE 711, 244
+8770 ENDPROC
+
+
+REM *************************
+REM *** STAGE INFORMATION ***
+REM *************************
+10001 LEVEL$="\3C\D6\F8\10\02\AB\01\AC\8D\33\00\00\00\00\00\00\00\00\00\00\00\00\00\00\04\97\AB\00\00\00\00\00\00\00\00\00\00\00\00" : RETURN
+
+
+
+
