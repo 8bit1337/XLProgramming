@@ -15,8 +15,9 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
-# Windows shortcuts
+# Windows shortcuts and locks
 *.lnk
+*.xls#
 
 # =========================
 # Operating System Files
