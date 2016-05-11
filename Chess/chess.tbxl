@@ -1,10 +1,38 @@
 REM *********************************
 REM *********************************
-REM ESCAPE (or maybe Cosmic Cages?)
+REM PUZZLE CHESS
 REM ---------------------------------
 REM by Jason "8BIT 1337" Gruetzmacher
 REM *********************************
 REM *********************************
+
+
+DIM C$(56):C$="\00\00\18\3C\3C\18\3C\7E\18\34\6E\7E\3C\18\3C\7E\38\7C\CF\FF\F6\F0\F0\F8\38\7C\CF\FF\F6\F0\F0\F8\00\00\5A\7E\3C\3C\3C\7E\00\00\08\49\49\6B\7F\7F\18\3C\99\99\DB\DB\FF\FF"
+M=PEEK(106) : N=M-16 : POKE 106,N : MOVE PEEK(756)*256,POKE 756,N: N=N*256 : GRAPHICS 18 : SC=DPEEK(88)
+8580   CHROM=PEEK(756)
+8590   POKE 756,CHRAM
+MOVE CHROM*256,CHRAM*256,1024
+
+
+MOVE ADR(C$),N,56
+
+REM move top of ram lower to give us some memory to work with
+M=PEEK(106) : N=M-16 : POKE 106,N : N=N*256 : O=PEEK(756)*256
+
+REM move a few characters we need to our new top of ram spot
+MOVE O+65*8,N,8 : MOVE O+67*8,N+8,24 : MOVE O+81*8,N+32,24 : MOVE O+87*8,N+56,16 : MOVE O+90*8,N+72,8 : MOVE O+124*8,N+80,8
+
+MOVE PEEK(756)*256,N*256,1024
+
+8510   MEMTOP = PEEK(106)
+8520   NEW_MEMTOP=MEMTOP-16
+8530   POKE 106,NEW_MEMTOP
+8540   GRAPHICS 2+16
+8550   SC=DPEEK(88)
+8560   CHRAM=NEW_MEMTOP
+8580   CHROM=PEEK(756)
+8590   POKE 756,CHRAM
+8600   MOVE CHROM*256,CHRAM*256,1024
 
 REM *********************
 REM *** PROGRAM START ***
@@ -301,28 +329,9 @@ REM    --- Move the top of memory back and set our memory addresses ---
 8600   MOVE CHROM*256,CHRAM*256,1024
 
 REM    --- Move game graphics into proper space in memory, in chunks to fit the characters being used
-REM    --- MEMLOC 1-7,8-13
-8610   CS$="\00\00\3C\3C\3C\3C\00\00\FF\99\81\C3\C3\81\99\FF\FF\99\81\DB\DB\81\99\FF\18\18\18\18\5A\42\7E\00\00\7E\58\5A\18\18\18\18\00\0E\02\FA\FA\02\0E\00\00\70\40\5F\5F\40\70\00"
-8620   MOVE ADR(CS$),CHRAM*256+(1)*8,56
-8630   CS$="\FB\87\8E\9D\99\99\99\DB\DB\99\99\99\B9\71\E1\DF\FF\81\01\F9\FD\0E\87\FB\DF\E1\70\BF\9F\80\81\FF\AA\55\AA\55\AA\55\AA\55\E7\81\BD\24\24\BD\81\E7"
-8640   MOVE ADR(CS$),CHRAM*256+(8)*8,48
-
-REM    --- MEMLOC = 26-29 ---
-8650   CS$="\03\07\0E\1C\38\70\E0\C0\C0\E0\70\38\1C\0E\07\03\00\00\00\FF\FF\00\00\00\18\18\18\18\18\18\18\18"
-8660   MOVE ADR(CS$),CHRAM*256+(26)*8,32
-
-REM    --- MEMLOC = 42
-8670   CS$="\E7\C3\81\81\81\81\81\81"
-8680   MOVE ADR(CS$),CHRAM*256+(42)*8,8
-
-
-REM    --- MEMLOC = 55-58
-8690   CS$="\FB\FB\00\DF\DF\DF\00\FB\E7\C3\99\BD\BD\AD\BD\BD\FF\E7\C3\C3\C3\C3\E7\FF\FF\FF\C3\81\81\C3\FF\FF"
-8700   MOVE ADR(CS$),CHRAM*256+(55)*8,32
-
-REM    --- MEMLOCK = 60-63
-8710   CS$="\7E\A5\81\81\7E\3C\7E\5A\7E\81\81\A5\7E\3C\7E\5A\7E\81\A9\81\7E\38\7C\54\7E\81\95\81\7E\1C\3E\2A"
-8720   MOVE ADR(CS$),CHRAM*256+(60)*8,32
+REM    --- MEMLOC 2-7
+8610   C$="\00\00\18\3C\3C\18\3C\7E\18\34\6E\7E\3C\18\3C\7E\38\7C\CF\FF\F6\F0\F0\F8\38\7C\CF\FF\F6\F0\F0\F8\00\00\5A\7E\3C\3C\3C\7E\00\00\08\49\49\6B\7F\7F\18\3C\99\99\DB\DB\FF\FF"
+8620   MOVE ADR(C$),CHRAM*256+16,56
 
 REM    --- Set colours:  upper=gray, lower=cyan, inverse upper = red/pink, inverse lower = brown ---
 REM    --- these are different from the values in initialize because those represent what locate will return based on these values
