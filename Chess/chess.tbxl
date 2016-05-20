@@ -5,36 +5,48 @@ REM ---------------------------------
 REM by Jason "8BIT 1337" Gruetzmacher
 REM *********************************
 REM *********************************
+REM The object of the game is to 
+REM solve each level by eliminating 
+REM all but one chess piece.
+REM
+REM Your score is based on how long
+REM it takes you to finish all three
+REM levels
+REM *********************************
 
-REM The chess pieces start at memory 4
+REM This is our initialaztion code:  create our chess graphics, draw the background for everything, set colours
+0 DIM A$(32):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:SC=DPEEK(88):O=PEEK(756)*256:POKE 756,N:N=N*256:POKE 708,8
+1 A$="\00\00\18\3C\3C\18\3C\7E\18\34\6E\7E\3C\18\3C\7E\38\7C\CF\FF\F6\F0\F0\F8\00\00\5A\7E\3C\3C\3C\7E":MOVE O,N,1024:MOVE A,N+32,32:MOVE O+992,N+248,8:MOVE O+656,N+256,8:POKE 709,132
+2 POKE 711,244:A$="\44\44\45\46\46\47\47\72\9C\4C\C0\00\BE\00\C0\C2\9C\46\96\9A\00\70\9A\72\74\BE\46\9C":POS. 2,2:?#6;"\EC\E5\F6\E5\EC":POS. 2,5:?#6;"\E3\EC\EF\E3\EB"
+3 F. I=2 TO 10:POS. 9,I:IF I MOD 2=0:?#6;" \40 \40 \40 \40":ELSE:? #6;"\3F \3F \3F \3F \3F":ENDIF:N. I
+4 WHILE STRIG(0)<>0:WEND:L=1:T=TIME/60
+5 P=0:C=SC+70:F. I=1 TO 7:J=L*7+I:X=ASC(A$(J,J)):IF X<>0:MOVE A+I-1,SC+X,1:P=P+1:ENDIF:N. I:V=PEEK(C):POS. 4,3:?#6;L
+6 WHILE P<>1:U=INT(TIME/60-T):IF U MOD 2=1:POKE C,14:ELSE:POKE C,V:ENDIF
+7   POS. 4,6:?#6;U
+8   
 
-0 DIM C$(32),L$(21),P$(7):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:SC=DPEEK(88):O=PEEK(756)*256:POKE 756,N:N=N*256
-1 C$="\00\00\18\3C\3C\18\3C\7E\18\34\6E\7E\3C\18\3C\7E\38\7C\CF\FF\F6\F0\F0\F8\00\00\5A\7E\3C\3C\3C\7E" : L$="\72\9C\4C\C0\00\BE\00\C0\C2\9C\46\96\9A\00\70\9A\72\74\BE\46\9C" : P$="\44\44\45\46\46\47\47"
-2 MOVE O,N,1024:MOVE ADR(C$),N+32,32:MOVE O+992,N+248,8:MOVE O+656,N+256,8
-3 POS. 2,2:?#6;"\F3\F4\E1\E7\E5":POS. 2,5:?#6;"\ED\EF\F6\E5\F3":POS. 2,8:?#6;"\E3\EC\EF\E3\EB":POKE 708,8:POKE 709,132:POKE 711,244
-4 F. I=2 TO 10:POS. 9,I:IF I MOD 2=0:?#6;" \40 \40 \40 \40":ELSE:? #6;"\3F \3F \3F \3F \3F":ENDIF:N. I
-
-5 L=0 : S=0 : T = TIME/60
-6 F. I=1 TO 7:J=L*7+I:X=ASC(L$(J,J)):IF X<>0:MOVE ADR(P$)+I-1,SC+X,1:ENDIF:N. I
-
-99 PAUSE 200 : POKE 106,M : GR. 0 : END
+80 IF U=15 THEN G.90:WEND:L=L+1:IF L=4:G. 90:ENDIF:G. 5
+90 POKE 106,M : GR. 0 : END
 
 REM ---------------------
 REM GLOSSARY OF VARIABLES
 REM ---------------------
-REM C$ = Character definitions for our 4 chess pieces
-REM L$ = Location in memory for up to 7 pieces (1 knight, 2 each of pawn/bishop/rook)
-REM P$ = The corresponding piece in memory for the levels (pawn/pawn/knight/bishop/bishop/rook/rook)
-REM M  = the original top page of memory
-REM N  = my new top address of memory.  First as a page number, then as an actual address
-REM SC = the first memory address for the screen
-REM O  = memory location in ROM for character set
-REM I  = loop variable
-REM J  = loop variable
-REM X  = address location after SC where a given piece sits
-REM L  = Current level number
-REM S  = current number of steps
+REM A$ = We first use this to redefine our character set
+REM A$ = The second time through the first 7 characters denote which graphic each piece uses, then the next 21 are the locations for each piece in our 3 levels
+REM A  = The Address, in memory, of where A$ is stored
+REM C  = location of the player's Cursor in memory relative to SC
+REM I,J= loop variables
+REM L  = current Level number
+REM M  = the original top page of Memory
+REM N  = the New top address of memory.  First as a page number, then as an actual address
+REM O  = memory location in rOm for character set
+REM P  = number of Pieces still on the board
+REM SC = the first memory address for the SCreen
 REM T  = Time when game starts
+REM U  = cUrrent time in the level
+REM V  = Value that currently sits at position C in momory
+REM X  = address location after SC where a given piece sits
+
 
 
 REM -------------------------------
