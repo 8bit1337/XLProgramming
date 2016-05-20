@@ -8,32 +8,46 @@ REM *********************************
 
 REM The chess pieces start at memory 4
 
-10 DIM C$(56),L$(21):C$="\00\00\18\3C\3C\18\3C\7E\18\34\6E\7E\3C\18\3C\7E\38\7C\CF\FF\F6\F0\F0\F8\38\7C\CF\FF\F6\F0\F0\F8\00\00\5A\7E\3C\3C\3C\7E"
-20 L$="\70\00\00\96\00\46\00\C0\C2\9C\46\96\9A\00\70\9A\72\74\BE\46\9C"
-30 M=PEEK(106) : N=M-16 : POKE 106,N : GRAPHICS 2 : SC=DPEEK(88) : O=PEEK(756)*256
-40 POKE 756,N : N=N*256 : MOVE O,N,1024 : MOVE ADR(C$),N+32,56 : MOVE O+992,N+120,8
-50 POSITION 2,2:? #6;"STAGE":POSITION 2,5:? #6;"MOVES":POSITION 2,8:? #6;"CLOCK"
-60 FOR I = 2 TO 10 : POSITION 9,I : IF I MOD 2=0 : ? #6;"+-+-+-+-+": ELSE :? #6;"| | | | |" : ENDIF : NEXT I
-REM custom graphics for chess pieces
+0 DIM C$(32),L$(21),P$(7):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:SC=DPEEK(88):O=PEEK(756)*256:POKE 756,N:N=N*256
+1 C$="\00\00\18\3C\3C\18\3C\7E\18\34\6E\7E\3C\18\3C\7E\38\7C\CF\FF\F6\F0\F0\F8\00\00\5A\7E\3C\3C\3C\7E" : L$="\72\9C\4C\C0\00\BE\00\C0\C2\9C\46\96\9A\00\70\9A\72\74\BE\46\9C" : P$="\44\44\45\46\46\47\47"
+2 MOVE O,N,1024:MOVE ADR(C$),N+32,32:MOVE O+992,N+248,8:MOVE O+656,N+256,8
+3 POS. 2,2:?#6;"\F3\F4\E1\E7\E5":POS. 2,5:?#6;"\ED\EF\F6\E5\F3":POS. 2,8:?#6;"\E3\EC\EF\E3\EB":POKE 708,8:POKE 709,132:POKE 711,244
+4 F. I=2 TO 10:POS. 9,I:IF I MOD 2=0:?#6;" \40 \40 \40 \40":ELSE:? #6;"\3F \3F \3F \3F \3F":ENDIF:N. I
 
-REM move a few characters we need to our new top of ram spot
-REM MOVE O+65*8,N,8 : MOVE O+67*8,N+8,24 : MOVE O+81*8,N+32,24 : MOVE O+87*8,N+56,16 : MOVE O+90*8,N+72,8 : MOVE O+124*8,N+80,8
+5 L=0 : S=0 : T = TIME/60
+6 F. I=1 TO 7:J=L*7+I:X=ASC(L$(J,J)):IF X<>0:MOVE ADR(P$)+I-1,SC+X,1:ENDIF:N. I
+
+99 PAUSE 200 : POKE 106,M : GR. 0 : END
+
+REM ---------------------
+REM GLOSSARY OF VARIABLES
+REM ---------------------
+REM C$ = Character definitions for our 4 chess pieces
+REM L$ = Location in memory for up to 7 pieces (1 knight, 2 each of pawn/bishop/rook)
+REM P$ = The corresponding piece in memory for the levels (pawn/pawn/knight/bishop/bishop/rook/rook)
+REM M  = the original top page of memory
+REM N  = my new top address of memory.  First as a page number, then as an actual address
+REM SC = the first memory address for the screen
+REM O  = memory location in ROM for character set
+REM I  = loop variable
+REM J  = loop variable
+REM X  = address location after SC where a given piece sits
+REM L  = Current level number
+REM S  = current number of steps
+REM T  = Time when game starts
 
 
-REM L$=P,P,K,B,B,R,R
-REM Board locations
+REM -------------------------------
+REM MEMORY LOCATIONS OF CHESS BOARD
+REM -------------------------------
+REM     HEX            DECIMAL
+REM     ---            -------
+REM 46,48,4A,4C     70, 72, 74, 76
+REM 6E,70,72,74    110,112,114,116
+REM 96,98,9A,9C    150,152,154,156
+REM BE,C0,C2,C4    190,192,194,196
 
-
-REM 46,48,4A,4C
-REM 6E,70,72,74
-REM 96,98,9A,9C
-REM BE,C0,C2,C4
-
-REM  70, 72, 74, 76
-REM 110,112,114,116
-REM 150,152,154,156
-REM 190,192,194,196
-
-REM    --- Set colours:  upper=gray, lower=cyan, inverse upper = red/pink, inverse lower = brown ---
-REM 8730   POKE 708, 8 : POKE 709, 132 : POKE 710, 66 : POKE 711, 244
-REM with Queen/King C$="\00\00\18\3C\3C\18\3C\7E\18\34\6E\7E\3C\18\3C\7E\38\7C\CF\FF\F6\F0\F0\F8\38\7C\CF\FF\F6\F0\F0\F8\00\00\5A\7E\3C\3C\3C\7E\00\00\08\49\49\6B\7F\7F\18\3C\99\99\DB\DB\FF\FF"
+REM --------------------------
+REM Queen/King Custom graphics
+REM --------------------------
+REM "\00\00\08\49\49\6B\7F\7F\18\3C\99\99\DB\DB\FF\FF"
