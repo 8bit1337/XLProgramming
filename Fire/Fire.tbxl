@@ -1,19 +1,21 @@
 REM this is where we set memory aside for our custom graphics and resetting the screen, set colours and graphics mode, and draw our background graphics
-0 DIM A$(32):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:SC=DPEEK(88):POKE 708,8
+0 DIM A$(32):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):POKE 710,66
 1 O=PEEK(756)*256:POKE 756,N:N=N*256:A$="\7E\81\A5\81\7E\3C\7E\5A\FB\FB\00\DF\DF\DF\00\FB\81\FF\7E\00\00\00\00\00\31\7C\2E\8F\3F\7F\7E\3C"
-2 MOVE O,N,1024:MOVE A,N+440,32:POKE 709,132:POS. 0,2:?#6;"\DA\DA\DA":POS. 15,0:?#6;"SCORE"
-3 M=(M-8)*256:F. I=3 TO 11:POS. 0,I:IF I=5 OR I=8:?#6;"xx":ELSE:?#6;"xxx":ENDIF:N. I
+2 MOVE O,N,1024:MOVE A,N+440,32:POS. 0,2:?#6;"\DA\DA\DA":POS. 15,0:?#6;"score"
+3 R=(M-8)*256:F. I=3 TO 11:POS. 0,I:IF I=5 OR I=8:?#6;"xx":ELSE:?#6;"xxx":ENDIF:N. I
 REM capture the screen contents now so that we can use it to blank the screen on a new game.  A$ now contains the path an object follows on the screen
-4 MOVE SC+40,M,200:A$="\EF\DA\C5\B0\C3\D6\C2\AD\99\84\97\AB\BE\D1\BD\A8\94\7F\92\A6\B9\CC\B8\A3\A2\8F\7B\66":WHILE STRIG(0)<>0:WEND
+4 MOVE S+40,R,200:WHILE STRIG(0)=1:WEND:A$="\EF\DA\C5\B0\C3\D6\C2\AD\99\84\97\AB\BE\D1\BD\A8\94\7F\92\A6\B9\CC\B8\A3\A2\8F\7B\66"
 REM clear the screen and start the level
-5 MOVE M,SC+40,200:POS. 3,11:?#6;"WYW":TS=INT(TIME/60):TL=TS:L=1:DO
-6 IF L<>0:I=RAND(8)+3:J=SC+I*20+2:IF PEEK(J)=0 THEN POKE J,55:POKE SC+PEEK(A),0:ENDIF
+5 MOVE R,S+40,200:POS. 3,11:?#6;"WYW":Z=INT(TIME/60):L=1:X=223:DO
+6 IF L<>0:I=RAND(8)+3:J=S+I*20+2:IF PEEK(J)=0:POKE J,55:L=L-1:ENDIF:ENDIF
 REM move everything in the queue one step to the right
-7 F. I=1 TO 27:POKE SC+PEEK(A+I),PEEK(SC+PEEK(A+I+1)):N. I
-80 TN=INT(TIME/60)-TS:IF TN= 5 THEN EXIT:LOOP
-90 POKE 106,M : GR. 0 : END
+7 POKE S+PEEK(A),0:F. I=1 TO 27:POKE S+PEEK(A+I),PEEK(S+PEEK(A+I+1)):N. I
+8 T=INT(TIME/60)-Z:POS. 16,1:?#6;T:J=STICK(0)
+9 IF J=11 AND X<>223:Y=X-5:ELSE:IF J=7 AND X<>233:Y=X+5:ENDIF:ENDIF
 
-REM Need to always skip 162 if it would be next.  Otherwise these are the spots in memory relative to SC that I've planned for the jumper
+10 LOOP:POKE 106,M:GR. 0:END
 
-REM 102,123,143,162,163,184,204,185,166,146,127,148,168,189,209,190,171,151,132,153,173,194,224,195,176,197,218,239
+REM MOVE S+223,R+201,6
 
+REM UluL
+REM POKE 708,8:POKE 709,132:POKE 710,66:POKE 711,244
