@@ -20,10 +20,11 @@ REM This is our initialaztion code:  create our chess graphics, draw the backgro
 2 POKE 711,244:A$="\44\44\45\46\46\47\47\72\9C\4C\C0\00\BE\00\C0\C2\9C\46\96\9A\00\70\9A\72\74\BE\46\9C":POS. 2,2:?#6;"\EC\E5\F6\E5\EC":POS. 2,5:?#6;"\E3\EC\EF\E3\EB"
 3 F. I=2 TO 10:POS. 9,I:IF I MOD 2=0:?#6;" \40 \40 \40 \40":ELSE:? #6;"\3F \3F \3F \3F \3F":ENDIF:N. I
 4 WHILE STRIG(0)<>0:WEND:L=1:T=TIME/60
-5 P=0:C=SC+70:F. I=1 TO 7:J=L*7+I:X=ASC(A$(J,J)):IF X<>0:MOVE A+I-1,SC+X,1:P=P+1:ENDIF:N. I:V=PEEK(C):POS. 4,3:?#6;L
+5 P=0:C=SC+70:NC=C:F. I=1 TO 7:J=L*7+I:X=ASC(A$(J,J)):IF X<>0:MOVE A+I-1,SC+X,1:P=P+1:ENDIF:N. I:V=PEEK(C):POS. 4,3:?#6;L
 6 WHILE P<>1:U=INT(TIME/60-T):IF U MOD 2=1:POKE C,14:ELSE:POKE C,V:ENDIF
 7   POS. 4,6:?#6;U
-8   
+8   S=STICK(0):IF S=14:NC=C-40:ELSE:IF S=13:NC=C+40:ELSE:IF S=11:NC=C-2:ELSE:IF S=7:NC=C+2:ENDIF:ENDIF:ENDIF:ENDIF
+9   IF NC<>C:IF NC-8 MOD 10 <> 0:NC=C:ENDIF:ENDIF
 
 80 IF U=15 THEN G.90:WEND:L=L+1:IF L=4:G. 90:ENDIF:G. 5
 90 POKE 106,M : GR. 0 : END
@@ -39,8 +40,10 @@ REM I,J= loop variables
 REM L  = current Level number
 REM M  = the original top page of Memory
 REM N  = the New top address of memory.  First as a page number, then as an actual address
+REM NC = next location for cursor
 REM O  = memory location in rOm for character set
 REM P  = number of Pieces still on the board
+REM S  = direction joyStick is pushed
 REM SC = the first memory address for the SCreen
 REM T  = Time when game starts
 REM U  = cUrrent time in the level
