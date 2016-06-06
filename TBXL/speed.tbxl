@@ -35,7 +35,7 @@ REM populate our three string arrays and other variables
 300 FOR I=1 TO 39:HOR$(I,I)="\0D":NEXT I
 310 FOR I=0 TO 18:J=3*I+1:VERT$(J,J+2)="\0D\1D\1E":NEXT I
 320 CR1$="\85\86\87\88"
-330 UP=14:DWN=13:LEFT=11:RIGHT=7:FLX=24:FLY=16
+330 UP=14:DWN=13:LEFT=11:RIGHT=7:FINISHX=24:FINISHY=16
 
 REM ***** reset game - aka (re)Start Game *****
 500 # RESET_GAME
@@ -48,7 +48,7 @@ REM draw playfield
 560 FOR LOUP=1 TO 18:READ I,J,K:L=3*K-2:POSITION I,J:? VERT$(1,L):NEXT LOUP
 570 DATA 0,1,17,3,4,2,3,13,3,5,4,2,6,14,4,9,1,3,9,13,3,12,15,3,13,3,3
 580 DATA 15,13,2,17,1,3,18,10,3,21,3,12,25,1,12,29,9,6,32,7,6,35,4,11,38,1,17
-590 POSITION FLX,FLY-1:? "\0E\1D\1D\1D\1E\0E":REM These are the start/finish line flags
+590 POSITION FINISHX,FINISHY-1:? "\0E\1D\1D\1D\1E\0E":REM These are the start/finish line flags
 
 REM important memory pokes for Display List, hiding cursor, ensuring we can scan for the Start button later
 600 POKE 559,34:POKE 752,1:POKE 53279,0
@@ -84,7 +84,7 @@ REM read the joystick
 1040   SLAST=S:LP=P1
 
 REM stop the player from cheating by going left over the start/finish line
-1060   IF X1=FLX+1 AND Y1>=FLY AND S=LEFT THEN S=0
+1060   IF X1=FINISHX+1 AND Y1>=FINISHY AND S=LEFT THEN S=0
 
 REM set X/Y coordinates for where player will end up next
 1070   IF S=RIGHT
@@ -100,12 +100,12 @@ REM set X/Y coordinates for where player will end up next
 1170   ENDIF:ENDIF:ENDIF:ENDIF
 
 REM check for collisions:  Z1=13 is a barrier, Z1=17 is an oil slick
-1180   LOCATE X1L,Y1L,Z1:POSITION X1L,Y1L:PUT #6,Z1
-1190   IF Z1=17
+1180   LOCATE X1L,Y1L,Z1L:POSITION X1L,Y1L:PUT #6,Z1L
+1190   IF Z1L=17
 1200     CRASH=1:CANMOVE=1
-1210   ELSE:IF Z1=13
+1210   ELSE:IF Z1L=13
 1220     CRASH=1:CANMOVE=0
-1230   ELSE:IF Z1>=133 AND Z1<=136
+1230   ELSE:IF Z1L>=133 AND Z1L<=136
 1240     CRASH=0:CANMOVE=0
 1250   ELSE
 1260     CRASH=0:CANMOVE=1
@@ -113,41 +113,51 @@ REM check for collisions:  Z1=13 is a barrier, Z1=17 is an oil slick
 
 REM if the player can move, move them, potentially place an oil slick, and check lap counter
 1280   IF CANMOVE=1
-1290     POSITION X1,Y1:?" ":POSITION X1L,Y1L:? CR1$(P1,P1)
-1300     IF P1<>LP
-1310       REM if the car is turning, play the car turn sound
-1320       SOUND 2,5,0,8:SOUND 3,2,10,8:PAUSE 1:SOUND 2,0,0,0:SOUND 3,0,0,0:ENDIF
-1330     IF X1=FLX AND Y1>=FLY
-1341       REM if we've passed the start/finish line, increment the lap counter
-1350       LAP=LAP+1
-1360       SOUND 2,50,12,10:PAUSE 1:SOUND 2,0,0,0
-1370       POSITION 23,21:? LAP
-1380       IF LAP=3 THEN GO# GAME_OVER:ENDIF
-1391     REM place an oil slick randomly based on which level the user chose
-1400     I=INT(RND(0)*SC+1)
-1410     IF I=7
-1420       LOCATE LX,LY,Z
-1430       IF Z=32
-1440         POSITION LX,LY:? CHR$(17):ENDIF:ENDIF
-1450     X1=X1L:Y1=Y1L
-1460   ENDIF
+1290     POSITION X1,Y1:? " "
+1300     POSITION X1L,Y1L:? CR1$(P1,P1)
+
+REM play a sound when the player turns
+1310     IF P1<>LP
+1320       SOUND 2,5,0,8:SOUND 3,2,10,8
+1330       PAUSE 1
+1340       SOUND 2,0,0,0:SOUND 3,0,0,0
+1350     ENDIF
+
+REM check to see if we're crossing the finish line
+1360     IF X1=FINISHX AND Y1>=FINISHY      
+1370       LAP=LAP+1
+1380       SOUND 2,50,12,10:PAUSE 1:SOUND 2,0,0,0
+1390       POSITION 23,21:? LAP
+1400       IF LAP=3 THEN GO# GAME_OVER
+1410     ENDIF
+
+REM place an oil slick randomly.  SC is set based on the level the user selected, it's either 10 or 35
+1420     OIL=INT(RND(0)*SC+1)
+1430     LOCATE X1,Y1,Z1:POSITION X1,Y1:PUT #6,Z1
+1440     IF OIL=7 AND Z1=32
+1450       POSITION X1,Y1:PUT #6,17
+1460     ENDIF
+
+1480     X1=X1L:Y1=Y1L
+1490   ENDIF
 
 REM if the player crashed, play the crash sounds and animation
-1470   IF CRASH=1
-1480     FOR I=1 TO 8
-1490       J=I MOD 4 + 1
-1500       SOUND 1,100,0,2*(8-I)
-1510       POSITION X1,Y1:? CR1$(J,J)
-1520       PAUSE 1
-1530     NEXT I
-1540     POSITION X1,Y1:? CR1$(LP,LP)
-1550   ENDIF
-1560 LOOP
+1500   IF CRASH=1
+1510     FOR I=1 TO 8
+1520       J=I MOD 4 + 1
+1530       SOUND 1,100,0,2*(8-I)
+1540       POSITION X1,Y1:? CR1$(J,J)
+1550       PAUSE 1
+1560     NEXT I
+1570     POSITION X1,Y1:? CR1$(LP,LP)
+1580     SLAST=0
+1590   ENDIF
+1600 LOOP
 
 REM game_over
-1600 # GAME_OVER
-1610 DSOUND
-1620 POSITION 15,22:? "GAME OVER"
-1630 POKE 53279,0
-1640 WHILE PEEK(53279)<>6:WEND:REM while player hasn't press start, loop
-1650 GO# RESET_GAME
+1700 # GAME_OVER
+1710 DSOUND
+1720 POSITION 15,22:? "GAME  OVER"
+1730 POKE 53279,0
+1740 WHILE PEEK(53279)<>6:WEND:REM while player hasn't press start, loop
+1750 GO# RESET_GAME
