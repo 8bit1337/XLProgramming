@@ -31,10 +31,10 @@ REM set screen colors
 280 POKE 708,26 : POKE 709,0 : POKE 710,198 : POKE 711,72 : POKE 712,5
 
 REM populate our three string arrays and other variables
-290 DIM HOR$(39),VERT$(57),CR1$(4)
+290 DIM HOR$(39),VERT$(57),CR$(4)
 300 FOR I=1 TO 39:HOR$(I,I)="\0D":NEXT I
 310 FOR I=0 TO 18:J=3*I+1:VERT$(J,J+2)="\0D\1D\1E":NEXT I
-320 CR1$="\85\86\87\88"
+320 CR$="\85\86\87\88"
 330 UP=14:DWN=13:LEFT=11:RIGHT=7:FINISHX=24:FINISHY=16
 
 REM ***** reset game - aka (re)Start Game *****
@@ -55,7 +55,7 @@ REM important memory pokes for Display List, hiding cursor, ensuring we can scan
 
 REM have user select level of difficulty: E=69, H=72
 610 SOUND 0,170,4,4
-620 POSITION X1,Y1:? CR1$(P1L,P1L)
+620 POSITION X1,Y1:? CR$(P1L,P1L)
 630 POSITION 14,20:? "SELECT LEVEL"
 640 POSITION 12,21:? "(E)asy or (H)ard";
 650 LEV=0:WHILE LEV<>69 AND LEV<>72:GET #1,LEV:WEND
@@ -115,7 +115,7 @@ REM if the player can move, move them, potentially place an oil slick, and check
 1280   IF CANMOVE=1
 1285     IF Z1L=14:Z1=14:ELSE:Z1=32:ENDIF
 1290     POSITION X1,Y1:PUT #6,Z1
-1300     POSITION X1N,Y1N:? CR1$(P1,P1)
+1300     POSITION X1N,Y1N:? CR$(P1,P1)
 1305     
 
 REM play a sound when the player turns
@@ -148,10 +148,10 @@ REM if the player crashed, play the crash sounds and animation
 1510     FOR I=1 TO 8
 1520       J=I MOD 4 + 1
 1530       SOUND 1,100,0,2*(8-I)
-1540       POSITION X1,Y1:? CR1$(J,J)
+1540       POSITION X1,Y1:? CR$(J,J)
 1550       PAUSE 1
 1560     NEXT I
-1570     POSITION X1,Y1:? CR1$(P1L,P1L)
+1570     POSITION X1,Y1:? CR$(P1L,P1L)
 1580     S1L=0
 1590   ENDIF
 1600 LOOP
