@@ -1,0 +1,24 @@
+100 DIM A$(50),O$(150),H$(15)
+110 H$="123456789ABCDEF"
+120 ?"ENTER NAME TO CONVERT: ";:INPUT A$
+130 FOR I = 1 TO 50
+140   J=3*(I-1)+1
+150   O=ASC(A$(I,I))
+160   D = O/16
+170   H1 = INT(O/16)
+180   H2 = O MOD 16
+
+190   O$(J,J)="\5C"
+200   IF O<=15
+210     O$(J+1,J+1)="0"  
+220   ELSE
+230     O$(J+1,J+1)=H$(H1,H1)
+240   ENDIF
+250   IF H2=0
+260     O$(J+2,J+2)="0"
+270   ELSE
+280     O$(J+2,J+2)=H$(H2,H2)
+290   ENDIF
+300 NEXT I
+
+310 PRINT O$
