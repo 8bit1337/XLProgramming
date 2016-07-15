@@ -1,31 +1,42 @@
 REM *** INITIALIZE ***
-0 DIM A$(32),M$(72):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):A$="\7E\81\A5\81\7E\3C\7E\5A\FB\FB\00\DF\DF\DF\00\FB\81\FF\7E\00\00\00\00\00\31\7C\2E\8F\3F\7F\7E\3C"
+0 C=6:DIM A$(32),M$(72),V(C):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):A$="\7E\81\A5\81\7E\3C\7E\5A\FB\FB\00\DF\DF\DF\00\FB\81\FF\7E\00\00\00\00\00\31\7C\2E\8F\3F\7F\7E\3C"
 1 O=PEEK(756)*256:POKE 756,N:N=N*256:MOVE O,N,1024:MOVE A,N+440,32:POS. 0,2:?#6;"\DA\DA\DA":POS. 15,0:?#6;"score":R=(M-8)*256
 REM --- Finish drawing the background (which begins with the POS. statement above). ---
 REM --- Store the full background at Address R so that we can use it to wipe the screen on a new game ---
 2 F. I=3 TO 11:POS. 0,I:IF I=4:?#6;"xx":ELSE:?#6;"xxx":ENDIF:N. I:POS. 3,11:?#6;"WYW":MOVE S,R,240:POKE 710,66
 REM --- A$ contains the reversed path that jumpers take.  M$ is our music. ---
-3 A$="\EF\DA\C5\B0\C3\D6\C2\AD\99\84\97\AB\BE\D1\BD\A9\94\80\6B\7E\92\A5\B9\CC\B8\A4\8F\7B\67\52":M$="\51\40\35\05\00\00\00\0A\51\3C\2F\05\00\00\00\0A\5B\48\3C\05\00\00\00\0A\5B\48\3C\05\00\00\00\05\51\40\35\05\00\00\00\05\51\40\35\0F\51\3C\2F\05\00\00\00\0A\5B\48\3C\05\00\00\00\05\79\48\3C\0A\79\60\51\0A\79\6A\51\19"
+REM 3 A$="\EF\DA\C5\B0\C3\D6\C2\AD\99\84\97\AB\BE\D1\BD\A9\94\80\6B\7E\92\A5\B9\CC\B8\A4\8F\7B\67\52"
+3 A$="\00\52\67\7B\8F\A4\B8\CC\E0\B9\A5\92\7E\6B\80\94\A9\BD\D1\E5\BE\AB\97\84\99\AD\C2\D6\EA\C3\B0\C5\DA":M$="\51\40\35\05\00\00\00\0A\51\3C\2F\05\00\00\00\0A\5B\48\3C\05\00\00\00\0A\5B\48\3C\05\00\00\00\05\51\40\35\05\00\00\00\05\51\40\35\0F\51\3C\2F\05\00\00\00\0A\5B\48\3C\05\00\00\00\05\79\48\3C\0A\79\60\51\0A\79\6A\51\19"
 REM *** KERNAL ***
 REM --- wait for user to push trigger to start, then set all of our first time start variables
-4 WHILE STRIG(0)=1:WEND:MOVE R,S,240:Z=TIME/60:L=0:C=1:X=223:P=0
-REM --- add a new character 
-5 DO
-6    IF C<>L
-7      REM move everything in the queue one step to the right
-8      L=L+1
-9      I=RAND(8)+2:J=S+I*20+2:IF PEEK(J)=0:POKE J,55:C=C-1:ENDIF:ENDIF
-10      POKE S+PEEK(A),0:F. I=1 TO 29:POKE S+PEEK(A+I),PEEK(S+PEEK(A+I+1)):N. I
-11    ENDIF
-12    T=INT(TIME/60-Z):POS. 16,1:?#6;T
-13    IF T>C+1:C=C+2:ENDIF
-    
-  REM --- move the player with the joystick ---
-14  J=STICK(0):IF J=11 AND X<>223:Y=X-5:ELSE:IF J=7 AND X<>233:Y=X+5:ELSE:Y=X:ENDIF:ENDIF:MOVE R,S+X,3:MOVE R+223,S+Y,3:X=Y
-  
-  
-15 LOOP
-16 POKE 106,M:GR. 0:END
+4 WHILE STRIG(0)=1:WEND
+5 MOVE R,S,240:Z=TIME/60:P=223:F=1:W=0:F. I=0 TO C:V(I)=0:N. I
+
+6  DO
+8    IF W<=0 AND INT(RAND(8)=7) AND F<=C : F=C+1 : W=4 : ENDIF
+9    MOVE R+40,S+40,180
+
+REM move Victims
+10   F. I=0 TO C
+11     IF V(I)=32 : V(I)=0 : F=I
+12       ELSE : IF V(I)=0 : F=I
+13       ELSE : V(I)=V(I)+1 : POKE S+PEEK(A+V(I)), 55
+14     ENDIF : ENDIF 
+15   N. I
+
+REM move Player
+18   J=STICK(0)
+19   IF J=11 AND P<>223:Q=P-5
+20     ELSE:IF J=7 AND P<>233:Q=P+5
+21     ELSE:Q=P
+22   ENDIF:ENDIF
+23   MOVE R,S+P,3:MOVE R+223,S+Q,3:P=Q
+
+25   T=INT(TIME/60-Z) : POS. 16,1:?#6;T
+26   W=W-1
+27 LOOP
+
+99 POKE 106,M:GR. 0:END
 
 REM MOVE S+223,R+201,6
 
