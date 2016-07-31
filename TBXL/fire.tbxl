@@ -3,7 +3,7 @@ REM *** INITIALIZE ***
 1 O=PEEK(756)*256:POKE 756,N:N=N*256:MOVE O,N,1024:MOVE A,N+440,32:POS. 0,2:?#6;"\DA\DA\DA":POS. 15,0:?#6;"score":R=(M-8)*256
 REM --- Finish drawing the background (which begins with the POS. statement above). ---
 REM --- Store the full background at Address R so that we can use it to wipe the screen on a new game ---
-2 F. I=3 TO 11:POS. 0,I:IF I=4:?#6;"xx":ELSE:?#6;"xxx":ENDIF:N. I:POS. 3,11:?#6;"WYW":MOVE S,R,240:POKE 710,66
+2 F. I=3 TO 11:POS. 0,I:IF I=4:?#6;"xx":ELSE:?#6;"xxx":ENDIF:N. I:POS. 3,11:?#6;"WYW":MOVE S,R,240:POKE 708,132:POKE 710,66:POKE 709, 8
 REM --- A$ contains the reversed path that jumpers take.  M$ is our music. ---
 REM 3 A$="\EF\DA\C5\B0\C3\D6\C2\AD\99\84\97\AB\BE\D1\BD\A9\94\80\6B\7E\92\A5\B9\CC\B8\A4\8F\7B\67\52"
 3 A$="\00\52\67\7B\8F\A4\B8\CC\E0\B9\A5\92\7E\6B\80\94\A9\BD\D1\E5\BE\AB\97\84\99\AD\C2\D6\EA\C3\B0\C5\DA":M$="\51\40\35\05\00\00\00\0A\51\3C\2F\05\00\00\00\0A\5B\48\3C\05\00\00\00\0A\5B\48\3C\05\00\00\00\05\51\40\35\05\00\00\00\05\51\40\35\0F\51\3C\2F\05\00\00\00\0A\5B\48\3C\05\00\00\00\05\79\48\3C\0A\79\60\51\0A\79\6A\51\19"
