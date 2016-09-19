@@ -1,0 +1,14 @@
+100 DIM SCREEN$(4095)
+110 VNTD=DPEEK(132)
+120 SCRBASE=PEEK(106)-16
+130 ?VNTD : ?SCRBASE
+REM 1080   A=USR(VNTD+90,ADR(SCREEN$),4097,4097,SCRBASE*256)
+1085 ?"POST USR"
+1190   SCREEN$(1)=CHR$(0):SCREEN$(4095)=CHR$(0):SCREEN$(2)=SCREEN$
+1250   SCREEN$(121,139)="press button to ski" : REM inverse "press button to ski"  (space=heart)
+1260   SCREEN$(163,178)="pull joystick to":SCREEN$(185,195)="view course" : REM inverse "pull joystick to" and "view course" (space=inverse heart in first string, space=heart in 2nd string)
+1270   SCREEN$(403,419)="f  i  n  i  s  h" : REM "f  i  n  i  s  h" spaces are inverse hearts
+REM 1280   A=USR(VNTD+597,ADR(SCREEN$)+480)
+1460   SCREEN$(121,195)=SCREEN$(120)
+
+REM 7060 SCREEN$(326,336)="press ףפבעפ" : REM " start" where space=heart
