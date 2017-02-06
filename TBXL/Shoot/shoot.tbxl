@@ -1,0 +1,65 @@
+REM *** INITIALIZE ***
+REM A$=custom graphics
+REM A =address of A$
+REM M =address of top of memory
+REM N =new address of top of memory (to store custom graphics)
+REM S =address of screen (240 characters)
+
+0 C=6:DIM A$(40):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):A$="\7E\81\A5\81\7E\3C\7E\5A\FB\FB\00\DF\DF\DF\00\FB\81\FF\7E\00\00\00\00\00\31\7C\2E\8F\3F\7F\7E\3C"
+1 O=PEEK(756)*256:POKE 756,N:N=N*256:MOVE O,N,1024:MOVE A,N+440,32:R=(M-8)*256
+
+2 POS. 0,0:?#6;"score":POS. 15,0:?#6;"bases"
+
+REM V & W are half of vertically moving ship, X and Y are half of horizontally moving ship.  Z[\] is the base in the middle.
+3 A$="\60\60\60\7F\7F\60\60\60\06\06\06\FE\FE\06\06\06\00\FF\FF\18\18\18\18\18\18\18\18\18\18\FF\FF\00"
+
+
+
+
+
+REM --- Finish drawing the background (which begins with the POS. statement above). ---
+
+REM --- Store the full background at Address R so that we can use it to wipe the screen on a new game ---
+2 F. I=3 TO 11:POS. 0,I:IF I=4:?#6;"xx":ELSE:?#6;"xxx":ENDIF:N. I:POS. 3,11:?#6;"WYW":MOVE S,R,240:POKE 708,132:POKE 710,66:POKE 709, 8
+REM --- A$ contains the reversed path that jumpers take.  M$ is our music. ---
+REM 3 A$="\EF\DA\C5\B0\C3\D6\C2\AD\99\84\97\AB\BE\D1\BD\A9\94\80\6B\7E\92\A5\B9\CC\B8\A4\8F\7B\67\52"
+
+REM *** KERNAL ***
+REM --- wait for user to push trigger to start, then set all of our first time start variables
+4 WHILE STRIG(0)=1:WEND
+5 MOVE R,S,240:Z=TIME/60:X=223:F=0:W=0:F. I=0 TO C:V(I)=0:N. I
+
+REM W = wait for next victim, F=number of victims on playfield, G=1 when we need to add a new victim to the playfield
+6  DO
+7    G=0:IF W<=0 AND F<=C THEN G=1 : F=F+1 : W=INT(RAND(5)+3)
+8    MOVE R+40,S+40,180 : REM blank the playfield, as I'll reset all the victims in their new locations below
+
+REM V(I) here represents which index of A$ the victim has been placed in. 32 is the last spot.  A 0 means the victim isn't active.
+9   F. I=0 TO C
+10     J=PEEK(A+V(I))
+11     IF V(I)=32 : V(I)=0 : F=F-1
+12       ELSE : IF V(I)=0 AND G=1 : V(I)=1
+13       ELSE : IF J>220 AND PEEK(S+J)<>32: V(I)=0 : F=F-1 : SOUND 0,120,10,10 : PAUSE 4 : DSOUND
+14       ELSE : IF V(I)<>0 : V(I)=V(I)+1
+15     ENDIF : ENDIF : ENDIF : ENDIF
+16     IF V(I)<>0 THEN POKE S+PEEK(A+V(I)), 55
+17   N. I
+
+REM move Player
+18   J=STICK(0)
+19   IF J=11 AND X<>223:Y=X-5
+20     ELSE:IF J=7 AND X<>233:Y=X+5
+21     ELSE:Y=X
+22   ENDIF:ENDIF
+23   MOVE R,S+X,3:MOVE R+223,S+Y,3:X=Y
+
+25   T=INT(TIME/60-Z) : POS. 16,1:?#6;T
+26   W=W-1
+27 LOOP
+
+99 POKE 106,M:GR. 0:END
+
+REM MOVE S+223,R+201,6
+
+REM UluL
+REM POKE 708,8:POKE 709,132:POKE 710,66:POKE 711,244
