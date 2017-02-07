@@ -1,19 +1,108 @@
+REM *** VARIABLES ***
+REM A$= custom graphics
+REM A = address of A$
+REM B = number of bases remaining
+REM E = array containing the current position of the L/U/R/D targetrs
+REM F = initial position for starting L/U/R/D targets
+REM G = final position allowed for L/U/R/D targets
+REM J = position of Joystick 0
+REM M = top of memory address
+REM N = new top of memory address/first address of new character set
+REM O = first address of original character set
+REM P = length to pause after each run through the kernal (game pauses less and less as you keep playing)
+REM R = location of memory to store parts of the screen as I move them around
+REM S = address where screen starts (240 characters)
+REM W = where a new target will appear next (L/U/R/D)
+REM Z = direction enemy ship moves
+
 REM *** INITIALIZE ***
-REM A$=custom graphics
-REM A =address of A$
-REM M =address of top of memory
-REM N =new address of top of memory (to store custom graphics)
-REM S =address of screen (240 characters)
+REM DIM E(3),F(3),G(3),Z(3),A$(64)
+DIM XY(1,2),VW(1,2),A$(64)
 
-0 C=6:DIM A$(40):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):A$="\7E\81\A5\81\7E\3C\7E\5A\FB\FB\00\DF\DF\DF\00\FB\81\FF\7E\00\00\00\00\00\31\7C\2E\8F\3F\7F\7E\3C"
-1 O=PEEK(756)*256:POKE 756,N:N=N*256:MOVE O,N,1024:MOVE A,N+440,32:R=(M-8)*256
+A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):R=(M-8)*256
+O=PEEK(756)*256:POKE 756,N:N=N*256:MOVE O,N,1024:MOVE A,N+432,64
 
-2 POS. 0,0:?#6;"score":POS. 15,0:?#6;"bases"
+REM F(0)=5:F(1)=2:F(2)=14:F(3)=11
+REM G(0)=8:G(1)=5:G(2)=11:G(3)=8
+REM Z(0)=1:Z(1)=1:Z(2)=-1:Z(3)=-1
 
-REM V & W are half of vertically moving ship, X and Y are half of horizontally moving ship.  Z[\] is the base in the middle.
-3 A$="\60\60\60\7F\7F\60\60\60\06\06\06\FE\FE\06\06\06\00\FF\FF\18\18\18\18\18\18\18\18\18\18\FF\FF\00"
+XY(0,1)=5:XY(1,1)=14
+XY(0,2)=8:XY(1,2)=11
 
+VW(0,1)=2:VW(1,1)=11
+VW(0,2)=5:VW(1,2)=8
 
+REM *** BACKGROUND ***
+POS. 0,0:?#6;"score":POS. 15,0:?#6;"bases":POS. 9,6:?#6;"z[":POS. 9,7:?#6;"\]"
+
+REM *** CHARACTER GRAPHICS ***
+REM VW are half of vertically moving ship
+REM XY are half of horizontally moving ship.  
+REM Z[  is the top of the base
+REM \]  is the bottom of the base
+A$="\60\60\60\7F\7F\60\60\60\06\06\06\FE\FE\06\06\06\00\FF\FF\18\18\18\18\18\18\18\18\18\18\FF\FF\00\00\00\01\01\01\01\01\E1\00\00\80\80\80\80\80\87\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00"
+
+REM *** WAIT FOR USER TO BE READY ***
+WHILE STRIG(0)=1:WEND:B=3:FOR I=0 TO 1:XY(0,I)=0:VW(0,I)=0:NEXT I:POS. 7,0:?#6;"       "
+
+REM *** KERNAL ***
+DO
+  REM Before we move the ships, check for a potential collision
+  LOCATE 8,6,Z:IF Z=0:LOCATE 9,5,Z:IF Z=0:LOCATE 11,6,Z:IF Z=0:LOCATE 9,8,Z:ENDIF:ENDIF:ENDIF
+  IF Z<>0:B=B-1:POS. 17,1:?#6;B:IF B=0:EXIT:ENDIF:ENDIF
+  
+  REM Move the ships
+  MOVE S+5,S+128,1:MOVE S+5,S+109,2:MOVE S+5,S+131,1:MOVE S+5,S+169,2
+  
+  REM Add new one if possible
+  W=INT(RAND(4))
+  IF E(W)<>0:E(W)=F(W):ENDIF
+
+  REM User Input
+  J=STICK(0)
+  
+  
+LOOP
+
+REM *** CLEAN UP ***
+POKE 106,M:GR. 0:END
+
+REM ********* SCREEN *********
+REM    01234567890123456789
+REM  0 SCORE          BASES 0
+REM  1  0               0   1
+REM  2          vw          2
+REM  3                      3
+REM  4                      4
+REM  5                      5
+REM  6      x   z[   x      6
+REM  7      y   \[   y      7
+REM  8                      8
+REM  9                      9
+REM 10                      10
+REM 11          vw          11
+REM    01234567890123456789
+REM ********* SCREEN *********
+
+REM ********** SCREEN **********
+REM     01234567890123456789
+REM   0 SCORE          BASES 0
+REM  20  0               0   20
+REM  40          vw          40
+REM  60                      60
+REM  80                      80
+REM 100                      100
+REM 120      x   z[   x      120
+REM 140      y   \[   y      140
+REM 160                      160
+REM 180                      180
+REM 200                      200
+REM 220          vw          220
+REM     01234567890123456789
+REM ********* SCREEN *********
+
+REM T=0:B=0:L=0:R=0
+REM T=2:B=11:L=5:R=14
 
 
 
@@ -26,7 +115,7 @@ REM 3 A$="\EF\DA\C5\B0\C3\D6\C2\AD\99\84\97\AB\BE\D1\BD\A9\94\80\6B\7E\92\A5\B9\
 
 REM *** KERNAL ***
 REM --- wait for user to push trigger to start, then set all of our first time start variables
-4 WHILE STRIG(0)=1:WEND
+
 5 MOVE R,S,240:Z=TIME/60:X=223:F=0:W=0:F. I=0 TO C:V(I)=0:N. I
 
 REM W = wait for next victim, F=number of victims on playfield, G=1 when we need to add a new victim to the playfield
@@ -57,9 +146,10 @@ REM move Player
 26   W=W-1
 27 LOOP
 
-99 POKE 106,M:GR. 0:END
+
 
 REM MOVE S+223,R+201,6
 
 REM UluL
 REM POKE 708,8:POKE 709,132:POKE 710,66:POKE 711,244
+
