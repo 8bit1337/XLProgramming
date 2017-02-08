@@ -1,54 +1,56 @@
-
-
 REM *** INITIALIZE ***
-0 Q=256:L=240:DIM A$(64):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):R=(M-8)*Q:T=R+Q:X=T+Q:O=PEEK(756)*Q
-1 POKE 756,N:N=N*Q:MOVE O,N,Q*4:A$="\60\60\60\7F\7F\60\60\60\06\06\06\FE\FE\06\06\06\00\FF\FF\18\18\18\18\18\18\18\18\18\18\FF\FF\00\00\00\01\01\01\01\01\E1\00\00\80\80\80\80\80\87\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00":MOVE A,N+432,64
-2 X=A+16:A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\38\39\00\00\36\37\00\00\38\39\00\00\36\37\00\00"
+0 Q=256:L=240:DIM A$(64),V(15):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):R=(M-8)*Q:T=R+Q:O=PEEK(756)*Q
+1 X=A+16:POKE 756,N:N=N*Q:MOVE O,N,Q*4:A$="\70\70\71\7F\7F\71\70\70\0E\0E\8E\FE\FE\8E\0E\0E\00\FF\FF\FF\18\18\18\3C\3C\18\18\18\FF\FF\FF\00\00\00\03\03\03\03\03\E3\00\00\C0\C0\C0\C0\C0\C7\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00":MOVE A,N+432,64
+
+REM                        A LOCATIONS                                     X GRAPHICAL CHARACTER                           Y MEMORY LOCATIONS FOR ANIMATION MOVES                Z WHEN SHOOTING, DEFINES WHERE TO LOOK
+REM                        LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT-------|TOP--------|RIGHT------|BOTTOM-----||----------------------------------------------------||----------------------------------|
+2 Y=X+16:Z=Y+18:A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\00\00\D6\D7\00\00\D8\D9\00\00\D6\D7\00\00\68\7C\04\7C\90\04\00\28\50\70\79\04\84\8D\04\A0\A0\50\7D\80\14\31\6D\01\83\86\14\A9\D1\01"
 
 REM *** BACKGROUND ***
 3 POS. 0,0:?#6;"score":POS. 1,1:?#6;"0":POS. 15,0:?#6;"bases":POS. 17,1:?#6;"0":POS. 9,6:?#6;"Z[":POS. 9,7:?#6;"\]":MOVE S,R,L
 
-
 REM *** WAIT FOR USER TO BE READY ***
-4 WHILE STRIG(0)=1:WEND:B=3:MOVE R,S,L:C=10:I=0:P=0:GOS. 999
+40 WHILE STRIG(0)=1:WEND:B=3:MOVE R,S,L:C=50:D=0:P=0:POS. 17,1:?#6;B:GOS. 999
 
 REM *** KERNAL ***
-5 DO
-6   I=I+1:IF I=C
-      REM Before we move the ships, check for a potential collision
-8     LOC. 8,6,Z:IF Z=0:LOC. 9,5,Z:IF Z=0:LOC. 11,6,Z:IF Z=0:LOC. 9,8,Z:ENDIF:ENDIF:ENDIF
-9     IF Z<>0:B=B-1:POS. 17,1:?#6;B:IF B=0:EXIT:ENDIF:ENDIF
+41 DO
+
+REM We're ready to move the screen and look for collisions
+42    D=D+1:IF D=C
+
+REM Check for collisions
+50    IF PEEK(S+128)+PEEK(S+109)+PEEK(S+131)+PEEK(S+169)<>0:B=B-1:ENDIF:POS. 17,1:?#6;B:IF B=0:EXIT:ENDIF
+
+REM Move the ships
+60   MOVE S+40,T+20,200
+61   FOR I = 0 TO 5:MOVE T+PEEK(Y+3*I),S+PEEK(Y+3*I+1),PEEK(Y+3*I+2):NEXT I
   
-      REM Move the current layout to screen 2
-10    MOVE S+40,T+20,200
-  
-      REM Move screen 2 back in it's new spot
-11    MOVE T,S+40,80:MOVE T+103,S+104,4:MOVE T+112,S+121,4:MOVE T+123,S+124,4:MOVE T+132,S+142,4:MOVE T+140,S+160,80
-  
-      REM Add a new enemy
-12    GOS. 999
+REM Add a new ship
+62    GOS. 999
     
-13    I=0:IF C<>1:C=C-1:ENDIF
-14  ENDIF
+REM Reset counters
+130    D=0:IF C<>1:C=C-1:ENDIF
+140  ENDIF
 
 REM User Input
-15  J=STICK(0)
-16  IF J=11:E=125:F=128
-17  ELSE : IF J=14:E=49:F=109
-18  ELSE : IF J=7:E=131:F=134
-19  ELSE : IF J=13:E=169:F=209: ENDIF : ENDIF : ENDIF : ENDIF
-20  FOR I = F TO E STEP -1:IF PEEK(I)<>0:P=P+1:ENDIF:NEXT I
-21  POS. 1,1:?#6;P
+150  J=STICK(0)
+160  IF J=11:E=125:F=128:Z=20
+170  ELSE:IF J=14:E=49 :F=109:Z=1
+180  ELSE:IF J= 7:E=131:F=134:Z=20
+190  ELSE:IF J=13:E=169:F=209:Z=1
+195  ELSE:E=40:F=40:ENDIF:ENDIF:ENDIF:ENDIF
+200  FOR I = F TO E STEP -1:IF PEEK(S+I)<>0:P=P+1:POKE I,0:POKE I+Z,0:POS. 1,1:?#6;P:ENDIF:NEXT I
 
-219 PAUSE 1000
+215  POS. 7,0:?#6;D : POS. 11,0:?#6;C
+
 220 LOOP
 
 REM *** CLEAN UP ***
 230 G. 4
 
 997 POKE 106,M:GR. 0:END
-998 END
-999 W=4*INT(RAND(4)):POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W)):POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1))
+
+999 W=4*RAND(4):POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W)):POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1)):RETURN
 
 REM ************** SCREEN **************
 REM         01234567890123456789
@@ -82,26 +84,28 @@ REM 180(09)                      180(9)
 REM 200(10)          vw          200(10)
 REM 220(11)                      220(11)
 REM         01234567890123456789
-REM ************* SCREEN  2*************
+REM ************* SCREEN T *************
 
 REM *** VARIABLES ***
-REM A$= used to setup default X/Y positions of enemy ships and custom graphics
-REM A = address of A$
-REM B = number of bases remaining
-REM C = countdown timer (i.e. how many loops before we move screen/add new enemy)
-REM E = used to check for hits when shooting
-REM F = used to check for hits when shooting
-REM I = loop variable
-REM J = position of Joystick 0
-REM L = 240 (length of screen in memory)
-REM M = top of memory address
-REM N = new top of memory address/first address of new character set
-REM O = first address of original character set
-REM P = current score/points
-REM Q = 256
-REM R = first address of Reset screen
-REM S = address where screen starts (240 characters)
-REM T = first address of Temp screen
-REM W = where a new target will appear next (L/U/R/D)
-REM X = address for graphics of new enemy ships (L1L2/U1U2/R1R2/D1D2)
-REM Z = used when looking for a collision
+REM A$  = used to setup default X/Y positions of enemy ships and custom graphics
+REM A   = address of A$
+REM B   = number of bases remaining
+REM C   = countdown timer (i.e. how many loops have we gone through)
+REM D   = max value for countdown timer (i.e. how many loops before we move screen/add new enemy)
+REM E   = used to check for hits when shooting
+REM F   = used to check for hits when shooting
+REM I   = loop variables
+REM J   = position of Joystick 0
+REM L   = 240 (length of screen in memory)
+REM M   = top of memory address
+REM N   = new top of memory address/first address of new character set
+REM O   = first address of original character set
+REM P   = current score/points
+REM Q   = 256
+REM R   = first address of Reset screen
+REM S   = address where screen starts (240 characters)
+REM T   = first address of Temp screen
+REM W   = where a new target will appear next (L/U/R/D)
+REM X   = address for graphics of new enemy ships (L1L2/U1U2/R1R2/D1D2)
+REM Y   = memory address info for moving ships
+REM Z   = used when player tries to shoot enemy ships
