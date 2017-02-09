@@ -5,13 +5,12 @@ REM *** INITIALIZE ***
 11 A$="\70\70\71\7F\7F\71\70\70\0E\0E\8E\FE\FE\8E\0E\0E\00\FF\FF\FF\18\18\18\3C\3C\18\18\18\FF\FF\FF\00\00\00\03\03\03\03\03\E3\00\00\C0\C0\C0\C0\C0\C7\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00"
 
 20 V(11)=1:V(14)=2:V(7)=3:V(13)=4:MOVE A,N+432,64
-REM    A LOCATIONS                                     X GRAPHICAL CHARACTER                           Y MEMORY LOCATIONS FOR ANIMATION MOVES                Z WHERE TO LOOK WHEN SHOOTING
-REM    LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT-------|TOP--------|RIGHT------|BOTTOM-----||----------------------------------------------------||-------------------------------------------|
-21 A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\00\00\D6\D7\00\00\D8\D9\00\00\D6\D7\00\00\68\7C\04\7C\90\04\00\28\50\70\79\04\84\8D\04\A0\A0\50\09\09\00\7D\80\14\31\6D\01\83\86\14\A9\D1\01"
+REM     A LOCATIONS                                     X GRAPHICAL CHARACTER                           Y MEMORY LOCATIONS FOR ANIMATION MOVES                Z WHERE TO LOOK WHEN SHOOTING
+REM    |LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT----|LEFT----|TOP-----|RIGHT---|RIGHT---|BOTTOM--|-------------------------------------------|
+21 A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\00\00\D6\D7\00\00\D8\D9\00\00\D6\D7\00\00\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50\09\09\00\7D\80\14\31\6D\01\83\86\14\A9\D1\01"
 
 REM *** BACKGROUND ***
 30 POS. 0,0:?#6;"score":POS. 1,1:?#6;"0":POS. 15,0:?#6;"bases":POS. 17,1:?#6;"0":POS. 9,6:?#6;"Z[":POS. 9,7:?#6;"\]":MOVE S,R,L
-
 
 REM *** WAIT FOR USER TO BE READY ***
 40 WHILE STRIG(0)=1:WEND:B=3:MOVE R,S,L:C=20:D=0:P=0:POS. 17,1:?#6;B:GOS. 90
@@ -30,50 +29,58 @@ REM User Input
 60  J=V(STICK(0))
 70  F. I = PEEK(Z+3*J+1) TO PEEK(Z+3*J) STEP -1:IF PEEK(S+I)<>0:P=P+1:POKE I,0:POKE I+PEEK(Z+3*J+2),0:ENDIF:N. I
 
-80 POS. 1,1:?#6;P:POS. 7,0:?#6;D: POS. 17,1:?#6;B: POS. 11,0:?#6;P
+80 POS. 1,1:?#6;P
+81 POS. 17,1:?#6;B
 
-81 LOOP
+REM 82 POS. 7,0:?#6;D
+84 LOOP
 
 REM *** CLEAN UP ***
-82 POS. 17,1:?#6;B:WHILE STRIG(0)=1:WEND
+85 POS. 17,1:?#6;B:WHILE STRIG(0)=1:WEND
 
-83 POKE 106,M:GR. 0:END
+89 POKE 106,M:GR. 0:END
 
-90 W=4*RAND(4):POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W)):POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1)):RETURN
+90 W=4*RAND(3)
+REM W=0:POS.5,0:?#6;PEEK(A+W),PEEK(A+W+1)
+91 POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W))
+92 POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1))
+95 POS. 12,0:?#6;" ":POS. 11,0:?#6;W
+REM 98 WHILE STRIG(0)=1:WEND
+99 RETURN
 
-REM ************** SCREEN **************
-REM         01234567890123456789
-REM   0( 0) SCORE          BASES 0  (0)
-REM  20( 1)  0               0   20 (1)
-REM  40( 2)          vw          40 (2)
-REM  60(03)                      60 (3)
-REM  80(04)                      80 (4)
-REM 100(05)                      100(5)
-REM 120(06)      x   z[   x      120(6)
-REM 140(07)      y   \[   y      140(7)
-REM 160(08)                      160(8)
-REM 180(09)                      180(9)
-REM 200(10)                      200(10)
-REM 220(11)          vw          220(11)
-REM         01234567890123456789
-REM ************** SCREEN **************
+REM ************* SCREEN *************
+REM        01234567890123456789
+REM   0( 0)SCORE          BASES0  (0)
+REM  20( 1) 0               0  20 (1)
+REM  40( 2)         vw         40 (2)
+REM  60(03)                    60 (3)
+REM  80(04)                    80 (4)
+REM 100(05)                    100(5)
+REM 120(06)     x   z[   x     120(6)
+REM 140(07)     y   \[   y     140(7)
+REM 160(08)                    160(8)
+REM 180(09)                    180(9)
+REM 200(10)                    200(10)
+REM 220(11)         vw         220(11)
+REM        01234567890123456789
+REM ************* SCREEN *************
 
-REM ************* SCREEN T *************
-REM         01234567890123456789
-REM   0( 0)                      0  (0)
-REM  20( 1)          vw          20 (1)
-REM  40( 2)                      40 (2)
-REM  60(03)                      60 (3)
-REM  80(04)                      80 (4)
-REM 100(05)      x   z[   x      100(5)
-REM 120(06)      y   \[   y      120(6)
-REM 140(07)                      140(7)
-REM 160(08)                      160(8)
-REM 180(09)                      180(9)
-REM 200(10)          vw          200(10)
-REM 220(11)                      220(11)
-REM         01234567890123456789
-REM ************* SCREEN T *************
+REM ************ SCREEN T ************
+REM        01234567890123456789
+REM   0( 0)                    0  (0)
+REM  20( 1)         vw         20 (1)
+REM  40( 2)                    40 (2)
+REM  60(03)                    60 (3)
+REM  80(04)                    80 (4)
+REM 100(05)     x   z[   x     100(5)
+REM 120(06)     y   \[   y     120(6)
+REM 140(07)                    140(7)
+REM 160(08)                    160(8)
+REM 180(09)                    180(9)
+REM 200(10)         vw         200(10)
+REM 220(11)                    220(11)
+REM        01234567890123456789
+REM ************ SCREEN T ************
 
 REM *** VARIABLES ***
 REM A$  = used to setup default X/Y positions of enemy ships and custom graphics
