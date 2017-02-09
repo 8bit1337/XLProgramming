@@ -6,7 +6,7 @@ REM *** INITIALIZE ***
 
 20 V(11)=1:V(14)=2:V(7)=3:V(13)=4:MOVE A,N+432,64
 REM     A LOCATIONS                                     X GRAPHICAL CHARACTER                           Y MEMORY LOCATIONS FOR ANIMATION MOVES                Z WHERE TO LOOK WHEN SHOOTING
-REM    |LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT----|LEFT----|TOP-----|RIGHT---|RIGHT---|BOTTOM--|-------------------------------------------|
+REM    |LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT----|LEFT----|TOP-----|RIGHT---|RIGHT---|BOTTOM--|none----|LEFT----|TOP-----|RIGHT---|BOTTOM--|
 21 A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\00\00\D6\D7\00\00\D8\D9\00\00\D6\D7\00\00\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50\09\09\00\7D\80\14\31\6D\01\83\86\14\A9\D1\01"
 
 REM *** BACKGROUND ***
@@ -28,15 +28,14 @@ REM Check for collisions, move ships, add new one
 59 ENDIF
 
 REM User Input
-60  J=V(STICK(0)):G=Z+3*J:E=PEEK(G):F=PEEK(G+1)
-70  F. I = F TO E STEP -1
-71  IF PEEK(S+I)<>0:SO. 1,29,10,5:P=P+1:I=E-1:POKE S+I,0:POKE S+I+PEEK(G+2),0:ENDIF
+60  J=V(STICK(0)):G=Z+3*J:E=S+PEEK(G):F=S+PEEK(G+1)
+70  F. I = E TO F
+71  IF PEEK(I)<>0:SO. 1,29,10,5:P=P+1:POKE I,0:POKE I+PEEK(G+2),0:I=F+1:ENDIF
 72  N. I
 
 80 POS. 1,1:?#6;P
 81 POS. 17,1:?#6;B
 
-82 POS. 0,11:?#6;E:POS. 15,11:?#6;F
 83 SOUND
 84 LOOP
 
@@ -45,7 +44,7 @@ REM *** CLEAN UP ***
 
 89 POKE 106,M:GR. 0:END
 
-90 W=4*RAND(3)
+90 W=4*RAND(4)
 91 POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W))
 92 POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1))
 99 RETURN
