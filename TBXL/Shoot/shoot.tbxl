@@ -1,56 +1,45 @@
 REM *** INITIALIZE ***
 0 Q=256:L=240:DIM A$(64),V(15):A=ADR(A$):M=PEEK(106):N=M-16:POKE 106,N:GR. 18:S=DPEEK(88):R=(M-8)*Q:T=R+Q:O=PEEK(756)*Q
-1 X=A+16:POKE 756,N:N=N*Q:MOVE O,N,Q*4:A$="\70\70\71\7F\7F\71\70\70\0E\0E\8E\FE\FE\8E\0E\0E\00\FF\FF\FF\18\18\18\3C\3C\18\18\18\FF\FF\FF\00\00\00\03\03\03\03\03\E3\00\00\C0\C0\C0\C0\C0\C7\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00":MOVE A,N+432,64
 
-REM                        A LOCATIONS                                     X GRAPHICAL CHARACTER                           Y MEMORY LOCATIONS FOR ANIMATION MOVES                Z WHEN SHOOTING, DEFINES WHERE TO LOOK
-REM                        LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT-------|TOP--------|RIGHT------|BOTTOM-----||----------------------------------------------------||----------------------------------|
-2 Y=X+16:Z=Y+18:A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\00\00\D6\D7\00\00\D8\D9\00\00\D6\D7\00\00\68\7C\04\7C\90\04\00\28\50\70\79\04\84\8D\04\A0\A0\50\7D\80\14\31\6D\01\83\86\14\A9\D1\01"
+10 X=A+16:Y=X+16:Z=Y+18:POKE 756,N:N=N*Q:MOVE O,N,Q*4
+11 A$="\70\70\71\7F\7F\71\70\70\0E\0E\8E\FE\FE\8E\0E\0E\00\FF\FF\FF\18\18\18\3C\3C\18\18\18\FF\FF\FF\00\00\00\03\03\03\03\03\E3\00\00\C0\C0\C0\C0\C0\C7\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00"
+
+20 V(11)=0:V(14)=1:V(7)=2:V(13)=3:MOVE A,N+432,64
+REM    A LOCATIONS                                     X GRAPHICAL CHARACTER                           Y MEMORY LOCATIONS FOR ANIMATION MOVES                Z WHERE TO LOOK WHEN SHOOTING
+REM    LEFT-------|TOP--------|RIGHT------|BOTTOM-----|LEFT-------|TOP--------|RIGHT------|BOTTOM-----||----------------------------------------------------||----------------------------------|
+21 A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\00\00\D6\D7\00\00\D8\D9\00\00\D6\D7\00\00\68\7C\04\7C\90\04\00\28\50\70\79\04\84\8D\04\A0\A0\50\7D\80\14\31\6D\01\83\86\14\A9\D1\01"
 
 REM *** BACKGROUND ***
-3 POS. 0,0:?#6;"score":POS. 1,1:?#6;"0":POS. 15,0:?#6;"bases":POS. 17,1:?#6;"0":POS. 9,6:?#6;"Z[":POS. 9,7:?#6;"\]":MOVE S,R,L
+30 POS. 0,0:?#6;"score":POS. 1,1:?#6;"0":POS. 15,0:?#6;"bases":POS. 17,1:?#6;"0":POS. 9,6:?#6;"Z[":POS. 9,7:?#6;"\]":MOVE S,R,L
+
 
 REM *** WAIT FOR USER TO BE READY ***
-40 WHILE STRIG(0)=1:WEND:B=3:MOVE R,S,L:C=50:D=0:P=0:POS. 17,1:?#6;B:GOS. 999
-
-REM *** KERNAL ***
+40 WHILE STRIG(0)=1:WEND:B=3:MOVE R,S,L:C=50:D=0:P=0:POS. 17,1:?#6;B:GOS. 90
 41 DO
+42   D=D+1:IF D=C
+43   J=PEEK(S+128)+PEEK(S+109)+PEEK(S+131)+PEEK(S+169)
 
-REM We're ready to move the screen and look for collisions
-42    D=D+1:IF D=C
-
-REM Check for collisions
-50    IF PEEK(S+128)+PEEK(S+109)+PEEK(S+131)+PEEK(S+169)<>0:B=B-1:ENDIF:POS. 17,1:?#6;B:IF B=0:EXIT:ENDIF
-
-REM Move the ships
-60   MOVE S+40,T+20,200
-61   FOR I = 0 TO 5:MOVE T+PEEK(Y+3*I),S+PEEK(Y+3*I+1),PEEK(Y+3*I+2):NEXT I
-  
-REM Add a new ship
-62    GOS. 999
-    
-REM Reset counters
-130    D=0:IF C<>1:C=C-1:ENDIF
-140  ENDIF
+REM Check for collisions, move ships, add new one
+50 IF J<>0:B=B-1:ENDIF:IF B=0:EXIT:ENDIF
+51 MOVE S+40,T+20,200
+52 F. I = 0 TO 5:MOVE T+PEEK(Y+3*I),S+PEEK(Y+3*I+1),PEEK(Y+3*I+2):N. I
+53 GOS. 90
+54 D=0:IF C<>1:C=C-1:ENDIF:ENDIF
 
 REM User Input
-150  J=STICK(0)
-160  IF J=11:E=125:F=128:Z=20
-170  ELSE:IF J=14:E=49 :F=109:Z=1
-180  ELSE:IF J= 7:E=131:F=134:Z=20
-190  ELSE:IF J=13:E=169:F=209:Z=1
-195  ELSE:E=40:F=40:ENDIF:ENDIF:ENDIF:ENDIF
-200  FOR I = F TO E STEP -1:IF PEEK(S+I)<>0:P=P+1:POKE I,0:POKE I+Z,0:POS. 1,1:?#6;P:ENDIF:NEXT I
+60  J=V(STICK(0))
+70  F. I = PEEK(Z+3*J+1) TO PEEK(Z+3*J) STEP -1:IF PEEK(S+I)<>0:P=P+1:POKE I,0:POKE I+PEEK(Z+3*J+2),0:ENDIF:N. I
 
-215  POS. 7,0:?#6;D : POS. 11,0:?#6;C
+80 POS. 1,1:?#6;P:POS. 7,0:?#6;D: POS. 17,1:?#6;B: POS. 11,0:?#6;P
 
-220 LOOP
+81 LOOP
 
 REM *** CLEAN UP ***
-230 G. 4
+82 G. 40
 
-997 POKE 106,M:GR. 0:END
+83 POKE 106,M:GR. 0:END
 
-999 W=4*RAND(4):POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W)):POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1)):RETURN
+90 W=4*RAND(4):POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W)):POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1)):RETURN
 
 REM ************** SCREEN **************
 REM         01234567890123456789
