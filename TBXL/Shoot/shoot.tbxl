@@ -13,39 +13,41 @@ REM *** BACKGROUND ***
 30 POS. 0,0:?#6;"score":POS. 1,1:?#6;"0":POS. 15,0:?#6;"bases":POS. 17,1:?#6;"0":POS. 9,6:?#6;"Z[":POS. 9,7:?#6;"\]":MOVE S,R,L
 
 REM *** WAIT FOR USER TO BE READY ***
-40 WHILE STRIG(0)=1:WEND:B=3:MOVE R,S,L:C=20:D=0:P=0:POS. 17,1:?#6;B:GOS. 90
+40 WHILE STRIG(0)=1:WEND:B=3:MOVE R,S,L:C=30:D=0:P=0:POS. 17,1:?#6;B:GOS. 90
 41 DO
 42 D=D+1:IF D=C
 43 J=PEEK(S+128)+PEEK(S+109)+PEEK(S+131)+PEEK(S+169)
 
 REM Check for collisions, move ships, add new one
-50 IF J<>0:B=B-1:ENDIF:IF B=0:EXIT:ENDIF
-51 MOVE S+40,T+20,200
-52 F. I = 0 TO 5:MOVE T+PEEK(Y+3*I),S+PEEK(Y+3*I+1),PEEK(Y+3*I+2):N. I
-53 GOS. 90
-54 D=0:IF C<>1:C=C-1:ENDIF:ENDIF
+50 IF J<>0:B=B-1:SO. 0,243,10,5:ENDIF
+51 IF B=0:EXIT:ENDIF
+52 MOVE S+40,T+20,200
+53 F. I = 0 TO 5:E=Y+3*I:MOVE T+PEEK(E),S+PEEK(E+1),PEEK(E+2):N. I
+54 GOS. 90
+55 D=0:IF C<>1:C=C-1:ENDIF
+59 ENDIF
 
 REM User Input
-60  J=V(STICK(0))
-70  F. I = PEEK(Z+3*J+1) TO PEEK(Z+3*J) STEP -1:IF PEEK(S+I)<>0:P=P+1:POKE I,0:POKE I+PEEK(Z+3*J+2),0:ENDIF:N. I
+60  J=V(STICK(0)):G=Z+3*J:E=PEEK(G):F=PEEK(G+1)
+70  F. I = F TO E STEP -1
+71  IF PEEK(S+I)<>0:SO. 1,29,10,5:P=P+1:I=E-1:POKE S+I,0:POKE S+I+PEEK(G+2),0:ENDIF
+72  N. I
 
 80 POS. 1,1:?#6;P
 81 POS. 17,1:?#6;B
 
-REM 82 POS. 7,0:?#6;D
+82 POS. 0,11:?#6;E:POS. 15,11:?#6;F
+83 SOUND
 84 LOOP
 
 REM *** CLEAN UP ***
-85 POS. 17,1:?#6;B:WHILE STRIG(0)=1:WEND
+85 SOUND:POS. 17,1:?#6;B:WHILE STRIG(0)=1:WEND
 
 89 POKE 106,M:GR. 0:END
 
 90 W=4*RAND(3)
-REM W=0:POS.5,0:?#6;PEEK(A+W),PEEK(A+W+1)
 91 POS. PEEK(A+W),PEEK(A+W+1):?#6;CHR$(PEEK(X+W))
 92 POS. PEEK(A+W+2),PEEK(A+W+3):?#6;CHR$(PEEK(X+W+1))
-95 POS. 12,0:?#6;" ":POS. 11,0:?#6;W
-REM 98 WHILE STRIG(0)=1:WEND
 99 RETURN
 
 REM ************* SCREEN *************
@@ -88,9 +90,8 @@ REM A   = address of A$
 REM B   = number of bases remaining
 REM C   = countdown timer (i.e. how many loops have we gone through)
 REM D   = max value for countdown timer (i.e. how many loops before we move screen/add new enemy)
-REM E   = used to check for hits when shooting
-REM F   = used to check for hits when shooting
-REM I   = loop variables
+REM EFG = temp variables
+REM I   = loop variable
 REM J   = position of Joystick 0
 REM L   = 240 (length of screen in memory)
 REM M   = top of memory address
