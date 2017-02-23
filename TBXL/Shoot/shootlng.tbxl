@@ -1,17 +1,17 @@
-10 DIM A$(64)
-12 DIM W$(20)
-15 Q=256
-16 L=200
-20 M=PEEK(106)
-25 N=M-16
-30 POKE 106,N
-40 A=ADR(A$)
-45 W=ADR(W$)
-50 GRAPHICS 18
-60 S=DPEEK(88)
-70 R=(M-8)*Q
-80 T=R+Q
-90 X=A+16
+010 DIM A$(64)
+012 DIM W$(20)
+015 Q=256
+016 L=200
+020 M=PEEK(106)
+025 N=M-16
+030 POKE 106,N
+040 A=ADR(A$)
+045 W=ADR(W$)
+050 GRAPHICS 18
+060 S=DPEEK(88)
+070 R=(M-8)*Q
+080 T=R+Q
+090 X=A+16
 100 O=PEEK(756)*Q
 105 Y=X+8
 110 POKE 756,N
@@ -22,6 +22,8 @@
 210 MOVE A,N+432,64
 220 A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\D6\D7\D8\D9\D6\D7\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50\7D\7D\7E\7E\7F\7F\80\80\6D\6D\59\59\45\45\31\31\83\86\A9\D1"
 230 W$="\0B\80\7F\7E\7D\0E\6D\59\45\31\07\83\84\85\86\0D\A9\BD\D1\E5"
+
+299 REM Setup Default Screen, then move to Address R so that we can reset with it
 300 POSITION 0,0
 305 PRINT #6;"score"
 310 POSITION 1,1
@@ -35,6 +37,8 @@
 350 POSITION 9,7
 355 PRINT #6;"\]"
 360 MOVE S,R,Q
+
+399 REM WAIT FOR USER TO PRESS BUTTON TO START, THEN INITIALIZE GAME VARIABLES
 400 WHILE STRIG(0)=1
 401 WEND
 410 B=3
@@ -42,28 +46,38 @@
 430 C=9
 432 D=0
 434 P=0
+436 U=0
 450 GOSUB 900
+
+459 REM ***** KERNAL *****
 460 WHILE B
 470   D=D+1
+475   SOUND 1,PEEK(Z+INT(U/3)),10,5
 480   IF D=C
 500     E=PEEK(S+128)+PEEK(S+109)+PEEK(S+131)+PEEK(S+169)
+509     REM IF WE DETECT A COLLISION, PLAY SOUND AND REDUCE # LIVES
 510     IF E<>0
 520       SOUND 0,243,10,5
 540       B=B-1
 550     ENDIF
+559     REM MOVE ALIENS CLOSER TO PLAYER
 560     MOVE S+40,T+20,L
-600     FOR I=0 TO 5
-610       E=Y+3*I
+570     FOR I=0 TO 5
+580       E=Y+3*I
 620       MOVE T+PEEK(E),S+PEEK(E+1),PEEK(E+2)
 630     NEXT I
+629     REM ADD NEW ALIEN
 640     GOSUB 900
+649     REM RESET D&C
 650     D=0
 660     IF C<>2
 662       C=C-1
 664     ENDIF
 670   ENDIF
+679   REM CAPTURE PLAYER MOVEMENT
 680   K=STICK(0)
 690   FOR I=0 TO 3
+
 700     E=W+5*I
 710     IF K=PEEK(E)
 720       IF I MOD 2=0
@@ -77,6 +91,7 @@
 760           SOUND 0,29,10,5
 770           P=P+1
 780           POKE G,0
+
 800           POKE G+F,0
 810           EXIT
 820         ENDIF
@@ -94,6 +109,7 @@
 896 WHILE STRIG(0)=1
 868 WEND
 899 END
+
 900 E=RAND(4)
 910 F=A+4*E
 915 G=X+2*E
@@ -104,69 +120,21 @@
 940 RETURN
 
 
-REM ************* SCREEN *************
-REM        01234567890123456789
-REM   0( 0)SCORE          BASES0  (0)
-REM  20( 1) 0               0  20 (1)
-REM  40( 2)         vw         40 (2)
-REM  60(03)                    60 (3)
-REM  80(04)                    80 (4)
-REM 100(05)                    100(5)
-REM 120(06)     x   z[   x     120(6)
-REM 140(07)     y   \[   y     140(7)
-REM 160(08)                    160(8)
-REM 180(09)                    180(9)
-REM 200(10)                    200(10)
-REM 220(11)         vw         220(11)
-REM        01234567890123456789
-REM ************* SCREEN *************
 
-REM ************ SCREEN T ************
-REM        01234567890123456789
-REM   0( 0)                    0  (0)
-REM  20( 1)         vw         20 (1)
-REM  40( 2)                    40 (2)
-REM  60(03)                    60 (3)
-REM  80(04)                    80 (4)
-REM 100(05)     x   z[   x     100(5)
-REM 120(06)     y   \[   y     120(6)
-REM 140(07)                    140(7)
-REM 160(08)                    160(8)
-REM 180(09)                    180(9)
-REM 200(10)         vw         200(10)
-REM 220(11)                    220(11)
-REM        01234567890123456789
-REM ************ SCREEN T ************
+REM 107
 
-REM *** VARIABLES ***
-REM A$  = used to setup default X/Y positions of enemy ships and custom graphics
-REM A   = address of A$
-REM B   = number of bases remaining
-REM C   = countdown timer (i.e. how many loops have we gone through)
-REM D   = max value for countdown timer (i.e. how many loops before we move screen/add new enemy)
-REM EFGH= temp variables
-REM IJ  = loop variables
-REM K   = position of Joystick 0
-REM L   = 240 (length of screen in memory)
-REM M   = top of memory address
-REM N   = new top of memory address/first address of new character set
-REM O   = first address of original character set
-REM P   = current score/points
-REM Q   = 256
-REM R   = first address of Reset screen
-REM S   = first address of main Screen (240 characters)
-REM T   = first address of Temp screen
-REM W   = address of the string I'm using to look for successfull hits of enemies
-REM X   = address for graphics of new enemy ships (L1L2/U1U2/R1R2/D1D2)
-REM Y   = memory address info for moving ships
-REM Z   = used when player tries to shoot enemy ships
 
-REM A$
-REM  A LOCATIONS                                     X GRAPHICAL CHARACTER   Y MEMORY LOCATIONS FOR ANIMATION MOVES                Z WHERE TO LOOK WHEN SHOOTING
-REM LEFT--------|TOP--------|RIGHT------|BOTTOM-----|LEFT-|TOP--|RIGHT|BTTM-|LEFT----|LEFT----|TOP-----|RIGHT---|RIGHT---|BOTTOM--|LEFT-------------------|TOP--------------------|RIGHT|BTTM-|
-REM \05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\D6\D7\D8\D9\D6\D7\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50\7D\7D\7E\7E\7F\7F\80\80\6D\6D\59\59\45\45\31\31\83\86\A9\D1"
+REM 118
 
-REM W$
-REM \LEFT-------------|TOP--------------|RIGHT------------|BOTTOM-----------|
-REM \0B\80\7F\7E\7D\01\0E\6D\59\45\31\14\07\83\84\85\86\01\0D\A9\BD\D1\E5\14"
-REM    0                  6                 12
+
+REM 115
+
+
+REM 118
+7E=W+5*I:IF K=PEEK(E):IF I MOD 2=0:F=20:ELSE:F=1:ENDIF:F.J=1TO4:G=S+PEEK(E+J):IFPEEK(G)<>0:SO.0,29,10,5:P=P+1:POKEG,0
+
+REM 82
+8POKEG+F,0:EXIT:ENDIF:N.J:ENDIF:N.I:POS.1,1:?#6;P:POS.17,1:?#6;B:SO.:WEND:SO.:G.4
+
+REM 116
+9E=RAND(4):F=A+4*E:G=X+2*E:POS.PEEK(F),PEEK(F+1):?#6;CHR$(PEEK(G)):POS.PEEK(F+2),PEEK(F+3):?#6;CHR$(PEEK(G+1)):RET.
