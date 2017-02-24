@@ -53,7 +53,6 @@
 
 459   REM ***** KERNAL *****
 460   WHILE B
-465     SOUND
 470     D=D+1
 475     SOUND 1,PEEK(Z+INT(U/3)),10,5
 480     IF D=C
@@ -64,12 +63,12 @@
 540         B=B-1
 550       ENDIF
 559       REM MOVE ALIENS CLOSER TO PLAYER
-560       MOVE S+40,T+20,L
+560       MOVE S+40,T+20,200
 570       FOR I=0 TO 5
 580         E=Y+3*I
 620         MOVE T+PEEK(E),S+PEEK(E+1),PEEK(E+2)
 630       NEXT I
-629       REM ADD NEW ALIEN
+639       REM ADD NEW ALIEN
 640       GOSUB 900
 649       REM RESET D&C
 650       D=0
@@ -99,17 +98,19 @@
 780             POKE G,0
 800             POKE G+F,0
 810             EXIT
-820           ENDIF
-830         NEXT J
-840       ENDIF
-850     NEXT I
-860     POSITION 1,1
-865     PRINT #6;P
-870     POSITION 17,1
-875     PRINT #6;B
-880     U=U+1
-885   WEND
-890 LOOP
+815           ENDIF
+820         NEXT J
+825       ENDIF
+830     NEXT I
+835     POSITION 1,1
+840     PRINT #6;P
+845     POSITION 17,1
+859     PRINT #6;B
+855     U=U+1
+856     U=U MOD 60
+860     SOUND 0,0,0,0
+865   WEND
+870 LOOP
 
 899 REM DRAW A RANDOM NEW ENEMY ON THE PLAYFIELD
 900 E=RAND(4)

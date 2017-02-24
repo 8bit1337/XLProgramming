@@ -1,34 +1,33 @@
 REM 120
-0DIMA$(64),W$(20):Q=256:L=200:M=PEEK(106):N=M-16:POKE106,N:A=ADR(A$):W=ADR(W$):GR.18:S=DPEEK(88):R=(M-8)*Q:T=R+Q:X=A+16
+0DIMA$(64),W$(20):Q=256:L=756:M=PEEK(106):N=M-16:POKE106,N:A=ADR(A$):W=ADR(W$):GR.18:S=DPEEK(88):R=(M-8)*Q:T=R+Q:X=A+16
 
-REM 118
-1O=PEEK(756)*Q:Y=X+8:POKE756,N:N=N*Q:MOVEO,N,Q*4:A$="\70\70\71\7F\7F\71\70\70\0E\0E\8E\FE\FE\8E\0E\0E\00\FF\FF\FF\18\18\18\3C\3C\18\18\18\FF\FF\FF\00\00\00\03\03\03\03\03\E3\00\00\C0\C0\C0\C0\C0\C7\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00"
+REM 114
+1O=PEEK(L)*Q:Y=X+8:POKEL,N:N=N*Q:MOVEO,N,Q*4:A$="\70\70\71\7F\7F\71\70\70\0E\0E\8E\FE\FE\8E\0E\0E\00\FF\FF\FF\18\18\18\3C\3C\18\18\18\FF\FF\FF\00\00\00\03\03\03\03\03\E3\00\00\C0\C0\C0\C0\C0\C7\FD\1F\03\1F\FC\E0\00\00\BF\F8\C0\F8\3F\07\00\00"
 
-REM 110  A$=62 W$=20
-2Z=Y+18:MOVEA,N+432,64:A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\D6\D7\D8\D9\D6\D7\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50\7D\7D\7E\7E\7F\7F\80\80\6D\6D\59\59\45\45\31\31\83\86\A9\D1":W$="\0B\80\7F\7E\7D\0E\6D\59\45\31\07\83\84\85\86\0D\A9\BD\D1\E5"
+REM 110  A$=55 W$=20
+2Z=Y+18:MOVEA,N+432,64:A$="\05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\D6\D7\D8\D9\D6\D7\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50\80\79\6D\60\5B\6C\5B\60\79\60\6C\80\6C":W$="\0B\80\7F\7E\7D\0E\6D\59\45\31\07\83\84\85\86\0D\A9\BD\D1\E5"
 
 REM 119
 3POS.0,0:?#6;"score":POS.1,1:?#6;"0":POS.15,0:?#6;"bases":POS.17,1:?#6;"3":POS.9,6:?#6;"Z[":POS.9,7:?#6;"\]":MOVES,R,Q
 
-REM 118
-4DO:SO.:WHILE STRIG(0)=1:WEND:B=3:MOVER,S,Q:C=9:D=0:P=0:U=0:GOS.9:WHILE B:SO.:D=D+1:SO.1,PEEK(Z+INT(U/3)),10,5:IF D=C
-
-REM 118
-5E=PEEK(S+128)+PEEK(S+109)+PEEK(S+131)+PEEK(S+169):IF E<>0:SO.0,243,10,5:B=B-1:ENDIF:MOVES+40,T+20,L:F.I=0TO5:E=Y+3*I
-
 REM 115
-6MOVET+PEEK(E),S+PEEK(E+1),PEEK(E+2):N.I:GOS.9:D=0:IF C<>2:C=C-1:ENDIF:ENDIF:K=STICK(0):U=U+1:U=U MOD 60:F.I=0TO3
+4DO:SO.:WHILE STRIG(0)=1:WEND:B=3:MOVER,S,Q:C=14:D=0:P=0:U=0:GOS.9:WHILE B:D=D+1:SO.1,PEEK(Z+INT(U/3)),10,5:IF D=C
 
-REM 118
-7E=W+5*I:IF K=PEEK(E):IF I MOD 2=0:F=20:ELSE:F=1:ENDIF:F.J=1TO4:G=S+PEEK(E+J):IFPEEK(G)<>0:SO.0,29,10,5:P=P+1:POKEG,0
+REM 120
+5E=PEEK(S+128)+PEEK(S+109)+PEEK(S+131)+PEEK(S+169):IF E<>0:SO.0,243,10,5:B=B-1:ENDIF:MOVES+40,T+20,200:F.I=0TO5:E=Y+3*I
 
-REM 75
-8POKEG+F,0:EXIT:ENDIF:N.J:ENDIF:N.I:POS.1,1:?#6;P:POS.17,1:?#6;B:WEND:LOOP
+REM 102
+6MOVET+PEEK(E),S+PEEK(E+1),PEEK(E+2):N.I:GOS.9:D=0:IF C=2:C=3:ELSE:C=C-1:ENDIF:ENDIF:ENDIF:K=STICK(0)
+
+REM 113
+7F.I=0TO3:E=W+5*I:IF K=PEEK(E):IF I MOD 2=0:F=20:ELSE:F=1:ENDIF:F.J=1TO4:G=S+PEEK(E+J):IFPEEK(G)<>0:SO.0,29,10,5
+
+REM 117
+8P=P+1:POKEG,0:POKEG+F,0:EXIT:ENDIF:N.J:ENDIF:N.I:POS.1,1:?#6;P:POS.17,1:?#6;B:U=U+1:U=U MOD 39:SO.0,0,0,0:WEND:LOOP
 
 REM 116
 9E=RAND(4):F=A+4*E:G=X+2*E:POS.PEEK(F),PEEK(F+1):?#6;CHR$(PEEK(G)):POS.PEEK(F+2),PEEK(F+3):?#6;CHR$(PEEK(G+1)):RET.
 
-10 POKE 756,M:GR.0
 
 REM ************* SCREEN *************
 REM        01234567890123456789
@@ -46,52 +45,17 @@ REM 200(10)                    200(10)
 REM 220(11)         vw         220(11)
 REM        01234567890123456789
 REM ************* SCREEN *************
-
-REM ************ SCREEN T ************
-REM        01234567890123456789
-REM   0( 0)                    0  (0)
-REM  20( 1)         vw         20 (1)
-REM  40( 2)                    40 (2)
-REM  60(03)                    60 (3)
-REM  80(04)                    80 (4)
-REM 100(05)     x   z[   x     100(5)
-REM 120(06)     y   \[   y     120(6)
-REM 140(07)                    140(7)
-REM 160(08)                    160(8)
-REM 180(09)                    180(9)
-REM 200(10)         vw         200(10)
-REM 220(11)                    220(11)
-REM        01234567890123456789
-REM ************ SCREEN T ************
-
-REM *** VARIABLES ***
-REM A$  = used to setup default X/Y positions of enemy ships and custom graphics
-REM A   = address of A$
-REM B   = number of bases remaining
-REM C   = countdown timer (i.e. how many loops have we gone through)
-REM D   = max value for countdown timer (i.e. how many loops before we move screen/add new enemy)
-REM EFGH= temp variables
-REM IJ  = loop variables
-REM K   = position of Joystick 0
-REM M   = top of memory address
-REM N   = new top of memory address/first address of new character set
-REM O   = first address of original character set
-REM P   = current score/points
-REM Q   = 256
-REM R   = first address of Reset screen
-REM S   = first address of main Screen (240 characters)
-REM T   = first address of Temp screen
-REM W   = address of the string I'm using to look for successfull hits of enemies
-REM X   = address for graphics of new enemy ships (L1L2/U1U2/R1R2/D1D2)
-REM Y   = memory address info for moving ships
-REM Z   = used when player tries to shoot enemy ships
-
+REM
 REM A$
-REM  A LOCATIONS                                     X GRAPHICAL CHARACTER   Y MEMORY LOCATIONS FOR ANIMATION MOVES               
+REM LOCATIONS                                       X GRAPHICAL CHARACTER   Y MEMORY LOCATIONS FOR ANIMATION MOVES               
 REM LEFT--------|TOP--------|RIGHT------|BOTTOM-----|L----|T----|R----|B----|LEFT----|LEFT----|TOP-----|RIGHT---|RIGHT---|BOTTOM--
-REM \05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\D6\D7\D8\D9\D6\D7\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50"
-REM \05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\D6\D7\D8\D9\D6\D7\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50\7D\7D\7E\7E\7F\7F\80\80\6D\6D\59\59\45\45\31\31\83\86\A9\D1
-
+REM \05\06\05\07\09\02\0A\02\0D\06\0D\07\09\0B\0A\0B\D8\D9\D6\D7\D8\D9\D6\D7\68\7D\04\7C\91\04\00\28\50\70\83\04\84\97\04\A0\A0\50
+REM 
+REM MUSIC
+REM   B  C  D  E  F  D  F  E  C  E  D  A  D
+REM 128121109 96 91108 91 96121 96108128108
+REM \80\79\6D\60\5B\6C\5B\60\79\60\6C\80\6C
+REM
 REM W$
 REM \LEFT----------|TOP-----------|RIGHT---------|BOTTOM--------|
 REM \0B\80\7F\7E\7D\0E\6D\59\45\31\07\83\84\85\86\0D\A9\BD\D1\E5"
