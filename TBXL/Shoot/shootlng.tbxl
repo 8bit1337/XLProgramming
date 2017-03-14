@@ -66,7 +66,6 @@
 560       MOVE S+40,T+20,200
 570       FOR I=0 TO 5
 580         E=Y+3*I
-
 620         MOVE T+PEEK(E),S+PEEK(E+1),PEEK(E+2)
 630       NEXT I
 639       REM ADD NEW ALIEN
