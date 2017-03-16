@@ -1,0 +1,102 @@
+REM move top of memory down so that we can use it for custom characters
+Q=256
+M=PEEK(106)
+N=M-16
+POKE 106,N
+
+REM set graphics mode, capture first address of screen (S), set aside reset (R) and movement (T) screen addresses 
+GRAPHICS 18
+S=DPEEK(88)
+R=(M-8)*Q
+T=R+Q
+
+REM custom graphics.  replace xyz[\ 448=address offset for letter x
+DIM A$(40),U$(20)
+A=ADR(A$):U=ADR(U$)
+A$="custom graphics"
+U$="custom music"
+O=PEEK(756)*Q
+POKE 756,N
+N=N*Q
+MOVE O,N,1024
+MOVE A,N+448,40
+
+
+REM setup screen, store it at address R
+POSITION  0, 0:?#6;"score"
+POSITION  1, 1:?#6;"0"
+POSITION 15, 0:?#6;"lives"
+POSITION 17, 1:?#6;"3"
+POSITION  9,11:?#6;"z[\"
+MOVE S,R,Q
+
+REM 115
+DO
+  SOUND
+  WHILE STRIG(0)=1:WEND
+  MOVE R,S,Q
+  
+  B=3:L=0
+  WHILE B
+    REM loop counter
+    L=L+1
+    
+    REM music
+    SOUND 1,PEEK(U+L),10,5
+    
+    REM check for collision
+    MOVE S+200,A,20
+    IF A$<>"                    " THEN
+      SOUND 0,243,10,5
+      B=B-1
+    ENDIF
+    
+    REM move enemy ships
+    MOVE S,T,Q
+    MOVE T+40,S+60,160
+    MOVE R+40,S+40,20
+
+    REM move player 11=left, 7=right  " z[\ "
+    K=STICK(0)
+    FOR I=0 TO 3
+      E=W+5*I
+      IF K=PEEK(E)
+        F=PEEK(Z+13+I)
+        FOR J=1 TO 4
+          G=S+PEEK(E+J)
+          IF PEEK(G)<>0
+            SOUND 0,29,10,5
+            P=P+1
+            POKE G,0:POKE G+F,0
+          ENDIF
+        NEXT J
+      ENDIF
+    NEXT I
+    POSITION  1,1:?#6;P
+    POSITION 17,1:?#6;B
+    U=(U+1) MOD 39
+    SOUND 0,0,0,0
+    
+    REM add new enemy ship
+    E=40+2*RAND(10)
+    POKE S+E+0,56
+    POKE S+E+1,57
+  WEND
+LOOP
+
+REM ************* SCREEN *************
+REM        01234567890123456789
+REM   0( 0)SCORE          BASES0  (0)
+REM  20( 1) 0               0  20 (1)
+REM  40( 2)xy                xy40 (2)
+REM  60(03)  xy            xy  60 (3)
+REM  80(04)    xy        xy    80 (4)
+REM 100(05)      xy    xy      100(5)
+REM 120(06)        xy          120(6)
+REM 140(07)          xy        140(7)
+REM 160(08)                    160(8)
+REM 180(09)                    180(9)
+REM 200(10)                    200(10)
+REM 220(11)         z[\        220(11)
+REM        01234567890123456789
+REM ************* SCREEN *************
