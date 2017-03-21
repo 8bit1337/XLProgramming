@@ -1,102 +1,123 @@
-REM move top of memory down so that we can use it for custom characters
-Q=256
-M=PEEK(106)
-N=M-16
-POKE 106,N
+REM set our graphics mode and establish memory addresses
+REM - S=main screen
+REM - R=reset screen
+REM - T=animation screen
+000 Q=256
+010 M=PEEK(106)
+020 N=M-16
+030 POKE 106,N
+040 GRAPHICS 18
+050 S=DPEEK(88)
+060 R=(M-8)*Q
+070 T=R+Q
 
-REM set graphics mode, capture first address of screen (S), set aside reset (R) and movement (T) screen addresses 
-GRAPHICS 18
-S=DPEEK(88)
-R=(M-8)*Q
-T=R+Q
+REM custom graphics and music
+REM - replace xyz[\ characters
+REM - 448=address offset for letter x
+REM - the music array is actually characters to represent values for the notes
+100 DIM A$(40),U$(96) 
+110 A=ADR(A$):U=ADR(U$)
+120 A$="\00\00\63\7F\7C\70\00\00\00\00\C6\FE\3E\0E\00\00\00\00\00\1C\3F\3F\1C\08\10\10\38\7C\FF\FF\7C\28\00\00\00\70\F8\F8\70\20"
+130 U$="\60\48\48\48\48\48\40\3C\3C\3C\3C\3C\40\2F\2F\2F\40\40\3C\3C\48\48\48\48\23\23\23\23\23\23\23\28\28\28\28\28\23\2F\2F\2F\2F\2F\2F\2F\2F\2F\23\23\23\23\23\23\23\23\48\3C\3C\3C\3C\3C\35\2F\2F\2F\35\35\3C\3C\48\48\48\00\2F\2F\35\35\35\3C\3C\48\60\60\60\60\51\48\48\48\48\48\48\48\48\48\00"
+140 O=PEEK(756)*Q
+150 POKE 756,N
+160 N=N*Q
+173 MOVE O,N,1024
+180 MOVE A,N+448,40
 
-REM custom graphics.  replace xyz[\ 448=address offset for letter x
-DIM A$(40),U$(20)
-A=ADR(A$):U=ADR(U$)
-A$="custom graphics"
-U$="custom music"
-O=PEEK(756)*Q
-POKE 756,N
-N=N*Q
-MOVE O,N,1024
-MOVE A,N+448,40
+REM setup screen
+REM - store it in R so we can quickly reset game
+200 POSITION  0, 0:?#6;"score"
+210 POSITION  1, 1:?#6;"0"
+220 POSITION 15, 0:?#6;"lives"
+230 POSITION 17, 1:?#6;"3"
+240 POSITION  9,11:?#6;"z[\"
+250 MOVE S,R,Q
 
-
-REM setup screen, store it at address R
-POSITION  0, 0:?#6;"score"
-POSITION  1, 1:?#6;"0"
-POSITION 15, 0:?#6;"lives"
-POSITION 17, 1:?#6;"3"
-POSITION  9,11:?#6;"z[\"
-MOVE S,R,Q
-
-REM 115
-DO
-  SOUND
-  WHILE STRIG(0)=1:WEND
-  MOVE R,S,Q
-  
-  B=3:L=0
-  WHILE B
-    REM loop counter
-    L=L+1
-    
-    REM music
-    SOUND 1,PEEK(U+L),10,5
-    
-    REM check for collision
-    MOVE S+200,A,20
-    IF A$<>"                    " THEN
-      SOUND 0,243,10,5
-      B=B-1
-    ENDIF
-    
-    REM move enemy ships
-    MOVE S,T,Q
-    MOVE T+40,S+60,160
-    MOVE R+40,S+40,20
-
-    REM move player 11=left, 7=right  " z[\ "
-    K=STICK(0)
-    FOR I=0 TO 3
-      E=W+5*I
-      IF K=PEEK(E)
-        F=PEEK(Z+13+I)
-        FOR J=1 TO 4
-          G=S+PEEK(E+J)
-          IF PEEK(G)<>0
-            SOUND 0,29,10,5
-            P=P+1
-            POKE G,0:POKE G+F,0
-          ENDIF
-        NEXT J
-      ENDIF
-    NEXT I
-    POSITION  1,1:?#6;P
-    POSITION 17,1:?#6;B
-    U=(U+1) MOD 39
-    SOUND 0,0,0,0
-    
-    REM add new enemy ship
-    E=40+2*RAND(10)
-    POKE S+E+0,56
-    POKE S+E+1,57
-  WEND
-LOOP
+REM kernal
+300 DO
+      REM wait for user to press trigger to begin, then reset screen
+310   SOUND
+320   WHILE STRIG(0)=1:WEND  
+      REM reset screen, game variables
+330   MOVE R,S,Q
+340   B=3:P=0:L=0:Z=8
+350   WHILE B
+        REM L=counter to help me keep track of where music should play
+360     L=(L+1) MOD 95
+        REM play next note
+370     SOUND 1,PEEK(U+L),10,5    
+        REM check for collision
+380     MOVE S+200,A,20
+390     IF A$<>"                    "
+391       POS. 0,10:?A$
+400       SOUND 0,243,10,5
+410       B=B-1
+420     ENDIF    
+        REM move enemy ships
+430     MOVE S,T,Q
+440     MOVE T+40,S+60,160
+450     MOVE R+40,S+40,20
+        REM move player 11=left, 7=right  " z[\ "
+460     K=STICK(0)
+470     IF K=7
+480       IF Z=15:Z=0:ELSE:Z=Z+1:ENDIF
+490     ELSE:IF K=11
+500       IF Z=0:Z=15:ELSE:Z=Z-1:ENDIF
+510     ENDIF:ENDIF
+520     POSITION Z,11:PRINT #6;" z[\ "
+        REM when player shoots, look for collisions.  
+530     IF STRIG(0)-1
+540       Y=10:F=1
+550       WHILE Y
+560          LOCATE Z+2,Y,E
+570          IF E AND F
+580            SOUND 0,29,10,5
+590            P=P+1
+600            POSITION Z+2,Y:PRINT #6;"  "
+610            F=0
+620          ELSE
+630            PAUSE 1
+640          ENDIF
+650          Y=Y-1
+660       WEND
+670     ENDIF
+        REM update the scoreboards
+700     POSITION  1,1:?#6;P
+710     POSITION 17,1:?#6;B
+720     U=(U+1) MOD 39
+730     SOUND 0,0,0,0
+        REM add new enemy ship
+740     X=1+2*RAND(8)
+750     POSITION X,2:PRINT #6;"xy"
+760   WEND
+770 LOOP
 
 REM ************* SCREEN *************
 REM        01234567890123456789
-REM   0( 0)SCORE          BASES0  (0)
-REM  20( 1) 0               0  20 (1)
-REM  40( 2)xy                xy40 (2)
-REM  60(03)  xy            xy  60 (3)
-REM  80(04)    xy        xy    80 (4)
-REM 100(05)      xy    xy      100(5)
-REM 120(06)        xy          120(6)
-REM 140(07)          xy        140(7)
-REM 160(08)                    160(8)
-REM 180(09)                    180(9)
+REM   0( 0)SCORE          BASES0  ( 0)
+REM  20( 1) 0               0  20 ( 1)
+REM  40( 2) xy              xy 40 ( 2)
+REM  60(03)   xy          xy   60 ( 3)
+REM  80(04)     xy      xy     80 ( 4)
+REM 100(05)       xy  xy       100( 5)
+REM 120(06)         xy         120( 6)
+REM 140(07)                    140( 7)
+REM 160(08)                    160( 8)
+REM 180(09)                    180( 9)
 REM 200(10)                    200(10)
 REM 220(11)         z[\        220(11)
 REM        01234567890123456789
 REM ************* SCREEN *************
+
+REM 97 notes
+REM Ee | Aq. Ae Ae Be | 7
+REM Cq. Ce Ce Be | E+q.  Bq    Ce | Ce Aq Aq A+e | A+q. A+q A+e | G+q. G+q A+e | E+h. | 36
+REM E+q. A+q A+e | A+q.  A+q   Ae | Ce Cq Cq De  | E+e E+q Dq Ce| Ce Aq. Re E+e| 30
+REM E+e Dq De Cq | Ae Eq Ee Ee Ge | Ah.          | Aq. Rq 24
+
+REM As Decimals
+REM \96e | \72q. \72e \72e \64e |
+REM \60q. \60e \60e \64e | \47q.  \64q    \60e | \60e \72q \72q \35e | \35q. \35q \35e | \40q. \40q \35e | \47h. | 
+REM \47q. \35q \35e | \35q.  \35q   \72e | \60e \60q \60q \53e  | \47e \47q \53q \60e| \60e \72q. Re \47e | 
+REM \47e \53q \53e \60q | \72e \96q \96e \96e \81e | \72h.          | \72q. Rq |
