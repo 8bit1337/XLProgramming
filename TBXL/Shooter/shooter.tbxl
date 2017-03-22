@@ -2,27 +2,27 @@ REM set our graphics mode and establish memory addresses
 REM - S=main screen
 REM - R=reset screen
 REM - T=animation screen
-000 Q=256
-010 M=PEEK(106)
-020 N=M-16
-030 POKE 106,N
-040 GRAPHICS 18
-050 S=DPEEK(88)
-060 R=(M-8)*Q
-070 T=R+Q
+000 DIM A$(40),U$(96)
+005 A=ADR(A$):U=ADR(U$)
+015 Q=256
+020 M=PEEK(106)
+030 N=M-16
+040 POKE 106,N
+050 GRAPHICS 18
+060 S=DPEEK(88)
+070 R=(M-8)*Q
+080 T=R+Q
 
 REM custom graphics and music
 REM - replace xyz[\ characters
 REM - 448=address offset for letter x
 REM - the music array is actually characters to represent values for the notes
-100 DIM A$(40),U$(96) 
-110 A=ADR(A$):U=ADR(U$)
 120 A$="\00\00\63\7F\7C\70\00\00\00\00\C6\FE\3E\0E\00\00\00\00\00\1C\3F\3F\1C\08\10\10\38\7C\FF\FF\7C\28\00\00\00\70\F8\F8\70\20"
 130 U$="\60\48\48\48\48\48\40\3C\3C\3C\3C\3C\40\2F\2F\2F\40\40\3C\3C\48\48\48\48\23\23\23\23\23\23\23\28\28\28\28\28\23\2F\2F\2F\2F\2F\2F\2F\2F\2F\23\23\23\23\23\23\23\23\48\3C\3C\3C\3C\3C\35\2F\2F\2F\35\35\3C\3C\48\48\48\00\2F\2F\35\35\35\3C\3C\48\60\60\60\60\51\48\48\48\48\48\48\48\48\48\00"
 140 O=PEEK(756)*Q
 150 POKE 756,N
 160 N=N*Q
-173 MOVE O,N,1024
+173 MOVE O,N,Q*4
 180 MOVE A,N+448,40
 
 REM setup screen
@@ -40,7 +40,7 @@ REM kernal
 310   SOUND
 320   WHILE STRIG(0)=1:WEND  
       REM reset screen, game variables
-330   MOVE R,S,Q
+REM 330   MOVE R,S,Q
 340   B=3:P=0:L=0:Z=8
 350   WHILE B
         REM L=counter to help me keep track of where music should play
@@ -50,8 +50,8 @@ REM kernal
         REM check for collision
 380     MOVE S+200,A,20
 390     IF A$<>"                    "
-391       POS. 0,10:?A$
-400       SOUND 0,243,10,5
+REM 391       POS. 0,10:?A$
+REM 400       SOUND 0,243,10,5
 410       B=B-1
 420     ENDIF    
         REM move enemy ships
