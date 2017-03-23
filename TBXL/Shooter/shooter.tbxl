@@ -38,7 +38,7 @@ REM   wait for user to press trigger to begin, then reset screen
 330   WHILE STRIG(0)=1:WEND  
 REM   reset screen, game variables
 340   MOVE R,S,Q
-350   B=3:P=0:L=0:Z=8
+350   B=3:P=0:L=0:Z=228
 360   WHILE B
 REM     L=counter to help me keep track of where music should play
 370     L=(L+1) MOD 125
@@ -57,9 +57,9 @@ REM     move enemy ships
 500     MOVE R+40,S+40,20
 REM     move player: 11=left, 7=right
 460     K=STICK(0)
-470     IF K=7 AND Z<>14:Z=Z+1:ENDIF
-480     IF K=11 AND Z<>0:Z=Z-1:ENDIF
-490     POSITION Z,11:PRINT #6;" Z[\ "
+470     IF K=7 AND Z<>235:MOVE S+Z,S+Z+1,5:ENDIF
+480     IF K=11 AND Z<>220:MOVE S+Z,S+Z-1,5:ENDIF
+
 REM     when player shoots, look for collisions.  
 530     IF STRIG(0)-1
 540       Y=10
