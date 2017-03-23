@@ -1,0 +1,40 @@
+0DIMA$(40),U$(26):A=ADR(A$):U=ADR(U$):Q=256:M=PEEK(106):N=M-16:POKE106,N:GR.18:S=DPEEK(88):R=(M-8)*Q:T=R+Q
+1A$="\00\00\63\7F\7C\70\00\00\00\00\C6\FE\3E\0E\00\00\00\00\00\1C\3F\3F\1C\08\10\10\38\7C\FF\FF\7C\28\00\00\00\70\F8\F8\70\20":O=PEEK(756)*Q:POKE756,N:N=N*Q:MOVEO,N,Q*4:MOVEA,N+448,40
+2U$="\60\48\48\48\48\48\40\3C\3C\3C\3C\3C\40\2F\2F\2F\40\40\3C\3C\48\48\48\48\00\00":POS.0,0:?#6;"score":POS.1,1:?#6;"0":POS.15,0:?#6;"lives":POS.17,1:?#6;"3":POS.9,11
+3?#6;"Z[\":MOVE S,R,Q:DO:SO.:WHILE STRIG(0)=1:WEND:MOVER,S,Q:B=3:P=0:L=0:Z=8:WHILE B:L=(L+1) MOD 125
+4SO.1,PEEK(U+INT(L/5)),10,5:F.I=201TO217STEP2:IF PEEK(S+I)<>0:SO.0,243,10,5:B=B-1:ENDIF:N.I:MOVES,T,Q:MOVET+40,S+60,160
+5MOVE R+40,S+40,20:K=STICK(0):IF K=7 AND Z<>14:Z=Z+1:ENDIF:IF K=11 AND Z<>0:Z=Z-1:ENDIF:POS.Z,11:PRINT #6;" Z[\ "
+6IF STRIG(0)-1:Y=10:WHILE Y:LOC.Z+2,Y,C:IF C-32:POS.Z+1,Y:?#6;"   ":SO.0,29,10,5:P=P+1:Y=1:ENDIF:Y=Y-1:WEND:ENDIF
+9X=1+2*RAND(8):POS.X,2:?#6;"xy":POS.1,1:?#6;P:POS.17,1:?#6;B:SO.0,0,0,0:WEND:LOOP
+
+REM ************* SCREEN *************
+REM        01234567890123456789
+REM   0( 0)SCORE          BASES0  ( 0)
+REM  20( 1) 0               0  20 ( 1)
+REM  40( 2) xy              xy 40 ( 2)
+REM  60(03)   xy          xy   60 ( 3)
+REM  80(04)     xy      xy     80 ( 4)
+REM 100(05)       xy  xy       100( 5)
+REM 120(06)         xy         120( 6)
+REM 140(07)                    140( 7)
+REM 160(08)                    160( 8)
+REM 180(09)                    180( 9)
+REM 200(10)                    200(10)
+REM 220(11)         z[\        220(11)
+REM        01234567890123456789
+REM ************* SCREEN *************
+
+REM 97 notes
+REM Ee | Aq. Ae Ae Be | 7
+REM Cq. Ce Ce Be | E+q.  Bq    Ce | Ce Aq Aq A+e | A+q. A+q A+e | G+q. G+q A+e | E+h. | 36
+REM E+q. A+q A+e | A+q.  A+q   Ae | Ce Cq Cq De  | E+e E+q Dq Ce| Ce Aq. Re E+e| 30
+REM E+e Dq De Cq | Ae Eq Ee Ee Ge | Ah.          | Aq. Rq 24
+
+REM As Decimals
+REM \96e | \72q. \72e \72e \64e |
+REM \60q. \60e \60e \64e | \47q.  \64q    \60e | \60e \72q \72q \35e | \35q. \35q \35e | \40q. \40q \35e | \47h. | 
+REM \47q. \35q \35e | \35q.  \35q   \72e | \60e \60q \60q \53e  | \47e \47q \53q \60e| \60e \72q. Re \47e | 
+REM \47e \53q \53e \60q | \72e \96q \96e \96e \81e | \72h.          | \72q. Rq |
+
+
+REM 130 U$="\60\48\48\48\48\48\40\3C\3C\3C\3C\3C\40\2F\2F\2F\40\40\3C\3C\48\48\48\48\23\23\23\23\23\23\23\28\28\28\28\28\23\2F\2F\2F\2F\2F\2F\2F\2F\2F\23\23\23\23\23\23\23\23\48\3C\3C\3C\3C\3C\35\2F\2F\2F\35\35\3C\3C\48\48\48\00\2F\2F\35\35\35\3C\3C\48\60\60\60\60\51\48\48\48\48\48\48\48\48\48\00"
