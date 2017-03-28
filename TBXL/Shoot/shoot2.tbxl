@@ -2,7 +2,7 @@ REM set our graphics mode and establish memory addresses
 REM - S=main screen
 REM - R=reset screen
 REM - T=animation screen
-000 DIM A$(40),U$(26)
+000 DIM A$(40),U$(23)
 005 A=ADR(A$):U=ADR(U$)
 015 Q=256
 020 M=PEEK(106)
@@ -10,7 +10,7 @@ REM - T=animation screen
 040 POKE 106,N
 050 GRAPHICS 18
 060 S=DPEEK(88)
-065 P=S+221
+065 P=S+220
 070 R=(M-8)*Q
 080 T=R+Q
 REM custom graphics and music
@@ -25,7 +25,7 @@ REM - 448=address offset for letter x
 REM setup music and screen
 REM - store screen at address R so we can quickly reset game
 REM - U$ represents notes on keyboard
-200 U$="\00\60\48\48\48\48\48\40\3C\3C\3C\3C\3C\40\2F\2F\2F\40\40\3C\3C\48\48\48\48\00"
+200 U$="\00\60\48\48\48\48\40\3C\3C\3C\3C\40\2F\2F\2F\40\40\3C\3C\48\48\48\00"
 210 POSITION  0, 0:?#6;"hits 0"
 230 POSITION 15, 0:?#6;"Z[\ 3"
 250 POSITION  9,11:?#6;"Z[\"
@@ -37,7 +37,7 @@ REM   wait for user to press trigger to begin, then reset screen
 330   WHILE STRIG(0)=1:WEND  
 REM   reset screen, game variables
 340   MOVE R,S,Q
-350   L=3:H=0:Z=8:W=9:V=0
+350   L=3:H=0:Z=8:W=5:V=0
 360   WHILE L
 REM     check for collision
 410     FOR I=0 TO 8
@@ -46,19 +46,18 @@ REM     check for collision
 440         L=L-1
 450       ENDIF
 460     NEXT I
-REM     move enemy ships
-470     MOVE S,T,Q
-480     MOVE T+20,S+40,180
 REM     move player: 11=left, 7=right
 510     K=STICK(0)
 520     IF (K=7 AND Z<15) OR (K=11 AND Z>0)  
 530       E=(9-K)/2
-540       Z=Z+E
-550       MOVE P,T,18
-555       MOVE T,P+E,18
+540       MOVE P+Z,T,5
+545       Z=Z+E
+550       MOVE T,P+Z,5
+
 560     ENDIF
 REM     when player shoots, look for collisions
-730     IF STRIG(0)=0
+REM 730 IF STRIG(0)=0
+730     IF PEEK(644)=0
 740       Y=10
 750       WHILE Y
 760          LOCATE Z+2,Y,C
@@ -71,13 +70,14 @@ REM     when player shoots, look for collisions
 830          Y=Y-1
 840       WEND
 850     ENDIF
-REM     
 860     IF W=0
-870       V=(V+1) MOD 25
+REM       move enemy ships
+863       MOVE S,T,Q
+866       MOVE T+20,S+40,180
+870       V=(V+1) MOD 22
 REM       add new enemy ship
-880       X=5+RAND(9)
-890       POSITION X,2:?#6;"xy"
-900       W=9
+890       POSITION RAND(17),2:?#6;"xy"
+900       W=5
 910     ENDIF
 REM     play next note
 920     SOUND 1,PEEK(U+V),10,5    
