@@ -26,10 +26,8 @@ REM setup music and screen
 REM - store screen at address R so we can quickly reset game
 REM - U$ represents notes on keyboard
 200 U$="\00\60\48\48\48\48\48\40\3C\3C\3C\3C\3C\40\2F\2F\2F\40\40\3C\3C\48\48\48\48\00"
-210 POSITION  0, 0:?#6;"score"
-220 POSITION  1, 1:?#6;"0"
-230 POSITION 15, 0:?#6;"lives"
-240 POSITION 17, 1:?#6;"3"
+210 POSITION  0, 0:?#6;"hits 0"
+230 POSITION 15, 0:?#6;"Z[\ 3"
 250 POSITION  9,11:?#6;"Z[\"
 300 MOVE S,R,Q
 REM ***** main loop *****
@@ -39,7 +37,7 @@ REM   wait for user to press trigger to begin, then reset screen
 330   WHILE STRIG(0)=1:WEND  
 REM   reset screen, game variables
 340   MOVE R,S,Q
-350   L=3:S=0:Z=8:W=5:V=0
+350   L=3:H=0:Z=8:W=9:V=0
 360   WHILE L
 REM     check for collision
 410     FOR I=0 TO 8
@@ -57,17 +55,18 @@ REM     move player: 11=left, 7=right
 520     IF (K=7 AND Z<15) OR (K=11 AND Z>0)  
 530       E=(9-K)/2
 540       Z=Z+E
-550       MOVE P,P+E,18
+550       MOVE P,T,18
+555       MOVE T,P+E,18
 560     ENDIF
-REM     when player shoots, look for collisions.  
-730     IF STRIG(0)-1
+REM     when player shoots, look for collisions
+730     IF STRIG(0)=0
 740       Y=10
 750       WHILE Y
 760          LOCATE Z+2,Y,C
-770          IF C=32
+770          IF C<>32
 780            POSITION Z+1,Y:?#6;"   "
 790            SOUND 0,29,10,5
-800            S=S+1
+800            H=H+1
 810            Y=1
 820          ENDIF
 830          Y=Y-1
@@ -79,13 +78,13 @@ REM
 REM       add new enemy ship
 880       X=1+2*RAND(8)
 890       POSITION X,2:?#6;"xy"
-900       W=5
+900       W=9
 910     ENDIF
 REM     play next note
 920     SOUND 1,PEEK(U+V),10,5    
 REM     update the scoreboards, kill effects sounds
-940     POSITION  1,1:?#6;S
-950     POSITION 17,1:?#6;L
+940     POSITION  5,0:?#6;H
+950     POSITION 19,0:?#6;L
 960     SOUND 0,0,0,0
 965     W=W-1
 970   WEND
@@ -93,8 +92,8 @@ REM     update the scoreboards, kill effects sounds
 
 REM ************* SCREEN *************
 REM        01234567890123456789
-REM   0( 0)SCORE          BASES0  ( 0)
-REM  20( 1) 0               0  20 ( 1)
+REM   0( 0)HITS 0         Z[\ 0 0 ( 0)
+REM  20( 1)                    20 ( 1)
 REM  40( 2) xy              xy 40 ( 2)
 REM  60(03)   xy          xy   60 ( 3)
 REM  80(04)     xy      xy     80 ( 4)
