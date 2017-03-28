@@ -48,8 +48,7 @@ REM     check for collision
 460     NEXT I
 REM     move enemy ships
 470     MOVE S,T,Q
-480     MOVE T+40,S+60,160
-500     MOVE R+40,S+40,20
+480     MOVE T+20,S+40,180
 REM     move player: 11=left, 7=right
 510     K=STICK(0)
 520     IF (K=7 AND Z<15) OR (K=11 AND Z>0)  
@@ -76,7 +75,7 @@ REM
 860     IF W=0
 870       V=(V+1) MOD 25
 REM       add new enemy ship
-880       X=1+2*RAND(8)
+880       X=5+RAND(9)
 890       POSITION X,2:?#6;"xy"
 900       W=9
 910     ENDIF
@@ -94,7 +93,7 @@ REM ************* SCREEN *************
 REM        01234567890123456789
 REM   0( 0)HITS 0         Z[\ 0 0 ( 0)
 REM  20( 1)                    20 ( 1)
-REM  40( 2) xy              xy 40 ( 2)
+REM  40( 2)                    40 ( 2)
 REM  60(03)   xy          xy   60 ( 3)
 REM  80(04)     xy      xy     80 ( 4)
 REM 100(05)       xy  xy       100( 5)
