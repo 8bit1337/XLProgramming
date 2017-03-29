@@ -2,10 +2,10 @@ REM set our graphics mode and establish memory addresses
 REM - S=main screen
 REM - R=reset screen
 REM - T=animation screen
-000 DIM A$(24),U$(17)
+000 DIM A$(24),U$(16)
 005 A=ADR(A$):U=ADR(U$)
-006 A$="\00\00\20\20\30\10\1F\0F\00\00\04\04\0C\08\F8\F0\00\08\1C\3E\3E\3E\1C\00"
-007 U$="\00\60\48\48\3C\3C\40\40\2F\2F\40\40\3C\3C\48\48\00"
+006 A$="\07\3F\7F\E3\E3\FF\7F\3F\E0\FC\FE\C7\C7\FF\FE\FC\00\08\1C\3E\3E\3E\1C\00"
+007 U$="\48\40\48\51\58\48\79\3C\35\3C\40\48\40\51\58\2F"
 015 Q=256
 020 M=PEEK(106)
 030 N=M-16
@@ -18,54 +18,52 @@ REM - T=animation screen
 140 O=PEEK(756)*Q
 150 POKE 756,N
 160 N=N*Q
-170 MOVE O,N,Q*4
+200 MOVE O,N,Q*4
 210 MOVE A,N+448,40
 
-310 POSITION  0, 0:?#6;"drops 0"
-350 POSITION  9,11:?#6;"xy"
-400 MOVE S,R,Q
+220 POSITION  0, 0:?#6;"drops 0"
+230 POSITION  9,11:?#6;"xy"
+240 MOVE S,R,Q
 REM ***** main loop *****
-410 DO
+300 DO
 REM   wait for user to press trigger to begin, then reset screen
-420   SOUND
-430   WHILE STRIG(0)=1:WEND  
+310   SOUND
+320   WHILE STRIG(0)=1:WEND  
 REM   reset screen, game variables
-440   MOVE R,S,Q
-450   L=TIME+900:D=0:Z=8:W=5:V=0
-460   WHILE L-TIME
+330   MOVE R,S,Q
+340   L=TIME+900:D=0:Z=8
+350   REPEAT
+360     C=INT((L-TIME)/60)
 REM     move player: 11=left, 7=right
-510     K=(9-STICK(0))/2
-520     IF (K=1 AND Z<17) OR (K=-1 AND Z>0)
-540       MOVE P+Z,T,4
-545       Z=Z+K
-550       MOVE T,P+Z,4
-560     ENDIF
- 
-760     IF W=0
+400     K=(9-STICK(0))/2
+410     IF (K=1 AND Z<17) OR (K=-1 AND Z>0)
+420       MOVE P+Z,T,4
+435       Z=Z+K
+440       MOVE T,P+Z,4
+450     ENDIF
+REM     only repeat these actions every 5 times through the loop
+500     IF C MOD 5=0
 REM       move rain drops
-930       MOVE S,T,Q
-940       MOVE T+20,S+40,180
-REM       check for collection
-770       FOR I=1 TO 2
-780         IF PEEK(P-20+Z+I)<>0
-790           SOUND 0,9,10,5
-900           D=D+1
-910         ENDIF
-920       NEXT I
-REM       add new rain drop
-950       POSITION 2+RAND(15),2:?#6;"Z"
-REM       determine next note in song and reset W counter
-945       V=(V+1) MOD 15
-955       W=5
-960     ENDIF
+510       MOVE S,T,Q
+520       MOVE T+20,S+40,180
+REM       check for head collision
+530       FOR I=1 TO 2
+540         IF PEEK(P-20+Z+I)<>0
+550           D=D+1
+560           I=2
+600         ENDIF
+610       NEXT I
+REM       add random new rain drops
+620       POSITION 2+RAND(15),2:?#6;"Z"  
+640     ENDIF
 REM     play next note in song
-965     SOUND 0,PEEK(U+V),10,5
+655     SOUND 0,PEEK(U+(D MOD 15)),10,5
 REM     update the scoreboard
-970     POSITION  6,0:?#6;D
-976     POSITION 17,0:?#6;INT((L-TIME)/60)
-980     W=W-1
-985   WEND
-990 LOOP
+700     POSITION  6,0:?#6;D
+710     POSITION 17,0:?#6;C
+720     W=W-1
+735   UNTIL C=0
+740 LOOP
 
 REM ************* SCREEN *************
 REM        01234567890123456789
@@ -90,8 +88,6 @@ REM Cq. Ce Ce Be | E+q.  Bq    Ce | Ce Aq Aq A+e | A+q. A+q A+e | G+q. G+q A+e |
 REM E+q. A+q A+e | A+q.  A+q   Ae | Ce Cq Cq De  | E+e E+q Dq Ce| Ce Aq. Re E+e| 30
 REM E+e Dq De Cq | Ae Eq Ee Ee Ge | Ah.          | Aq. Rq 24
 
-REM As Decimals
-REM \96e | \72q. \72e \72e \64e |
-REM \60q. \60e \60e \64e | \47q.  \64q    \60e | \60e \72q \72q \35e | \35q. \35q \35e | \40q. \40q \35e | \47h. | 
-REM \47q. \35q \35e | \35q.  \35q   \72e | \60e \60q \60q \53e  | \47e \47q \53q \60e| \60e \72q. Re \47e | 
-REM \47e \53q \53e \60q | \72e \96q \96e \96e \81e | \72h.          | \72q. Rq |
+REM A A A B A G F A A C- C C D C B A A B G F E+
+REM 72 72 72 64 72 81 91 72 72 121 60 60 53 60 64 72 72 64 81 91 47
+REM 
