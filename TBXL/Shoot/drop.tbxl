@@ -2,8 +2,10 @@ REM set our graphics mode and establish memory addresses
 REM - S=main screen
 REM - R=reset screen
 REM - T=animation screen
-000 DIM A$(40),U$(17)
+000 DIM A$(24),U$(17)
 005 A=ADR(A$):U=ADR(U$)
+006 A$="\00\00\20\20\30\10\1F\0F\00\00\04\04\0C\08\F8\F0\00\08\1C\3E\3E\3E\1C\00"
+007 U$="\00\60\48\48\3C\3C\40\40\2F\2F\40\40\3C\3C\48\48\00"
 015 Q=256
 020 M=PEEK(106)
 030 N=M-16
@@ -17,12 +19,10 @@ REM - T=animation screen
 150 POKE 756,N
 160 N=N*Q
 170 MOVE O,N,Q*4
-200 A$="\00\00\63\7F\7C\70\00\00\00\00\C6\FE\3E\0E\00\00\00\00\00\1C\3F\3F\1C\08\10\10\38\7C\FF\FF\7C\28\00\00\00\70\F8\F8\70\20"
 210 MOVE A,N+448,40
-300 U$="\00\60\48\48\3C\3C\40\40\2F\2F\40\40\3C\3C\48\48\00"
-310 POSITION  0, 0:?#6;"hits 0"
-330 POSITION 15, 0:?#6;"Z[\ 3"
-350 POSITION  9,11:?#6;"Z[\"
+
+310 POSITION  0, 0:?#6;"drops 0"
+350 POSITION  9,11:?#6;"xy"
 400 MOVE S,R,Q
 REM ***** main loop *****
 410 DO
@@ -31,69 +31,56 @@ REM   wait for user to press trigger to begin, then reset screen
 430   WHILE STRIG(0)=1:WEND  
 REM   reset screen, game variables
 440   MOVE R,S,Q
-450   L=3:H=0:Z=8:W=5:V=0:Y=1
-460   WHILE L
+450   L=TIME+900:D=0:Z=8:W=5:V=0
+460   WHILE L-TIME
 REM     move player: 11=left, 7=right
 510     K=(9-STICK(0))/2
-520     IF (K=1 AND Z<15) OR (K=-1 AND Z>0)
-540       MOVE P+Z,T,5
+520     IF (K=1 AND Z<17) OR (K=-1 AND Z>0)
+540       MOVE P+Z,T,4
 545       Z=Z+K
-550       MOVE T,P+Z,5
+550       MOVE T,P+Z,4
 560     ENDIF
-REM     when player shoots, look for collisions
-600     IF STRIG(0)=0 AND Y=0
-610       X=Z+2:Y=10
-620     ENDIF
-630     IF Y
-640       LOCATE X,Y,C
-650       IF C<>32
-680         POSITION X-1,Y:?#6;"   "
-690         SOUND 0,9,10,5
-700         H=H+1:Y=1
-710       ENDIF
-720       Y=Y-1
-730     ENDIF
  
 760     IF W=0
-REM       check for collision
-770       FOR I=0 TO 9
-780         IF PEEK(P-20+2*I)<>0
-790           SOUND 0,243,10,5
-900           L=L-1
-910         ENDIF
-920       NEXT I
-REM       move enemy ships
+REM       move rain drops
 930       MOVE S,T,Q
 940       MOVE T+20,S+40,180
-REM       determine next note in song
+REM       check for collection
+770       FOR I=1 TO 2
+780         IF PEEK(P-20+Z+I)<>0
+790           SOUND 0,9,10,5
+900           D=D+1
+910         ENDIF
+920       NEXT I
+REM       add new rain drop
+950       POSITION 2+RAND(15),2:?#6;"Z"
+REM       determine next note in song and reset W counter
 945       V=(V+1) MOD 15
-REM       add new enemy ship
-950       POSITION 1+RAND(16),2:?#6;"xy"
 955       W=5
 960     ENDIF
-REM     play next note
-965     SOUND 0,PEEK(U+V),10,5    
-REM     update the scoreboards
-970     POSITION  5,0:?#6;H
-975     POSITION 19,0:?#6;L
+REM     play next note in song
+965     SOUND 0,PEEK(U+V),10,5
+REM     update the scoreboard
+970     POSITION  6,0:?#6;D
+976     POSITION 17,0:?#6;INT((L-TIME)/60)
 980     W=W-1
 985   WEND
 990 LOOP
 
 REM ************* SCREEN *************
 REM        01234567890123456789
-REM   0( 0)HITS 0         Z[\ 0 0 ( 0)
+REM   0( 0)DROPS 0          30  0 ( 0)
 REM  20( 1)                    20 ( 1)
 REM  40( 2)                    40 ( 2)
-REM  60(03)   xy          xy   60 ( 3)
-REM  80(04)     xy      xy     80 ( 4)
-REM 100(05)       xy  xy       100( 5)
-REM 120(06)         xy         120( 6)
+REM  60(03)                    60 ( 3)
+REM  80(04)                    80 ( 4)
+REM 100(05)                    100( 5)
+REM 120(06)                    120( 6)
 REM 140(07)                    140( 7)
 REM 160(08)                    160( 8)
 REM 180(09)                    180( 9)
 REM 200(10)                    200(10)
-REM 220(11)         z[\        220(11)
+REM 220(11)         yz         220(11)
 REM        01234567890123456789
 REM ************* SCREEN *************
 
