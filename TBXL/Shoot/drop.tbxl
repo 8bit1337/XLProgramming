@@ -14,9 +14,9 @@ REM Q=256 just saves me space, as I use 256 a lot
 020 Q=256:E=17:F=18
 100 A$="\1F\17\17\1F\17\1F\1F\0F\E0\FC\FC\EC\EC\F8\E0\C0\00\08\1C\3E\3E\3E\1C\00"
 REM 110 U$="\00\48\40\48\51\58\48\79\3C\35\3C\40\48\40\51\58\2F"
-110 U$="\00\48\00\48\00\48\00\40\00\48\00\51\00\58\00\48\00\48\00\79\00\3C\00\3C\00\35\00\3C\00\40\00\48\00\48\00\40\00\51\00\58\00\2F"
+110 U$="\00\48\00\48\00\48\00\40\00\48\00\51\00\58\00\48\00\48\00\3C\00\3C\00\3C\00\35\00\3C\00\40\00\48\00\48\00\40\00\51\00\58\00\2F"
 
-REM A A A B A G F A A C2 C C D C B A A B G F E4
+REM A A A B A G F A A C2 C2 C2 D C B A A B G F E4
 REM 72 72 72 64 72 81 91 72 72 121 60 60 53 60 64 72 72 64 81 91 47
 
 REM this next set of code is mostly standard memory related code, which you will see in lots of basic programs
@@ -64,6 +64,7 @@ REM     C = time remaining, in seconds
 REM     K = +1/-1, representing a move right or left
 REM     STICK(0):  11=left, 7=right
 520     C=L-TIME
+
 530     K=(9-STICK(0))/2
 REM     move player
 540     IF (K=1 AND X<17) OR (K=-1 AND X>0)
@@ -80,13 +81,13 @@ REM     check for collision with player
 680       ENDIF
 690     NEXT I
 REM     only move/add raindrops every second
-700     IF C MOD 4=0
+
 REM       move rain drops
 710       MOVE S,T,Q
 720       MOVE T+20,S+40,180
 REM       add random new rain drops
 760       POSITION 2+RAND(15),2:?#6;"\DA"  
-800     ENDIF
+
 REM     play the appropriate note from the song
 810     SOUND 0,PEEK(U+(D MOD 41)),10,5
 REM     update the score and time remaining
