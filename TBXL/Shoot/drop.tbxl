@@ -9,15 +9,20 @@ REM our two string arrays are to set character graphics and for our music
 REM we will replace the x, y, and z characters with our coffee cup (xy) and our raindrop (z)
 REM the music array characters represention in memory give us the integers we need to play the song
 REM Q=256 just saves me space, as I use 256 a lot
-000 DIM A$(24),U$(17)
+000 DIM A$(24),U$(42)
 010 A=ADR(A$):U=ADR(U$)
 020 Q=256:E=17:F=18
 100 A$="\1F\17\17\1F\17\1F\1F\0F\E0\FC\FC\EC\EC\F8\E0\C0\00\08\1C\3E\3E\3E\1C\00"
-110 U$="\00\48\40\48\51\58\48\79\3C\35\3C\40\48\40\51\58\2F"
+REM 110 U$="\00\48\40\48\51\58\48\79\3C\35\3C\40\48\40\51\58\2F"
+110 U$="\00\48\00\48\00\48\00\40\00\48\00\51\00\58\00\48\00\48\00\79\00\3C\00\3C\00\35\00\3C\00\40\00\48\00\48\00\40\00\51\00\58\00\2F"
+
+REM A A A B A G F A A C2 C C D C B A A B G F E4
+REM 72 72 72 64 72 81 91 72 72 121 60 60 53 60 64 72 72 64 81 91 47
 
 REM this next set of code is mostly standard memory related code, which you will see in lots of basic programs
 REM of note:
 REM - S = address of screen
+REM - V = address for row where collisions can occur
 REM - P = address for row where player sits
 REM - R = will contain a copy of the screen, so I can reset game
 REM - T = used to animate raindrops/coffee cup
@@ -26,7 +31,8 @@ REM - T = used to animate raindrops/coffee cup
 220 POKE 106,N
 230 GRAPHICS 18
 240 S=DPEEK(88)
-250 P=S+220
+250 V=S+200
+255 P=V+20
 260 R=(M-8)*Q
 270 T=R+Q
 300 O=PEEK(756)*Q
@@ -50,7 +56,7 @@ REM   wait for user to press trigger to begin, then reset screen and variables
 REM   L is the target time.  900/60=15 seconds
 460   L=TIME+900
 REM   B helps me keep track of elapsed time. 
-REM   X=horizonal position of player.  D=number of drops collected
+REM   X=horizonal position of player minus 1.  D=number of drops collected
 500   X=8:D=0
 REM   ***** main game loop start *****
 510   REPEAT
@@ -65,37 +71,47 @@ REM     move player
 610       X=X+K
 620       MOVE T,P+X,4
 630     ENDIF
+REM     check for collision with player
+640     FOR I=1 TO 2
+650       IF PEEK(V+X+I)<>0
+655         POKE V+X+I,122
+656         POKE V+X+I,0
+660         D=D+1
+680       ENDIF
+690     NEXT I
 REM     only move/add raindrops every second
-640     IF C MOD 7=0
+700     IF C MOD 4=0
 REM       move rain drops
-650       MOVE S,T,Q
-660       MOVE T+20,S+40,180
-REM       check for collision with player
-700       FOR I=1 TO 2
-710         IF PEEK(P-20+X+I)<>0
-720           D=D+1
-730           I=2
-740         ENDIF
-750       NEXT I
+710       MOVE S,T,Q
+720       MOVE T+20,S+40,180
 REM       add random new rain drops
 760       POSITION 2+RAND(15),2:?#6;"\DA"  
 800     ENDIF
 REM     play the appropriate note from the song
-810     SOUND 0,PEEK(U+(D MOD 16)),10,5
+810     SOUND 0,PEEK(U+(D MOD 41)),10,5
 REM     update the score and time remaining
 815     C=INT(C/60)
 820     POSITION 6,0:?#6;D
 830     IF C<10
-          POSITION E,0:?#6;" "
-          POSITION F,0
-        ELSE
-          POSITION E,0
-        ENDIF
-        ?#6;C
-900   UNTIL C<0
-910   POSITION E,0:?#6;"\E5\EE\E4"
+900       POSITION E,0:?#6;" "
+910       POSITION F,0
+920     ELSE
+930       POSITION E,0
+940     ENDIF
+950     ?#6;C
+960   UNTIL C<0
+970   POSITION E,0:?#6;"\E5\EE\E4"
 REM   ***** main game loop end *****
-920 LOOP
+980 LOOP
+
+
+FOR I=1 TO 2
+  IF PEEK(V+X+I)<>0
+    POKE V+X+I,122
+    D=D+1
+    I=2
+  ENDIF
+NEXT I
 
 
 REM   X=58, Y=59, Z=5A.  (orange)
