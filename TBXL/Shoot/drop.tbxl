@@ -1,4 +1,4 @@
-REM raindrops keep falling in my coffee
+REM raindrops keep falling in my coffee mug
 REM (c) 2017 by Jason Gruetzmacher
 
 REM set our graphics mode and establish memory addresses
@@ -11,10 +11,11 @@ REM the music array characters represention in memory give us the integers we ne
 REM Q=256 just saves me space, as I use 256 a lot
 000 DIM A$(24),U$(42)
 010 A=ADR(A$):U=ADR(U$)
-020 Q=256:E=17:F=18
-100 A$="\1F\17\17\1F\17\1F\1F\0F\E0\FC\FC\EC\EC\F8\E0\C0\00\08\1C\3E\3E\3E\1C\00"
-REM 110 U$="\00\48\40\48\51\58\48\79\3C\35\3C\40\48\40\51\58\2F"
-110 U$="\00\48\00\48\00\48\00\40\00\48\00\51\00\58\00\48\00\48\00\3C\00\3C\00\3C\00\35\00\3C\00\40\00\48\00\48\00\40\00\51\00\58\00\2F"
+020 Q=256
+030 A$="\1F\17\17\1F\17\1F\1F\0F\E0\FC\FC\EC\EC\F8\E0\C0\00\08\1C\3E\3E\3E\1C\00"
+100 U$="\00\48\00\48\00\48\00\40\00\48\00\51\00\58\00\48\00\48\00\3C\00\3C\00\3C\00\35\00\3C\00\40\00\48\00\48\00\40\00\51\00\58\00\2F"
+
+
 
 REM A A A B A G F A A C2 C2 C2 D C B A A B G F E4
 REM 72 72 72 64 72 81 91 72 72 121 60 60 53 60 64 72 72 64 81 91 47
@@ -26,94 +27,73 @@ REM - V = address for row where collisions can occur
 REM - P = address for row where player sits
 REM - R = will contain a copy of the screen, so I can reset game
 REM - T = used to animate raindrops/coffee cup
-200 M=PEEK(106)
-210 N=M-16
-220 POKE 106,N
-230 GRAPHICS 18
-240 S=DPEEK(88)
-250 V=S+200
-255 P=V+20
-260 R=(M-8)*Q
-270 T=R+Q
-300 O=PEEK(756)*Q
-310 POKE 756,N
-320 N=N*Q
-330 MOVE O,N,Q*4
-340 MOVE A,N+448,24
+110 M=PEEK(106)
+120 N=M-16
+130 POKE 106,N
+200 GRAPHICS 18
+210 S=DPEEK(88)
+220 V=S+200
+230 P=V+20
+240 R=(M-8)*Q
+250 T=R+Q
+260 O=PEEK(756)*Q
+270 POKE 756,N
+280 N=N*Q
+300 MOVE O,N,Q*4
+310 MOVE A,N+448,24
 
 REM draw the screen, then save it at address R
-350 POSITION  0, 0:?#6;"drops 0"
-400 POSITION  9,11:?#6;"\F8\F9"
-410 MOVE S,R,Q
+320 POSITION 0,0:?#6;"drops 0"
+330 POSITION 9,11:?#6;"\F8\F9"
+400 MOVE S,R,Q
 
 REM infinite loop, so that you can start a new game just by pushing button
 REM with more lines of code available I'd make the Esc key or something stop execution and reset memory addresses
-420 DO
+410 DO
 REM   wait for user to press trigger to begin, then reset screen and variables
-430   SOUND
-440   WHILE STRIG(0)=1:WEND  
-450   MOVE R,S,Q
+420   SOUND
+430   WHILE STRIG(0)=1:WEND  
+440   MOVE R,S,Q
 REM   L is the target time.  900/60=15 seconds
-460   L=TIME+900
+450   L=TIME
 REM   B helps me keep track of elapsed time. 
-REM   X=horizonal position of player minus 1.  D=number of drops collected
-500   X=8:D=0
+REM   Z=horizonal position of player minus 1.  D=number of drops collected
+460   Z=8:H=0:C=0
 REM   ***** main game loop start *****
-510   REPEAT
+500   REPEAT
 REM     C = time remaining, in seconds
 REM     K = +1/-1, representing a move right or left
 REM     STICK(0):  11=left, 7=right
-520     C=L-TIME
+510     C=C+1
 
-530     K=(9-STICK(0))/2
-REM     move player
-540     IF (K=1 AND X<17) OR (K=-1 AND X>0)
-600       MOVE P+X,T,4
-610       X=X+K
-620       MOVE T,P+X,4
-630     ENDIF
-REM     check for collision with player
-640     FOR I=1 TO 2
-650       IF PEEK(V+X+I)<>0
-655         POKE V+X+I,122
-656         POKE V+X+I,0
-660         D=D+1
-680       ENDIF
-690     NEXT I
-REM     only move/add raindrops every second
-
-REM       move rain drops
-710       MOVE S,T,Q
-720       MOVE T+20,S+40,180
-REM       add random new rain drops
-760       POSITION 2+RAND(15),2:?#6;"\DA"  
-
-REM     play the appropriate note from the song
-810     SOUND 0,PEEK(U+(D MOD 41)),10,5
-REM     update the score and time remaining
-815     C=INT(C/60)
-820     POSITION 6,0:?#6;D
-830     IF C<10
-900       POSITION E,0:?#6;" "
-910       POSITION F,0
-920     ELSE
-930       POSITION E,0
-940     ENDIF
-950     ?#6;C
-960   UNTIL C<0
-970   POSITION E,0:?#6;"\E5\EE\E4"
+520     IF C MOD 3 = 0
+530       K=(9-STICK(0))/2
+540       IF (K=1 AND Z<17) OR (K=-1 AND Z>0)
+550         MOVE P+Z,T,4
+600         Z=Z+K
+610         MOVE T,P+Z,4
+620       ENDIF
+630     ELSE:IF C MOD 3 = 1
+640       FOR I=1 TO 2
+700         IF PEEK(V+Z+I)<>0
+710           POKE V+Z+I,122
+720           POKE V+Z+I,0
+730           H=H+1
+740         ENDIF
+750       NEXT I
+800       SOUND 0,PEEK(U+(H MOD 41)),10,5
+810     ELSE
+820       MOVE S,T,Q
+830       MOVE T+20,S+40,180
+840       POSITION 2+RAND(15),2:?#6;"\DA"
+850       POSITION 6,0:?#6;H
+860     ENDIF:ENDIF
+870     X=INT((TIME-L)/60)
+940     POSITION 17,0:?#6;X
+950   UNTIL X>20
+960   POSITION 17,0:?#6;"\E5\EE\E4"
 REM   ***** main game loop end *****
-980 LOOP
-
-
-FOR I=1 TO 2
-  IF PEEK(V+X+I)<>0
-    POKE V+X+I,122
-    D=D+1
-    I=2
-  ENDIF
-NEXT I
-
+970 LOOP
 
 REM   X=58, Y=59, Z=5A.  (orange)
 REM     Lowercase = 78,79,7A    (green)
