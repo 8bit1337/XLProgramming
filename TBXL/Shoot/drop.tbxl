@@ -1,27 +1,28 @@
-REM raindrops keep falling in my coffee mug
+REM Raindrops Keep Falling On My Head
 REM (c) 2017 by Jason Gruetzmacher
+REM
+REM ------------------------------
+REM The goal of the game is to collect enough raindrops to play the first 4 bars (+1 note!)
+REM of the BJ Thomas classic song of the same name in the least amount of time you can
+REM 
+REM Press your joystick button to start a game
+REM ------------------------------
 
 REM set our graphics mode and establish memory addresses
 REM - S=main screen
 REM - R=reset screen
 REM - T=animation screen
-REM our two string arrays are to set character graphics and for our music
-REM we will replace the x, y, and z characters with our coffee cup (xy) and our raindrop (z)
-REM the music array characters represention in memory give us the integers we need to play the song
-REM Q=256 just saves me space, as I use 256 a lot
-000 DIM A$(24),U$(42)
+REM our two string arrays are to set character graphics (A) and for our music (U)
+REM we will replace the x, y, and z characters with our head (xy) and our raindrop (z)
+REM Q=256 just saves me space
+000 DIM A$(24),U$(43)
 010 A=ADR(A$):U=ADR(U$)
 020 Q=256
-030 A$="\1F\17\17\1F\17\1F\1F\0F\E0\FC\FC\EC\EC\F8\E0\C0\00\08\1C\3E\3E\3E\1C\00"
-100 U$="\00\48\00\48\00\48\00\40\00\48\00\51\00\58\00\48\00\48\00\3C\00\3C\00\3C\00\35\00\3C\00\40\00\48\00\48\00\40\00\51\00\58\00\2F"
-
-
-
-REM A A A B A G F A A C2 C2 C2 D C B A A B G F E4
-REM 72 72 72 64 72 81 91 72 72 121 60 60 53 60 64 72 72 64 81 91 47
-
-REM this next set of code is mostly standard memory related code, which you will see in lots of basic programs
-REM of note:
+030 A$="\01\03\7F\FD\7F\3C\0E\03\80\C0\FE\BF\FE\3C\70\C0\00\08\1C\3E\3E\3E\1C\00"
+100 U$="\00\48\00\48\00\48\00\40\00\48\00\51\00\58\00\48\00\48\00\3C\00\3C\00\3C\00\35\00\3C\00\40\00\48\00\48\00\40\00\51\00\58\00\2F\2F"
+REM this next set of code is mostly standard memory related code, 
+REM which I won't explain.
+REM The variables of note:
 REM - S = address of screen
 REM - V = address for row where collisions can occur
 REM - P = address for row where player sits
@@ -30,7 +31,7 @@ REM - T = used to animate raindrops/coffee cup
 110 M=PEEK(106)
 120 N=M-16
 130 POKE 106,N
-200 GRAPHICS 18
+200 GR. 18
 210 S=DPEEK(88)
 220 V=S+200
 230 P=V+20
@@ -42,56 +43,56 @@ REM - T = used to animate raindrops/coffee cup
 300 MOVE O,N,Q*4
 310 MOVE A,N+448,24
 
-REM draw the screen, then save it at address R
-320 POSITION 0,0:?#6;"drops 0"
-330 POSITION 9,11:?#6;"\F8\F9"
+REM draw the screen, then save it at address R for resetting it
+320 POS. 0,0:?#6;"drops 0"
+330 POS. 9,11:?#6;"\58\59"
 400 MOVE S,R,Q
 
 REM infinite loop, so that you can start a new game just by pushing button
-REM with more lines of code available I'd make the Esc key or something stop execution and reset memory addresses
 410 DO
-REM   wait for user to press trigger to begin, then reset screen and variables
-420   SOUND
-430   WHILE STRIG(0)=1:WEND  
+REM   wait for user to press trigger to begin, then reset screen
+420   SO.
+430   WHILE STRIG(0)=1:WEND
 440   MOVE R,S,Q
-REM   L is the target time.  900/60=15 seconds
+REM   L is the time we started.  Used to determine how long we've been playing
 450   L=TIME
-REM   B helps me keep track of elapsed time. 
-REM   Z=horizonal position of player minus 1.  D=number of drops collected
+REM   Z=horizonal position of player minus 1.  
+REM   H=number of drops collected
+REM   C=keeps track of trips through repeat/until loop
 460   Z=8:H=0:C=0
 REM   ***** main game loop start *****
 500   REPEAT
-REM     C = time remaining, in seconds
-REM     K = +1/-1, representing a move right or left
-REM     STICK(0):  11=left, 7=right
 510     C=C+1
-
+REM     look for player movement
 520     IF C MOD 3 = 0
+REM       K = +1/-1, representing a move right or left
+REM       STICK(0):  11=left, 7=right
 530       K=(9-STICK(0))/2
 540       IF (K=1 AND Z<17) OR (K=-1 AND Z>0)
 550         MOVE P+Z,T,4
 600         Z=Z+K
 610         MOVE T,P+Z,4
 620       ENDIF
+REM     check for raindrop collisions
 630     ELSE:IF C MOD 3 = 1
 640       FOR I=1 TO 2
 700         IF PEEK(V+Z+I)<>0
-710           POKE V+Z+I,122
 720           POKE V+Z+I,0
 730           H=H+1
 740         ENDIF
 750       NEXT I
-800       SOUND 0,PEEK(U+(H MOD 41)),10,5
+800       SO. 0,PEEK(U+(H MOD 43)),10,5
+REM     move existing and add new raindrops
 810     ELSE
 820       MOVE S,T,Q
 830       MOVE T+20,S+40,180
-840       POSITION 2+RAND(15),2:?#6;"\DA"
-850       POSITION 6,0:?#6;H
+840       POS. 2+RAND(15),2:?#6;"\DA"
+850       POS. 6,0:?#6;H
 860     ENDIF:ENDIF
-870     X=INT((TIME-L)/60)
-940     POSITION 17,0:?#6;X
-950   UNTIL X>20
-960   POSITION 17,0:?#6;"\E5\EE\E4"
+940     POS. 17,0:?#6;INT((TIME-L)/60)
+950   UNTIL H>42
+REM   end
+960   POS. 9,0:?#6;"\E5\EE\E4"
 REM   ***** main game loop end *****
 970 LOOP
 
@@ -119,4 +120,5 @@ REM ************* SCREEN *************
 
 REM Raindrops keep falling for my head for piano
 REM A A A B A G F A A C2 C C D C B A A B G F E4
+REM as decimals
 REM 72 72 72 64 72 81 91 72 72 121 60 60 53 60 64 72 72 64 81 91 47
