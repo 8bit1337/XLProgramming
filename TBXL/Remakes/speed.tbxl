@@ -18,10 +18,14 @@ REM POKE DATA FOR ALTERED CHARACTERS SET
 190 A2$="\00\00\14\14\14\14\00\00\CC\CC\33\33\CC\CC\33\33\44\44\11\11\44\44\11\11\44\44\11\11\44\44\11\11\08\2A\A8\2A\AA\AA\A8\28"
 200 MOVE ADR(A1$),CHAR+8*69,32
 210 MOVE ADR(A2$),CHAR+8*77,40
-220 GRAPHICS 0:POKE 756,CP:POKE 559,0
+REM Set our graphics mode, and ensure character set points to our newly created characters
+220 GRAPHICS 0:POKE 756,CP
+REM 559=shadow register for DMA, 0 disables it I think.  I think I can remove the one above this.  Not surea bout reset game one, but it makes sense to only have one off and one on
+225 POKE 559,0
+REM set left margin of graphics 0 mode to 0 (default is 2)
 230 POKE 82,0
 
-REM ALTER DISPLAY LIST
+REM ALTER DISPLAY LIST.  560/1 point to the display list.  Not sure what is above that
 240 DL=DPEEK(560)
 250 POKE DL+3,68
 260 FOR I=6 TO 23:POKE DL+I,4:NEXT I
