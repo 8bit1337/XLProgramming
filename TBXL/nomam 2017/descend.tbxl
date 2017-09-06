@@ -1,0 +1,101 @@
+REM Atari 8-Bit Action
+REM Kevin's Atari 8-bit programming projects.
+REM http://www.savetz.com
+
+REM DESCEND: BASIC Tenliners Contest 2017 entry
+REM It?s my favorite time of year ? the 10-line BASIC programming contest. My first entry for 2017 is DESCEND, a port of my assembly language game Kaverns of Kfest. Your job is to descend into the cave collecting gems, without hitting the walls. As usual, I did this project in Turbo BASIC XL on the Atari 8-bit.
+
+REM Here's the code:
+5 GRAPHICS 0:DL=DPEEK(560):POKE DL+3,68:FOR I=DL+6 TO DL+25:POKE I,4:NEXT I:I=I+3:POKE I,65:DPOKE I+1,DL
+10 DIM F$(24),W$(38),B$(8):F$=?(mess of ATASCII)?:PX=20:PY=1:POKE 752,1:W$=?(mess of ATASCII)?
+15 B$=?(mess of ATASCII)?:POSITION 0,21:? ?DEPTH?:POSITION 17,21:? ?SHIELDS 10?:POSITION 35,21:? ?GEMS 0?
+20 CH=(PEEK(106)-16)*256:MOVE 57344,CH,1024:MOVE ADR(F$),CH+8,24:POKE 756,CH/256:SC=DPEEK(88):LW=15:CW=8:SS=10:WHILE SS
+40   MOVE ADR(W$),SC+800,LW:MOVE ADR(B$),SC+800+LW,CW:MOVE ADR(W$),SC+800+LW+CW,40-LW-CW:POKE SC+800+RAND(40),3
+50   POKE SC+800+RAND(40),4:X=RAND(3):LW=LW+X-1:IF LW<1:LW=1:ENDIF :IF LW>32:LW=32:ENDIF :PX=PX+(STICK(0)=7)-(STICK(0)=11)
+65   IF PX<1:PX=1:ENDIF :IF PX>38:PX=38:ENDIF :Q=PEEK(SC+PX+PY*40):IF Q=4:SOUND 0,50,10,8:G=G+1:POSITION 36,22:? G:ELSE 
+70     IF Q>0:SS=SS-1:POSITION 20,22:? SS;? ?:SOUND 0,RAND(100)+100,8,8:ENDIF :IF Q=0:SOUND :ENDIF :ENDIF 
+80   POKE SC+PX+PY*40,2:FOR I=0 TO 19:MOVE SC+40+40*I,SC+40*I,40:NEXT I:L=L+1:IF L=20 AND CW>3:CW=CW-1:ENDIF :IF L=40 AND PY<17:PY=PY+1
+90     L=0:POKE 708,RAND(200)+4:ENDIF :LL=LL+1:POSITION 1,22:? LL:WEND :POSITION 16,23:? ?GAME OVER?;:SOUND :WHILE STRIG(0):WEND :RUN
+
+REM Here's a breakdown of the code:
+
+5 GRAPHICS 0:
+This game uses ANTIC mode 4, the 4-color text mode. Start in graphics mode 0, then we?ll tweak the display list to use mode 4.
+DL=DPEEK(560)
+Find the top of the display list.
+POKE DL+3,68:FOR I=DL+6 TO DL+25:POKE I,4:NEXT I:I=I+3:POKE I,65:DPOKE I+1,DL
+Change most of the lines (excepting the bottom 3, which will be score dispaly) to mode 4. Everything you need to know about what?s doing on here is in this article by Orson Scott Card. 
+Setting up to use mode 4 costs an entire line of BASIC, pretty expensive in a 10-line program. More, really, because you pretty much need to use a custom character set with mode 4.
+10 DIM F$(24),W$(38),B$(8):F$=?(mess of ATASCII)?:PX=20:PY=1:POKE 752,1:W$=?(more ATASCII)?
+F$ is the data for three custom characters used in the character set: the walls, the player?s ship, and the random rocks/barriers. The gems are their own character, which I don?t actually set. By not setting them, they display some regular character set character, which looks kind of speckly and cool and gem-like in ANTIC mode 4.
+PX is the player?s X position. PY is player?s Y position. Unlike Kaverns of Kfest, this game doesn?t allow the player to control the Y; instead, you descend automatically, increasing difficulty.
+W$ is characters for the wall.
+POKE 752,1 turns off the cursor.
+15 B$=?(shorter mess of ATASCII)?
+B$ is characters for the blank space where the ship goes.
+:POSITION 0,21:? ?DEPTH?:POSITION 17,21:? ?SHIELDS10?:POSITION 35,21:? ?GEMS0?
+Print score headers and starting scores.
+20 CH=(PEEK(106)-16)*256
+Find space for the custom character set.
+:MOVE 57344,CH,1024
+Copy the ROM character set to the RAM space reserved for our custom set.
+:MOVE ADR(F$),CH+8,24
+Replace 3 characters with custom characters.
+:POKE 756,CH/256
+Switch from the ROM character set to our custom character set.
+:SC=DPEEK(88)
+Find the top of screen memory.
+:LW=15:CW=8:SS=10
+LW is left wall width. CW is center (play area) width. SS is number of shields (basically, lives.)
+:WHILE SS
+Here?s the main game loop. As long as you still have at least one shield?
+40   MOVE ADR(W$),SC+800,LW
+Build new section of wall-center-wall. This always goes at the bottom of the playfield and is pushed up later by the scroll routine. 
+First, the left wall. Copy LW (left wall width) characters of wall to the new line, at SC+800, that is, on the left edge 20 lines down.
+:MOVE ADR(B$),SC+800+LW,CW
+Now, copy CW (center width) characters of blank space to the right of the wall.
+:MOVE ADR(W$),SC+800+LW+CW,40-LW-CW
+Fill the rest of the line with wall.
+:POKE SC+800+RAND(40),3
+Each line gets a barrier (blue block) in a random place. 
+50   POKE SC+800+RAND(40),4
+Each line also gets gems in a random place. Might be in the center where you can get ?em, but probably not.
+:X=RAND(3):LW=LW+X-1
+Adjust the width of the left wall with every move. It can be one less, one more, or stay the same.
+:IF LW<1:LW=1:ENDIF :IF LW>32:LW=32:ENDIF
+But don?t let the width go off either side of the screen.
+:PX=PX+(STICK(0)=7)-(STICK(0)=11)
+Change PX + or - 1 based on left-rightness of joystick.
+65   IF PX<1:PX=1:ENDIF :IF PX>38:PX=38:ENDIF 
+But don?t let player move off the edges of the screen.
+:Q=PEEK(SC+PX+PY*40):
+Look at the space where the player is about to move to.
+IF Q=4:SOUND 0,50,10,8:G=G+1:POSITION 36,22:? G:ELSE 
+It?s a gem! Make a happy noise, increase count of gems collected, update that tally.
+70     IF Q>0:SS=SS-1:POSITION 20,22:? SS;? ?:SOUND 0,RAND(100)+100,8,8:ENDIF
+If you?re about to touch literally anything else: lose a shield, update the shield tally, play a bad sound.
+:IF Q=0:SOUND :ENDIF :ENDIF 
+But if you?re not touching anything, turn off sound, in case it?s on from the last move.
+80   POKE SC+PX+PY*40,2
+Draw the player in the new position.
+:FOR I=0 TO 19:MOVE SC+40+40*I,SC+40*I,40:NEXT I
+This is the scroll. Copy the second screen line to the first, third to the second, and so on.
+:L=L+1
+L is a temporary counter that counts every 40 levels. 
+IF L=20 AND CW>3:CW=CW-1:ENDIF 
+Every time L hits 20, make the center width one less, but don?t let it get too narrow.
+:IF L=40 AND PY<17:PY=PY+1
+Every line L hits 40, move the ship down one line, but not too low?
+90     L=0
+and restart the count-to-40 counter?
+:POKE 708,RAND(200)+4:ENDIF 
+and change the wall color because that?s fun.
+:LL=LL+1:POSITION 1,22:? LL
+LL is the total number of levels you?ve descended.
+:WEND 
+End of main game loop. Once we go past this, we must be out of shields.
+:POSITION 16,23:? ?GAME OVER?;:SOUND 
+Print game over, turn off sound.
+:WHILE STRIG(0):WEND :RUN 
+Wait for joystick button to be pressed then play again.
+This wasn?t too bad to compress into 10 lines, I had just enough space to do everything I wanted to do. I didn?t feel the need to use tbxl-parser to compress things, just did it by hand. I could have - but didn?t need to - compress things further by using more 1-character variable names and 1-digit line numbers.
