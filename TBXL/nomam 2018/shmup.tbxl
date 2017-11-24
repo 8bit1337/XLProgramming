@@ -1,17 +1,20 @@
-REM CIV EARLY COMBAT
+REM SHMUP
 REM (c) 2017 by Jason Gruetzmacher
+
+
+REM the music array characters represention in memory give us the integers we need to play the song
+REM Using Q=256 just saves me characters, as I use 256 a lot
+000 Q=256:DIM B$(8),U$(12):B=ADR(B$):U=ADR(U$)
+REM B$=Border graphics
+REM     |   left    |   right   |
+005 B$="\80\19\00\19\00\99\80\99"
+REM U$= Future music?
+006 U$=""
 
 REM set our graphics mode and establish memory addresses
 REM - S=main screen
-REM - R=reset screen
-REM - T=animation screen
-REM the music array characters represention in memory give us the integers we need to play the song
-REM Q=256 just saves me space, as I use 256 a lot
-000 Q=256:DIM A$(10),C$(12):A=ADR(A$):C=ADR(C$)
-REM A$ = Health, X position, Y position of army.  
-005 A$="\00\00\00"
-REM C$= | city 1 | city 2 | city 3 | city 4 |  Health, X, Y
-006 C$="\0A\00\02\0A\0F\02\0A\00\0B\0A\0F\0B"
+REM - R=reset screen (used when we start a new game)
+REM - T=animation screen (used to animate main screen objects)
 110 M=PEEK(106)
 120 N=M-8
 130 POKE 106,N
