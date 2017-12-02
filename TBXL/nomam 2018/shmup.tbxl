@@ -1,0 +1,106 @@
+REM SHMUP
+REM (c) 2017 by Jason Gruetzmacher
+
+
+REM the music array characters represention in memory give us the integers we need to play the song
+REM Using Q=256 just saves me characters, as I use 256 a lot
+000 Q=256:DIM B$(8),U$(12):B=ADR(B$):U=ADR(U$)
+REM B$=Border graphics
+REM     |   left    |   right   |
+005 B$="\80\19\00\19\00\99\80\99"
+REM U$= Future music?
+006 U$=""
+
+REM set our graphics mode and establish memory addresses
+REM - S=main screen
+REM - R=reset screen (used when we start a new game)
+REM - T=animation screen (used to animate main screen objects)
+110 M=PEEK(106)
+120 N=M-8
+130 POKE 106,N
+200 GRAPHICS 18
+210 S=DPEEK(88)
+240 R=N*Q
+250 T=R+Q
+
+X=RAND(4):Y=RAND(2)
+REM  20 \54 is solid circle
+REM  18 \52 is horizontal line
+REM 124 \7C is vertical line
+REM 111 \6F is lower case o (open circle)
+REM draw the screen, then save it at address R
+320 POSITION 0,0:?#6;"score 0"
+330 POSITION 9,11:?#6;"\05\11\7C"
+400 MOVE S,R,Q
+
+REM LEFT BORDER \80\19\00\19
+REM RIGHT BORDER \00\99\80\99
+
+REM SHIP \08\80\0A
+REM SHIP \0B\95\0C
+REM BULLET \2E or .
+
+REM infinite loop, so that you can start a new game just by pushing button
+REM with more lines of code available I'd make the Esc key or something stop execution and reset memory addresses
+410 DO
+REM   wait for user to press trigger to begin, then reset screen and variables
+420   SOUND
+430   WHILE STRIG(0)=1:WEND  
+440   MOVE R,S,Q
+REM   L is the target time.  900/60=15 seconds
+450   L=TIME
+REM   B helps me keep track of elapsed time. 
+REM   Z=horizonal position of player minus 1.  D=number of drops collected
+460   Z=8:H=0:C=0
+REM   ***** main game loop start *****
+500   REPEAT
+REM     C = time remaining, in seconds
+REM     K = +1/-1, representing a move right or left
+REM     STICK(0):  11=left, 7=right
+510     C=C+1
+
+520     IF C MOD 3 = 0
+530       K=(9-STICK(0))/2
+540       IF (K=1 AND Z<17) OR (K=-1 AND Z>0)
+550         MOVE P+Z,T,4
+600         Z=Z+K
+610         MOVE T,P+Z,4
+620       ENDIF
+630     ELSE:IF C MOD 3 = 1
+640       FOR I=1 TO 2
+700         IF PEEK(V+Z+I)<>0
+710           POKE V+Z+I,122
+720           POKE V+Z+I,0
+730           H=H+1
+740         ENDIF
+750       NEXT I
+800       SOUND 0,PEEK(U+(H MOD 41)),10,5
+810     ELSE
+820       MOVE S,T,Q
+830       MOVE T+20,S+40,180
+840       POSITION 2+RAND(15),2:?#6;"\DA"
+850       POSITION 6,0:?#6;H
+860     ENDIF:ENDIF
+870     X=INT((TIME-L)/60)
+940     POSITION 17,0:?#6;X
+950   UNTIL X>20
+960   POSITION 17,0:?#6;"\E5\EE\E4"
+970 LOOP
+
+
+REM ************* SCREEN *************
+REM        01234567890123456789
+REM   0( 0) score #####        0 ( 0)
+REM  20( 1)  |              |  20 ( 1)
+REM  40( 2) |                | 40 ( 2)
+REM  60(03)  |              |  60 ( 3)
+REM  80(04) |                | 80 ( 4)
+REM 100(05)  |              |  100( 5)
+REM 120(06) |                | 120( 6)
+REM 140(07)  |              |  140( 7)
+REM 160(08) |                | 160( 8)
+REM 180(09)  |              |  180( 9)
+REM 200(10) |      /-\       | 200(10)
+REM 220(11)  |              |  220(11)
+REM        01234567890123456789
+REM ************* SCREEN *************
