@@ -1,4 +1,4 @@
-REM SHMUP
+REM FLAPPY BIRD KNOCKOFF
 REM (c) 2017 by Jason Gruetzmacher
 
 
@@ -12,7 +12,7 @@ REM U$= Future music?
 006 U$=""
 
 REM space     \00 or \80
-REM 92=up     \5C
+REM dot = 20 | 84 
 REM 93=down   \5D
 REM 94=left   \5E
 REM 95=right  \5F
