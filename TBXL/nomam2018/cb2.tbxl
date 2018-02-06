@@ -1,13 +1,11 @@
 REM CRAZY BALLOON II
 
-REM Q is a constant, because we use 256 a lot and it saves characters
-REM B$ contains the graphics for the balloon.  Note there are preceding and trailing zeros to make animation easier
-REM B is the address where B$ resides
-REM Z$ and Z are used to erase memory quickly
-REM N is the new top of memory
-REM P is the address of the , where the balloon starts
+REM VARIABLES OF NOTE
+REM A$ contains the asterisks that make up the obstacles and it
+REM B$ contains the graphics for the balloon, with extra padding to make animation easier
 REM X is the horizontal position of the balloon
 REM Y is the vertical position of the balloon
+REM C counts how many cycles through the code we've gone, and is used to calculate the score and decide when to perform certain tasks
 
 REM SETUP OUR BALLOON GRAPHICS
 000 BHEIGHT=16
@@ -38,7 +36,7 @@ REM INITIALIZE
 230 MOVE Z,P,Q:  REM Clear out P/M area for Player 0
 
 REM START
-300 MOVE A,S+380,20:REM Create a row of asterisks as the bottom of the play area
+300 MOVE A,S+380,20:REM Create a row of asterisks at the bottom of the play area
 310 DO
 320   GOS. 999
 340   WHILE STRIG(0)=1:WEND:REM wait for user to press trigger to begin, then reset screen
@@ -55,12 +53,12 @@ REM START
 810       Y=Y+1
 820       MOVE B,Y,BHEIGHT:ENDIF:ENDIF:REM Move balloon down (gravity)
 830       MOVE S+20,S,380:REM Move Asterisks up
-840       MOVE Z,S+365,6
+840       MOVE Z,S+365,6:REM this is what creates the navigable gap for the player to float through
 
-800     POKE 656,2:POKE 657,7:?INT(C/10):REM Print score
+800     POKE 656,2:POKE 657,7:?INT(C/10):REM Update score
 810   UNTIL PEEK(53252)>0:REM Stop when player hits something
-
-890 LOOP:END
+880 REM will put some game over stuff here if I have space
+890 LOOP
 999 SO.:X=120:Y=P+X:MOVE B,Y,BHEIGHT:POKE 53248,X:C=0:POKE 656,2:POKE 657,0:PRINT "SCORE: 0     ":RETURN
 
 REM OH SUSANNAH
