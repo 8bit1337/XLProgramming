@@ -5,6 +5,8 @@ REM A$ contains the asterisks that make up the obstacles and it
 REM B$ contains the graphics for the balloon, with extra padding to make animation easier
 REM X is the horizontal position of the balloon
 REM Y is the vertical position of the balloon
+REM G is the space in memory where the gap starts
+REM L is the length of the gap
 REM C counts how many cycles through the code we've gone, and is used to calculate the score and decide when to perform certain tasks
 
 REM SETUP OUR BALLOON GRAPHICS
@@ -51,15 +53,15 @@ REM START
 450       MOVE B,Y,BHEIGHT
 800     ELSE
 810       Y=Y+1
-820       MOVE B,Y,BHEIGHT:ENDIF:ENDIF:REM Move balloon down (gravity)
-830       MOVE S+20,S,380:REM Move Asterisks up
-840       MOVE Z,S+365,6:REM this is what creates the navigable gap for the player to float through
-
-800     POKE 656,2:POKE 657,7:?INT(C/10):REM Update score
-810   UNTIL PEEK(53252)>0:REM Stop when player hits something
+820       MOVE B,Y,BHEIGHT:REM Move balloon down (gravity)
+830       G=G+(RAND(3)-1):IF C MOD 10=0 AND W>=2:W=W-1:ENDIF
+840       MOVE S+20,S,380:REM Move Asterisks up
+850       MOVE Z,S+G,W:ENDIF:ENDIF:REM Put a gap in the asterisks we moved up
+860     POKE 656,2:POKE 657,7:?INT(C/10):REM Update score
+870   UNTIL PEEK(53252)>0:REM Stop when player hits something
 880 REM will put some game over stuff here if I have space
 890 LOOP
-999 SO.:X=120:Y=P+X:MOVE B,Y,BHEIGHT:POKE 53248,X:C=0:POKE 656,2:POKE 657,0:PRINT "SCORE: 0     ":RETURN
+999 SO.:X=120:Y=P+X:MOVE B,Y,BHEIGHT:POKE 53248,X:C=0:G=367:W=6:POKE 656,2:POKE 657,0:PRINT "SCORE: 0     ":RETURN
 
 REM OH SUSANNAH
 REM Ge Ae Bq Dq Dq. Fe Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
