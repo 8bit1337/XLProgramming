@@ -17,13 +17,12 @@ REM asterisk maze
 001 DIM A$(20):A=ADR(A$):A$="\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A"
 
 REM music
-REM 002 DIM U$(26):U=ADR(U$):U$="\51\48\40\35\35\2D\35\40\51\48\40\40\48\51\48\51\3C\3C\2D\2D\2D\35\35\40\51\48"
-REM                           Ge Ae Bq Dq Dq.Fe Dq Bq Gq.Ae Bq Bq Aq Gq Ah.Gq Ch Ch Fq Fh Fq Dq Dq Bq Gq Ah.
+002 DIM U$(17):U=ADR(U$):U$="\51\48\40\35\35\2D\35\40\51\48\40\40\48\51\48\00\00"
 
 REM initialize
 010 Q=256:DIM Z$(Q):Z=ADR(Z$)
-100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*Q:T=P+1024
-110 GOS. 999
+100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*Q
+REM 110 GOS. 999
 200 GR. 1:S=DPEEK(88):POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172
 
 REM Create a row of asterisks at the bottom of the play area
@@ -36,32 +35,37 @@ REM Create a row of asterisks at the bottom of the play area
 370     IF C MOD 2 = 1
 REM       K = +1/-1, representing a move right or left
 380       K=(9-STICK(0))/2
-390       IF ((K=1 AND X<189) OR (K=-1 AND X>50))
-400         X=X+K
-410         POKE 53248,X:ENDIF
-REM       elevate balloon	
+390       IF K=1 OR K=-1
+400         X=X+K:POKE 53248,X:ENDIF
+REM       elevate balloon
 420       IF STRIG(0)=0
-440         Y=Y-3
-450         MOVE B,Y,17:ENDIF
+440         Y=Y-3:MOVE B,Y,17:ENDIF
 460     ENDIF
-600     IF C MOD 7 = 0
-610       Y=Y+2
+600     IF C MOD BGSPEED = 0
+601       V=V+1
+602       SO. 0,PEEK(U+V MOD 17),10,5 
 REM       balloon moves down automatically
+610       Y=Y+2
 620       MOVE B,Y,17
-630       G=G+(RAND(3)-1):IF C MOD 70=0 AND W>=3:W=W-1:ENDIF
-REM       background moves up
-640       MOVE S+20,S,380
-REM       insert a gap inside our new row in the background
-650       MOVE Z,S+G,W:ENDIF
+630       IF C MOD 10*BGSPEED=0
+640         IF HOLEWIDTH>=4:HOLEWIDTH=HOLEWIDTH-1:ELSE:BGSPEED=ABS(BGSPEED-1):ENDIF
+645       ELSE  
+650         HOLESTART=HOLESTART+(RAND(3)-1)
+655         IF HOLESTART<361:HOLESTART=361:ENDIF:IF HOLESTART>379-HOLEWIDTH:HOLESTART=379-HOLEWIDTH:ENDIF
+660       ENDIF
+
+REM       move background up and insert new gap
+670       MOVE S+20,S,380:MOVE Z,S+HOLESTART,HOLEWIDTH
+680     ENDIF
 
 REM     update score
 700     POKE 656,2:POKE 657,7:?INT(C/14)
 REM   stop when the player hits the background
 710   UNTIL PEEK(53252)>0
-REM will put some game over stuff here if I have space
-800 PAUSE 10:MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
+REM reset background and collision registers
+800 PAUSE 20:MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
 890 LOOP
-999 SO.:MOVE Z,P,Q:X=120:Y=P+X:MOVE B,Y,17:POKE 53248,X:C=0:G=367:W=6:POKE 656,2:POKE 657,0:?"SCORE:       ":RETURN
+999 SO.:MOVE Z,P,Q:X=120:Y=P+X:MOVE B,Y,17:POKE 53248,X:C=0:V=-1:HOLESTART=367:HOLEWIDTH=8:BGSPEED=7:POKE 656,2:POKE 657,0:?"SCORE:       ":RETURN
 
 
 
