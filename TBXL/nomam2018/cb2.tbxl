@@ -11,20 +11,20 @@ REM W is the width of the gap
 REM C counts how many cycles through the code we've gone, and is used to control program flow and calculate the score
 
 REM balloon graphics
-000 DIM B$(16):B=ADR(B$):B$="\00\1C\36\2E\2E\3E\3E\1C\08\08\08\08\06\00\00\00"
+000 DIM B$(17):B=ADR(B$):B$="\00\00\1C\36\2E\2E\3E\3E\1C\08\08\08\08\06\00\00\00"
 
 REM asterisk maze
 001 DIM A$(20):A=ADR(A$):A$="\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A"
 
 REM music
-002 DIM U$(26):U=ADR(U$):U$="\51\48\40\35\35\2D\35\40\51\48\40\40\48\51\48\51\3C\3C\2D\2D\2D\35\35\40\51\48"
+REM 002 DIM U$(26):U=ADR(U$):U$="\51\48\40\35\35\2D\35\40\51\48\40\40\48\51\48\51\3C\3C\2D\2D\2D\35\35\40\51\48"
 REM                           Ge Ae Bq Dq Dq.Fe Dq Bq Gq.Ae Bq Bq Aq Gq Ah.Gq Ch Ch Fq Fh Fq Dq Dq Bq Gq Ah.
 
 REM initialize
 010 Q=256:DIM Z$(Q):Z=ADR(Z$)
-100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*Q
+100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*Q:T=P+1024
 110 GOS. 999
-200 GR. 1:S=DPEEK(88):POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172:MOVE Z,P,Q
+200 GR. 1:S=DPEEK(88):POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172
 
 REM Create a row of asterisks at the bottom of the play area
 300 MOVE A,S+380,20
@@ -39,28 +39,29 @@ REM       K = +1/-1, representing a move right or left
 390       IF ((K=1 AND X<189) OR (K=-1 AND X>50))
 400         X=X+K
 410         POKE 53248,X:ENDIF
-REM       elevate balloon
+REM       elevate balloon	
 420       IF STRIG(0)=0
 440         Y=Y-3
-450         MOVE B,Y,16:ENDIF
+450         MOVE B,Y,17:ENDIF
 460     ENDIF
 600     IF C MOD 7 = 0
-610       Y=Y+1
+610       Y=Y+2
 REM       balloon moves down automatically
-620       MOVE B,Y,16
-630       G=G+(RAND(3)-1):IF C MOD 70=0 AND W>=2:W=W-1:ENDIF
+620       MOVE B,Y,17
+630       G=G+(RAND(3)-1):IF C MOD 70=0 AND W>=3:W=W-1:ENDIF
 REM       background moves up
 640       MOVE S+20,S,380
 REM       insert a gap inside our new row in the background
 650       MOVE Z,S+G,W:ENDIF
 
 REM     update score
-860     POKE 656,2:POKE 657,7:?INT(C/35)
+700     POKE 656,2:POKE 657,7:?INT(C/14)
 REM   stop when the player hits the background
-870   UNTIL PEEK(53252)>0
+710   UNTIL PEEK(53252)>0
 REM will put some game over stuff here if I have space
+800 PAUSE 10:MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
 890 LOOP
-999 SO.:X=120:Y=P+X:MOVE B,Y,16:POKE 53248,X:C=0:G=367:W=6:POKE 656,2:POKE 657,0:?"SCORE: 0     ":RETURN
+999 SO.:MOVE Z,P,Q:X=120:Y=P+X:MOVE B,Y,17:POKE 53248,X:C=0:G=367:W=6:POKE 656,2:POKE 657,0:?"SCORE:       ":RETURN
 
 
 
