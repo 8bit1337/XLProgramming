@@ -1,0 +1,91 @@
+REM CRAZY BALLOON II
+REM (c) 2018 by Jason "8BIT 1337" Gruetzmacher
+
+REM VARIABLES OF NOTE
+REM A$ contains the asterisks for the background maze
+REM B$ contains the graphics for the balloon
+REM U$ contains the music
+REM Z$ gives me an easy way to blank out the P/M base (an initialized string contains blank spaces)
+REM X is the horizontal position of the balloon
+REM Y is the vertical position of the balloon
+REM H is the space in memory where the 'hole' in the asterisks start
+REM W is the width of the hole
+REM C counts how many cycles through the code we've gone, and is used to control program flow and calculate the score
+REM D controls the speed of the scrolling, by dictating how many cycles (C) we go through before increasing difficulty
+REM E indicates whether we're on an even or odd level increase.  Even means narrowing playfield (W), odd means increasing speed (D)
+
+REM balloon graphics
+000 DIM B$(17):B=ADR(B$):B$="\00\00\1C\36\2E\2E\3E\3E\1C\08\08\08\08\06\00\00\00"
+
+REM asterisk maze
+001 DIM A$(20):A=ADR(A$):A$="\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A"
+
+REM music
+002 DIM U$(62):U=ADR(U$):U$="\51\48\40\35\35\2D\35\40\51\48\40\40\48\51\48\00\51\48\40\35\35\2D\35\40\51\48\40\40\48\48\51\00\3C\00\3C\00\2F\2F\00\2F\35\35\40\51\48\00\51\48\40\35\35\2D\35\40\51\48\40\40\48\48\51\00"
+
+REM initialize - see bottom for explanation of peek/poke addresses
+010 Q=256:DIM Z$(Q):Z=ADR(Z$)
+100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*Q
+200 GR. 1:S=DPEEK(88):POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172
+203 POS. 2,5:?#6;"crazy balloon ii"
+REM Create the asterisks at the bottom of the play area and our explanatory text
+300 MOVE A,S+380,20:POKE 656,3:POKE 657,0:?"--left & right steer, button elevates--"
+310 DO
+REM   wait for the player to start by pressing the trigger
+340   WHILE STRIG(0)=1:WEND
+REM   this resets everything, plus the background and collision register
+345   GOS. 999:MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
+350   REPEAT
+360     C=C+1
+370     IF C MOD 2=1
+REM       K = +1/-1, representing a move right or left
+380       K=(9-STICK(0))/2
+390       IF ABS(K)=1
+400         X=X+K:POKE 53248,X:ENDIF
+REM       elevate balloon
+420       IF STRIG(0)=0
+440         Y=Y-3:IF Y<P+30:Y=P+30:ENDIF:MOVE B,Y,17:ENDIF
+460     ENDIF
+500     IF C MOD 7=0
+REM       play music
+510       V=V+1
+520       SO. 0,PEEK(U+V MOD 62),10,5
+530     ENDIF
+600     IF C MOD D=0
+REM       balloon moves down: because gravity
+610       Y=Y+2
+620       MOVE B,Y,17
+REM       increase difficulty
+630       IF C MOD 40*D=0
+635         E=(E+1) MOD 2
+640         IF E=0:IF W>4:W=W-1:ENDIF:ELSE:IF D>4:D=D-1:ENDIF:ENDIF
+645       ELSE  
+650         H=H+(RAND(3)-1)
+REM         make sure the asterisks stay inside the screen
+655         IF H<361:H=361:ENDIF:IF H>379-W:H=379-W:ENDIF
+660       ENDIF
+
+REM       move background up and insert new gap
+670       MOVE S+20,S,380:MOVE Z,S+H,W
+680     ENDIF
+690     
+REM     update score
+700     POKE 656,0:POKE 657,22:?INT(C/14)
+REM   stop when the player hits the background
+710   UNTIL PEEK(53252)>0
+890 SO.:PAUSE 70:LOOP
+999 MOVE Z,P,Q:X=120:Y=P+X:MOVE B,Y,17:POKE 53248,X:C=0:V=-1:H=367:W=7:D=7:E=0:POKE 656,0:POKE 657,15:?"SCORE: 0  ":RETURN
+
+REM PEEK/POKE ADDRESSES EXPLAINED
+REM PEEK(106)    = The current top of memory.  We move it down to make space for the P/M graphics
+REM DPEEK(88)    = The beginning of screen memory, for making the asterisk maze
+REM POKE 752,1   = Turn on(0) or off (1) the cursor
+REM POKE 710,0   = Set BG colour for our text area
+REM POKE 559,62  = Set DMACTL: Single Line & Standard Playfield
+REM POKE 53277,3 = Set GRACTL: Players & Missles
+REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
+REM POKE 53256,1 = Set Player 0 (Balloon) graphics to double width
+REM POKE 704,72  = Set Player 0 colour to reddish
+REM POKE 708,172 = Set colour of the asterisks to tealish
+REM MOVE Z,P,Q   = Clear out P/M area for Player 0
+
