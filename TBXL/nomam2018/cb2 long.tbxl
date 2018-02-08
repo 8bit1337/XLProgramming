@@ -21,7 +21,7 @@ REM asterisk maze
 001 DIM A$(20):A=ADR(A$):A$="\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A"
 
 REM music
-002 DIM U$(62):U=ADR(U$):U$="\51\48\40\35\35\2D\35\40\51\48\40\40\48\51\48\00\51\48\40\35\35\2D\35\40\51\48\40\40\48\48\51\00\3C\00\3C\00\2F\2F\00\2F\35\35\40\51\48\00\51\48\40\35\35\2D\35\40\51\48\40\40\48\48\51\00"
+002 DIM U$(62):U=ADR(U$):U$="\51\48\40\35\35\2F\35\40\51\48\40\40\48\51\48\00\51\48\40\35\35\2F\35\40\51\48\40\40\48\48\51\00\3C\00\3C\00\2F\2F\00\2F\35\35\40\51\48\00\51\48\40\35\35\2F\35\40\51\48\40\40\48\48\51\00"
 
 REM initialize - see bottom for explanation of peek/poke addresses
 010 Q=256:DIM Z$(Q):Z=ADR(Z$)
@@ -89,3 +89,14 @@ REM POKE 704,72  = Set Player 0 colour to reddish
 REM POKE 708,172 = Set colour of the asterisks to tealish
 REM MOVE Z,P,Q   = Clear out P/M area for Player 0
 
+REM OH SUSANNAH
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
+REM Ch Ch Eq Eh Eq Dq  Dq Bq Gq Ah.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
+
+REM I ignored the exact timing of each note because of space limitations
+REM the first letter is the note
+REM the second letter is the length (e=eighth, q=quarter, h=half, . extends the note by half it's length)
