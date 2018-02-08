@@ -1,107 +1,80 @@
 REM SHMUP
-REM (c) 2017 by Jason Gruetzmacher
+REM (c) 2018 by Jason Gruetzmacher
+
+REM ship graphics
+000 DIM B$(8):B=ADR(B$):B$="\00\20\20\70\70\24\F8\00"
+
+REM initialize
+100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*256
+200 GR. 3
+201 S=DPEEK(88):POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172
+
+REM Print explanatory text
+300 POKE 656,3:POKE 657,0:?"--left & right steer, button elevates--"
+
+301 FOR I=0 TO 255:POKE P+I,0:NEXT I
+302 X=120:Y=P+180
+303 FOR I=0TO 7:POKE Y+I,PEEK(B+I):NEXT I
 
 
-REM the music array characters represention in memory give us the integers we need to play the song
-REM Using Q=256 just saves me characters, as I use 256 a lot
-000 Q=256:Q2=960:DIM B$(8),U$(12):B=ADR(B$):U=ADR(U$)
-REM B$=Border graphics
-REM     |   left    |   right   |
-005 B$="\80\19\00\19\00\99\80\99"
-REM U$= Future music?
-006 U$=""
+310 DO
+REM   wait for the player to start by pressing the trigger
+340   WHILE STRIG(0)=1:WEND
+REM   this resets everything, plus the background and collision register
+345   GOS. 999:MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
+350   REPEAT
+360     C=C+1
+370     IF C MOD 2=1
+REM       K = +1/-1, representing a move right or left
+380       K=(9-STICK(0))/2
+390       IF ABS(K)=1
+400         X=X+K:POKE 53248,X:ENDIF
+REM       elevate balloon
+420       IF STRIG(0)=0
+440         Y=Y-3:IF Y<P+30:Y=P+30:ENDIF:MOVE B,Y,17:ENDIF
+460     ENDIF
+500     IF C MOD 7=0
+REM       play music
+510       V=V+1
+520       SO. 0,PEEK(U+V MOD 62),10,5
+530     ENDIF
+600     IF C MOD D=0
+REM       balloon moves down: because gravity
+610       Y=Y+2
+620       MOVE B,Y,17
+REM       increase difficulty
+630       IF C MOD 40*D=0
+635         E=(E+1) MOD 2
+640         IF E=0:IF W>4:W=W-1:ENDIF:ELSE:IF D>4:D=D-1:ENDIF:ENDIF
+645       ELSE  
+650         H=H+(RAND(3)-1)
+REM         make sure the asterisks stay inside the screen
+655         IF H<361:H=361:ENDIF:IF H>379-W:H=379-W:ENDIF
+660       ENDIF
 
-REM space     \00 or \80
-REM 92=up     \5C
-REM 93=down   \5D
-REM 94=left   \5E
-REM 95=right  \5F
-REM + = 11    \0B
-REM | = 124   \7C
-REM - = 82    \52
-
-REM set our graphics mode and establish memory addresses
-REM - S=main screen
-REM - R=reset screen (used when we start a new game)
-REM - T=animation screen (used to animate main screen objects)
-REM - P=memory location for first player row
-110 M=PEEK(106)
-120 N=M-8
-130 POKE 106,N
-200 GR. 0
-210 S=DPEEK(88)
-240 R=N*Q
-250 T=R+Q2
-260 P=880
-
-REM X=RAND(4):Y=RAND(2)
-REM  20 \54 is solid circle
-REM  18 \52 is horizontal line
-REM 124 \7C is vertical line
-REM 111 \6F is lower case o (open circle)
-REM draw the screen, then save it at address R
-300 ZD=19
-320 POS. 1,0:?#6;"score 0"
-330 POS. ZD-1,22:?#6;"\08\80\0A"
-330 POS. ZD-1,23:?#6;"\0B\95\0C"
-400 MOVE S,R,Q2
+REM       move background up and insert new gap
+670       MOVE S+20,S,380:MOVE Z,S+H,W
+680     ENDIF
+690     
+REM     update score
+700     POKE 656,0:POKE 657,22:?INT(C/14)
+REM   stop when the player hits the background
+710   UNTIL PEEK(53252)>0
+890 SO.:PAUSE 70:LOOP
+999 :POKE 53248,X:C=0:V=-1:H=367:W=7:D=7:E=0:POKE 656,0:POKE 657,15:?"SCORE: 0  ":RETURN
 
 
+REM OH SUSANNAH
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
+REM Ch Ch Eq Eh Eq Dq  Dq Bq Gq Ah.
+REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
 
-REM SHIP \08\80\0A
-REM SHIP \0B\95\0C
-REM BULLET \2E or .
-
-REM infinite loop, so that you can start a new game just by pushing button
-REM with more lines of code available I'd make the Esc key or something stop execution and reset memory addresses
-410 DO
-REM   wait for user to press trigger to begin, then reset screen and variables
-420   SOUND
-430   WHILE STRIG(0)=1:WEND  
-440   MOVE R,S,Q2
-REM   L is the target time.  900/60=15 seconds
-REM   B helps me keep track of elapsed time. 
-REM   Z=horizonal position
-REM   W = which piece of the wall we need to present
-460   Z=ZD:H=0:W=0:C=0
-REM   ***** main game loop start *****
-500   REPEAT
-510     POS. 0,1;?#6;"\80\80\80":POS. 30,1;?#6;"\80\80\80"
-520     MOVE B,S+3,1:MOVE B+4,S+29,1
-
-REM     MOVE PLAYER
-REM     K = +1/-1, representing a move right or left
-REM     STICK(0):  11=left, 7=right
-530     K=(9-STICK(0))/2
-540     IF (K=1 AND Z<17) OR (K=-1 AND Z>0)
-550       MOVE 880+Z,T,4
-600       Z=Z+K
-610       MOVE T,P+Z,4
-620     ENDIF
-
-REM     ???
-640     FOR I=1 TO 2
-700       IF PEEK(V+Z+I)<>0
-710         POKE V+Z+I,122
-720         POKE V+Z+I,0
-730         H=H+1
-740       ENDIF
-750     NEXT I
-800     SOUND 0,PEEK(U+(H MOD 41)),10,5
-
-REM     MOVE THE SCREEN DOWN ONE ROW
-820     MOVE S,T,Q2
-830     MOVE T+40,S+80,380
-REM     ADD AN ENEMY
-840     POS. 6+RAND(15),1:?#6;"\DA"
-REM     UPDATE SCORE
-850     POS. 7,0:?#6;C
-  
-945     W=W+1 MOD 4
-950   UNTIL X>20
-960   POS. 17,0:?#6;"\E5\EE\E4"
-970 LOOP
-
+REM I ignored the exact timing of each note because of space limitations
+REM the first letter is the note
+REM the second letter is the length (e=eighth, q=quarter, h=half, . extends the note by half it's length)
 
 REM ************* SCREEN *************
 REM        0123456789012345678901234567890123456789
