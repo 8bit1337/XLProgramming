@@ -22,8 +22,8 @@ REM D controls the speed of the scrolling, by dictating how many cycles (C) we g
 REM E indicates whether we're on an even or odd level increase.  Even means narrowing playfield (W), odd means increasing speed (D)
 
 REM CODE OVERVIEW
-REM everything before the 'DO' statement initializes everything that only needs to be initialized once
-REM between the 'DO' and the 'REPEAT' are the rest of the things we need to initialize, but have to be reset each game
+REM Everything before the 'DO' statement initializes everything that only needs to be initialized once
+REM Between the 'DO' and the 'REPEAT' are the rest of the things we need to initialize, but have to be reset each game
 REM I use the variable 'C' for flow control, by using the MOD function to allow certain functions to only perform every Nth cycle
 REM - every 2nd cycle we look for player input
 REM - every 7th cycle I play a new note in the music
@@ -112,14 +112,13 @@ REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
 REM POKE 53256,1 = Set Player 0 (Balloon) graphics to double width
 REM POKE 704,72  = Set Player 0 colour to reddish
 REM POKE 708,172 = Set colour of the asterisks to tealish
-REM MOVE Z,P,256 = Clear out P/M area for Player 0
 
 REM OH SUSANNAH
 REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
 REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
 REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
 REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
-REM Ch Ch Eq Eh Eq Dq  Dq Bq Gq Ah.
+REM Ch Ch Eq Eh Eq  Dq Dq Bq Gq  Ah.
 REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
 
 REM I ignored the exact timing of each note because of space limitations
