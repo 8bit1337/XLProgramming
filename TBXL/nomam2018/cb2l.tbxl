@@ -1,5 +1,12 @@
 REM CRAZY BALLOON II
 REM (c) 2018 by Jason "8BIT 1337" Gruetzmacher
+REM In the arcade game Crazy Ballon you have to navigate a balloon around a maze without hitting the sides
+REM I though it would be fun to make a game in that same universe, but having the balloon constantly descending in a similar background
+REM Try to last as long as possible, and have fun!
+
+REM CONTROLS
+REM Moving the joystick left or right steers the balloon
+REM Pressing the joystick button moves the button up slightly
 
 REM VARIABLES OF NOTE
 REM A$ contains the asterisks for the background maze
@@ -14,27 +21,45 @@ REM C counts how many cycles through the code we've gone, and is used to control
 REM D controls the speed of the scrolling, by dictating how many cycles (C) we go through before increasing difficulty
 REM E indicates whether we're on an even or odd level increase.  Even means narrowing playfield (W), odd means increasing speed (D)
 
+REM CODE OVERVIEW
+REM everything before the 'DO' statement initializes everything that only needs to be initialized once
+REM between the 'DO' and the 'REPEAT' are the rest of the things we need to initialize, but have to be reset each game
+REM I use the variable 'C' for flow control, by using the MOD function to allow certain functions to only perform every Nth cycle
+REM - every 2nd cycle we look for player input
+REM - every 7th cycle I play a new note in the music
+REM - every Dth cycle I move the balloon down, shift the background up, or narrow the gap
+REM The variable 'D' helps me increase difficulty gradually over time.
+REM I increase the score every 14 loops through the code, because I like the number 14 :)
+
 REM balloon graphics
 000 DIM B$(17):B=ADR(B$):B$="\00\00\1C\36\2E\2E\3E\3E\1C\08\08\08\08\06\00\00\00"
 
 REM asterisk maze
 001 DIM A$(20):A=ADR(A$):A$="\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A\0A"
 
-REM music
+REM music.  see below for the notes to Oh Suzannah.  I translated them to the Atari by using the Quick Reference Guide (which translates piano keys to numbers for you)
 002 DIM U$(62):U=ADR(U$):U$="\51\48\40\35\35\2F\35\40\51\48\40\40\48\51\48\00\51\48\40\35\35\2F\35\40\51\48\40\40\48\48\51\00\3C\00\3C\00\2F\2F\00\2F\35\35\40\51\48\00\51\48\40\35\35\2F\35\40\51\48\40\40\48\48\51\00"
 
-REM initialize - see bottom for explanation of peek/poke addresses
-010 Q=256:DIM Z$(Q):Z=ADR(Z$)
-100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*Q
-200 GR. 1:S=DPEEK(88):POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172
-203 POS. 2,5:?#6;"crazy balloon ii"
-REM Create the asterisks at the bottom of the play area and our explanatory text
+REM initialize
+REM Z lets me quickly erase the P/M base
+010 DIM Z$(256):Z=ADR(Z$)
+REM N is the new top of memory address, P becomes our P0 address
+100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*256
+REM set our graphics mode.  S is the address for the top of the screen
+200 GR. 1:S=DPEEK(88)
+REM See below for an explanation of what each poke does
+201 POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172
+REM title screen
+203 POSITION 2,5:?#6;"crazy balloon ii"
+REM Create the asterisks at the bottom of the play area and some text to explain how to control the button
 300 MOVE A,S+380,20:POKE 656,3:POKE 657,0:?"--left & right steer, button elevates--"
 310 DO
 REM   wait for the player to start by pressing the trigger
 340   WHILE STRIG(0)=1:WEND
 REM   this resets everything, plus the background and collision register
-345   GOS. 999:MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
+345   MOVE Z,P,256:X=120:Y=P+X:MOVE B,Y,17:POKE 53248,X:POKE 656,0:POKE 657,15:?"SCORE: 0  "
+346   MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0:C=0:V=-1:H=367:W=7:D=7:E=0
+REM   main game loop
 350   REPEAT
 360     C=C+1
 370     IF C MOD 2=1
@@ -42,7 +67,7 @@ REM       K = +1/-1, representing a move right or left
 380       K=(9-STICK(0))/2
 390       IF ABS(K)=1
 400         X=X+K:POKE 53248,X:ENDIF
-REM       elevate balloon
+REM       if trigger is pushed, elevate balloon
 420       IF STRIG(0)=0
 440         Y=Y-3:IF Y<P+30:Y=P+30:ENDIF:MOVE B,Y,17:ENDIF
 460     ENDIF
@@ -55,7 +80,7 @@ REM       play music
 REM       balloon moves down: because gravity
 610       Y=Y+2
 620       MOVE B,Y,17
-REM       increase difficulty
+REM       increase difficulty if it's time to
 630       IF C MOD 40*D=0
 635         E=(E+1) MOD 2
 640         IF E=0:IF W>4:W=W-1:ENDIF:ELSE:IF D>4:D=D-1:ENDIF:ENDIF
@@ -71,10 +96,10 @@ REM       move background up and insert new gap
 690     
 REM     update score
 700     POKE 656,0:POKE 657,22:?INT(C/14)
-REM   stop when the player hits the background
+REM   stop when the computer detects a collision
 710   UNTIL PEEK(53252)>0
-890 SO.:PAUSE 70:LOOP
-999 MOVE Z,P,Q:X=120:Y=P+X:MOVE B,Y,17:POKE 53248,X:C=0:V=-1:H=367:W=7:D=7:E=0:POKE 656,0:POKE 657,15:?"SCORE: 0  ":RETURN
+REM reset sound.  the pause gives players time to stop pushing the button so they can see their score before starting a new game
+890 SOUND:PAUSE 70:LOOP
 
 REM PEEK/POKE ADDRESSES EXPLAINED
 REM PEEK(106)    = The current top of memory.  We move it down to make space for the P/M graphics
@@ -87,7 +112,7 @@ REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
 REM POKE 53256,1 = Set Player 0 (Balloon) graphics to double width
 REM POKE 704,72  = Set Player 0 colour to reddish
 REM POKE 708,172 = Set colour of the asterisks to tealish
-REM MOVE Z,P,Q   = Clear out P/M area for Player 0
+REM MOVE Z,P,256 = Clear out P/M area for Player 0
 
 REM OH SUSANNAH
 REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Gq Ah.
