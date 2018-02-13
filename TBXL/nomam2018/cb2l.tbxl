@@ -124,3 +124,15 @@ REM Ge Ae Bq Dq Dq. Ee Dq Bq Gq. Ae Bq Bq Aq Aq Gh.
 REM I ignored the exact timing of each note because of space limitations
 REM the first letter is the note
 REM the second letter is the length (e=eighth, q=quarter, h=half, . extends the note by half it's length)
+
+
+REM 0 DIM B$(17),A$(20),U$(62),Z$(256):B=ADR(B$):A=ADR(A$):U=ADR(U$):Z=ADR(Z$):N=PEEK(106)-8:B$="................."
+REM 1 POKE 106,N:P=(N+4)*256:GR. 1:S=DPEEK(88):POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:A$="...................."
+REM 2 POKE 54279,N:POKE 53256,1:POKE 704,72:POKE708,172:U$=".............................................................."
+REM 3 POS. 2,5:?#6;"crazy balloon ii":MOVE A,S+380,20:POKE 656,3:POKE 657,0:?"--left & right steer, button elevates--":DO
+REM 4 WHILE STRIG(0)=1:WEND:MOVE Z,P,256:X=120:Y=P+X:MOVE B,Y,17:POKE 53248,X:POKE 656,0:POKE 657,15:?"SCORE: 0  "
+REM 5 MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0:C=0:V=-1:H=367:W=7:D=7:E=0:REPEAT:C=C+1:IF C MOD 2=1:K=(9-STICK(0))/2
+REM 6 IF ABS(K)=1:X=X+K:POKE 53248,X:ENDIF:IF STRIG(0)=0:Y=Y-3:IF Y<P+30:Y=P+30:ENDIF:MOVE B,Y,17:ENDIF:ENDIF:IF C MOD 7=0
+REM 7 V=V+1:SOUND 0,PEEK(U+V MOD 62),10,5:ENDIF:IF C MOD D=0:Y=Y+2:MOVE B,Y,17:IF C MOD 40*D=0:E=(E+1) MOD 2:IF E=0:IF W>4
+REM 8 W=W-1:ENDIF:ELSE:IF D>4:D=D-1:ENDIF:ENDIF:ELSE:H=H+(RAND(3)-1):IF H<361:H=361:ENDIF:IF H>379-W:H=379-W:ENDIF:ENDIF
+REM 9 MOVE S+20,S,380:MOVE Z,S+H,W:ENDIF:POKE 656,0:POKE 657,22:?INT(C/14):UNTIL PEEK(53252)>0:SOUND:PAUSE 70:LOOP

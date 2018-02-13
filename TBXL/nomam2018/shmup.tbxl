@@ -3,19 +3,25 @@ REM (c) 2018 by Jason Gruetzmacher
 
 REM ship graphics
 000 DIM SHIP$(256):SHIP=ADR(SHIP$):SHIP$="\00\20\20\70\70\24\F8"
-001 DIM ENEMY$(256):ENEMY=ADR(ENEMY$):ENEMY$="\00\FF\FF"
+001 DIM MISSILE$(256):MISSILE=ADR(MISSILE$):MISSILE$="\00\55"
 
 REM initialize
 100 N=PEEK(106)-8:POKE 106,N:M=(N+3)*256:P=M+256
 200 GR. 19:S=DPEEK(88)
-201 POKE 752,1:POKE 710,0:POKE 559,62:POKE 53277,3:POKE 54279,N
+201 POKE 559,62:POKE 53277,3:POKE 54279,N
 
-REM reset player missile graphics
-301 FOR I=0 TO 255:POKE M+I,PEEK(ENEMY+I):POKE P+I,PEEK(SHIP+I):NEXT I
-343 C=0:X=120:Y=P+180
+REM set player missile graphics
+REM the first 32 scanlines of the page aren't used, so we store the graphics for each item in those 32 scanlines
+REM when it comes time to draw them on the screen, we copy from those first 32 scanlines to the appropriate place
+300 FOR I=0 TO 255:POKE M+I,PEEK(MISSILE+I):POKE P+I,PEEK(SHIP+I):NEXT I
+
+REM reset game variables
+310 C=0:PY=120:PM=P+180
 
 REM   this resets everything, plus the background and collision register
-342   POKE 53248,X
+320   POKE 53248,PY
+
+
 
 345   MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
 350   REPEAT
@@ -63,8 +69,13 @@ REM DPEEK(88)    = The beginning of screen memory, for making the asterisk maze
 REM POKE 752,1   = Turn on(0) or off (1) the cursor
 REM POKE 710,0   = Set BG colour for our text area
 REM POKE 559,62  = Set DMACTL: Single Line & Standard Playfield
+REM POKE 53248,X = Set horizontal position of Player 0
+REM POKE 53252,M0 = Set horizontal position of Missile 0
+REM POKE 53253,M1 = Set horizontal position of Missile 1
+REM POKE 53254,M2 = Set horizontal position of Missile 2
+REM POKE 53255,M3 = Set horizontal position of Missile 3
+REM POKE 53256,1 = Set Player 0 graphics to double width
 REM POKE 53277,3 = Set GRACTL: Players & Missles
 REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
-REM POKE 53256,1 = Set Player 0 (Balloon) graphics to double width
 REM POKE 704,72  = Set Player 0 colour to reddish
 REM POKE 708,172 = Set colour of the asterisks to tealish
