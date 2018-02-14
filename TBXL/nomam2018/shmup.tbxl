@@ -2,65 +2,32 @@ REM SHMUP
 REM (c) 2018 by Jason Gruetzmacher
 
 REM ship graphics
-000 DIM SHIP$(256):SHIP=ADR(SHIP$):SHIP$="\00\20\20\70\70\24\F8"
-001 DIM MISSILE$(256):MISSILE=ADR(MISSILE$):MISSILE$="\00\55"
+000 DIM SHIP$(256):SHIP=ADR(SHIP$):SHIP$="\18\18\3C\3C\18\24\C3"
+001 DIM MISSILE$(256):MISSILE=ADR(MISSILE$):MISSILE$="\55"
 
 REM initialize
 100 N=PEEK(106)-8:POKE 106,N:M=(N+3)*256:P=M+256
-200 GR. 19:S=DPEEK(88)
-201 POKE 559,62:POKE 53277,3:POKE 54279,N
+200 GR. 17:S=DPEEK(88)
+201 POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1
 
 REM set player missile graphics
 REM the first 32 scanlines of the page aren't used, so we store the graphics for each item in those 32 scanlines
 REM when it comes time to draw them on the screen, we copy from those first 32 scanlines to the appropriate place
+299 POS.0,0:?#6;"PLEASE WAIT"
 300 FOR I=0 TO 255:POKE M+I,PEEK(MISSILE+I):POKE P+I,PEEK(SHIP+I):NEXT I
+301 FOR I=0 TO 6:POKE P+I+180,PEEK(SHIP+I):NEXT I:POKE 704,200
+302 POS.0,0:?#6;"DONE       "
 
 REM reset game variables
-310 C=0:PY=120:PM=P+180
+310 C=0:PX=120:POKE 53248,PX
 
-REM   this resets everything, plus the background and collision register
-320   POKE 53248,PY
+400 C=C+1
 
+REM K = +1/-1, representing a move right or left
+410 K=(9-STICK(0))/2
+420 IF ABS(K)=1 THEN PX=PX+K:POKE 53248,PX
 
-
-345   MOVE Z,S,190:MOVE Z,S+190,190:POKE 53278,0
-350   REPEAT
-360     C=C+1
-370     IF C MOD 2=1
-REM       K = +1/-1, representing a move right or left
-380       K=(9-STICK(0))/2
-390       IF ABS(K)=1
-400         X=X+K:POKE 53248,X:ENDIF
-REM       elevate balloon
-420       IF STRIG(0)=0
-440         Y=Y-3:IF Y<P+30:Y=P+30:ENDIF:MOVE B,Y,17:ENDIF
-460     ENDIF
-500     IF C MOD 7=0
-REM       play music
-510       V=V+1
-520       SO. 0,PEEK(U+V MOD 62),10,5
-530     ENDIF
-600     IF C MOD D=0
-REM       balloon moves down: because gravity
-610       Y=Y+2
-620       MOVE B,Y,17
-REM       increase difficulty
-630       IF C MOD 40*D=0
-635         E=(E+1) MOD 2
-640         IF E=0:IF W>4:W=W-1:ENDIF:ELSE:IF D>4:D=D-1:ENDIF:ENDIF
-645       ELSE  
-650         H=H+(RAND(3)-1)
-REM         make sure the asterisks stay inside the screen
-655         IF H<361:H=361:ENDIF:IF H>379-W:H=379-W:ENDIF
-660       ENDIF
-
-REM       move background up and insert new gap
-670       MOVE S+20,S,380:MOVE Z,S+H,W
-680     ENDIF
-690     
-REM     update score
-REM   stop when the player hits the background
-710   IF PEEK(53252)>0 THEN END
+900 GOTO 400
 
 
 REM PEEK/POKE ADDRESSES EXPLAINED
@@ -79,3 +46,4 @@ REM POKE 53277,3 = Set GRACTL: Players & Missles
 REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
 REM POKE 704,72  = Set Player 0 colour to reddish
 REM POKE 708,172 = Set colour of the asterisks to tealish
+
