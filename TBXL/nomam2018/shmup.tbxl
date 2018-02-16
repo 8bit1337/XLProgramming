@@ -19,7 +19,7 @@ REM when it comes time to draw them on the screen, we copy from those first 32 s
 302 POS.0,0:?#6;"DONE       "
 
 REM reset game variables
-310 C=0:PX=120:POKE 53248,PX
+310 C=0:MY=0:PX=120:POKE 53248,PX
 
 400 C=C+1
 
@@ -27,7 +27,11 @@ REM K = +1/-1, representing a move right or left
 410 K=(9-STICK(0))/2
 420 IF ABS(K)=1 THEN PX=PX+K:POKE 53248,PX
 
-900 GOTO 400
+500 IF STRIG(0)=1 THEN GOTO 600:MX=PX:MY=P+179:POKE 53252,MX:GOSUB 900
+600
+
+800 GOTO 400
+900 FOR I=0 TO 1:POKE MY+I,PEEK(M+I):NEXT I:RETURN
 
 
 REM PEEK/POKE ADDRESSES EXPLAINED
