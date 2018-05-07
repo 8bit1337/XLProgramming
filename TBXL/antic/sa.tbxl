@@ -1,0 +1,268 @@
+10 HX=l:REM IF HX = 0 THEN ASSEMBLY I
+S IN DECIMAL
+2 Q! DIM H E $ ( 1 6) • Z 0 $ \ 3) • F: $ ( 1 Q!) • M N $ ( 1 2 )
+.ZA$(l} ~AZ$(l) .L$(3) .SA$( 4) ~H$(4}
+,LR$(l)
+3i2! OPEN #1 ~ 12.0. "E:"
+5 (2! HE .$ = " 0 1 2345 6789 ABC D E F " : S Z = 1 : Z 0 $ = "
+i2! iZi i~! "
+1 i21f21 PR I NT "{:::' ~~} FJlII:I:J.;;;I
+{3 ~1!i~} t.:..~-1:3.:L3"3: !!t]:C'J3:i.iO!l~
+0" ;
+1 h:1 DIM t-Ui (56*3). T Y (56). OP (56)
+120 FOR 1=1 TO 56:READ MN$:M$(1*3-2~
+I*3} =MI'·J$ ( 1 .3)
+177 TY(I)=VAL ( MN$(4.4»:OP ( I)=VAL (MN
+$ ( 5) )
+1 3~1 NE X T I
+14i21 PRINT :7
+15i-:1 PRINT" Immedi ate{5 SPACES}LDA #1
+"..'."J "
+1 5 5 P R I NT" A b sol ute { 6 SPACES::: L D A 1 5121
+QI"
+1 6 121 P R I NT" Z e r 0 p c3 g e {5 SPA C E S ::: L D A 1 5
+165 PRINT "AccufTlulc3to,{3 SPACES}ASL"
+1 7 121 P R I NT" I n d ire C t X (4 SPA C E S } L D A
+15 X) "
+i F"'"
+f ...J PRINT
+15) Y "
+177 PRINT
+15X"
+179 PRINT
+15Y"
+18i2! PRINT
+50121 X "
+185 PRINT
+50(2IY"
+"Indirect
+" Ze,a page
+" Zero page
+"Ab so l ute
+"Ab so l ute
+SPACES}LDA
+X fc S P ACES}LDA \. "_.
+Y r ..,.. '- .. .,:. SPACES}LDX
+X { 4 SPACES}LDA 1
+YUl- SPACES}LDA 1
+189 PRINT :PF:INT
+1 numbers in
+"{4 SPACES}Enter 031
+" -.
+1 9 ~I I F H X = 1 THE N P R I NT" I i't=->=£ II ;
+231
+AppendixC
+1 95 P R I NT" r: t::xOWi :1::1]"
+197 7 :7 "Addr-esses:Use 1536- 1791 ($
+i~!6i2H2!-$Q!6FF) " : 7 : 7
+200 PRINT "{ 2 DEL LINE}Please enterstar-
+ting" :7 "addr-ess for- ML prog
+ram";:INPUT SA$:IF SA$="" THEN 7
+" {2 UP::;";: GOT 0 2 !~! ~I
+210 IF HX=l THEN H$=SA$:GOSUB 5000 : S
+A=DE:GOTO 217
+215 SA=VAL{SA$)
+217 IF SA< 256 OR SA > = 4~2196 !~1 THEN '7 If
+{4 UP}Not IPAGE or- RONI":7 :GOTO
+2 Q!i21
+2 212! T A = SA: P R I N T II {C LEA F~} II : GOT 0 2 3 i2i
+225 '7 : 7 "{ BEL L::; _i!:I:l~.:iliI!TIW1f : '7 : IF
+HX=1 THEN -;:. "(e.g. #5 should be
+#fZ~5) II:?
+230 IF HX=1 THEN DE=SA:S Z=3:GOSUB 4 0
+12!Q!: PRINT H$ : " : II ~: GOTO 24i21
+2 3 5 PRINT SA:": ";
+2 4 i2! T RAP 2 2 5: I N PUT # 1 ; M N -0$ : '7 II {U P ::; II ; :
+POI< E 8 5 ~ 20: I F 1'1 N $ = II;' THE N -;:. II
+{DEL LINE } "::GOTO 23~)
+241 REN ADD NEW PSEUDO- OPS HERE
+242 IF LENCMN$»6 THEN IF MN$(LEN(MN
+$) -6) = II FOF~ WARD II THEN FB=SI-i
+243 IF MN$="RESOLVE" THEN FR=SA-FB:P
+o V E F B + 1 ~ F F~ - 2 : P R I N T II 0 r.: If : GOT 0
+231~!
+244 IF NN$=" pm::: E II THEN PR I I'H "ADDR , N
+UMBER (DEC) ": : INPUT ADDR, NUM: POI<E
+ADDR ~ NUM :G OTO 230
+25 Q! I F M i'-.I $ = .. END" THE N 8 I2H2li.2!
+260 L=LEN(MN$):L$=MN$ ( 1 .3)
+27121 FOF~ 1=1 TO 56:IF L$=M$<I:+:3-2.I:+:3
+) THE N 3 i2! Q!
+28~! NE XT I
+29~~! GOTO 85i2!
+300 REM PRINARY OPCODE CATEGORIES
+301 TY=TY- (I ): OP=OP ( I)
+305 IF FB=SA THEN TN=0:GOTO 2 010
+310 IF TY=0 THEN GOTO 1000
+232
+Appendix C
+3 2 ~I 1FT Y = 3 :-H E ~,j T Y = 1 : I F L = 3 THE N 0 P
+= 0 F' + 8 : GOT 0 t u () ;)
+330 R$=MNS(5): IF HX=l THEN GOSUS 600
+l-~!
+:::.40 LR$=R$ ~ 1.1 ) : LL :-:: LEN :F:$): IF LF$= "#
+TYEN 480
+3 5 121 I F L P $ =" (" THE N 5 2 0
+360 IF TY=8 THEN 600
+370 IF TY=3 THEN OP=oP+8:GoTO 1000
+38(21 IF R$(LL)="X" OR R$(LL)="Y" THEN
+630
+3 9 G I F L S ( 1 ~ 1 ) = " J" THE N 8 2 l~!
+40 0 TN=VAL(RS): IF TN~255 THEN 430
+410 IF TY=1 OR TY=3 OR TY=4 OR TY=5
+THEN oP=oF'+4
+4 2 l21 GOT 0 2 l2! (21 \21
+430 H=INTITN!256):L=(TN - 256* H) :IF TY
+=2 OR TV=7 THEN OP=OF'+8:GoTO 470
+440 IF TY=1 OR TY= 3 OR TY=4 OR TY=5
+THEN OP=oP+12:GOTO 470
+450 IF TY=6 OR TY=9 THEN 470
+46121 GoTO 850
+4 7 l21 GOT 0 3 ~~I ~:I (2)
+4 8 f'i T N = \,) A L ( R $ ( 2 )
+490 IF T V=1 THEN 0F'=oP~8:GoTO 2000
+500 IF TY=4 OR TY = ~ THEN GOTO 2000
+5 1 eGO T C 8 5 ):
+52QI
+53Q;
+IF R$(L.L - l)=" ) Y"
+IF RS(LL - l)="X)"
+THEN
+THEN
+540 TN=VAL(PS(2.LL - 1}}
+57 Qj
+550 IF TY=l THEN OP=OF'+16:GOTO 2000
+5 6 Ql GOT 0 8 5 Ql
+5 7 \21 T N = V A L ( F: S ( 2 " L L -- 1 ) }
+580 IF T Y= 1 THEN GOTo 2000
+59~) GoTo 850
+600 TN=VAL(PS):TN=TN - SA-2 : IF TN ~- 128
+OF: TN ::- 1 27 THE N P F: I l'.~ T "~~" ;
+: GOTD 85121
+6 1 (I 1FT N -< 0 THE N TN = T I'! + 2 5 6
+6 2 0 GOT 0 2 ~:I QI ~~5
+63QI IF R$(LL - l)=")Y" THEI'~ 540
+6 4 0 I F R'$ ( L L - 1 ) = " X" THE N -: 2 (21
+233
+AppendixC
+65121 REM *IEFO Y
+T N = \l A L ( R $ ( 1 ~ L L - 1 } } : 1FT N :: 2 5 5
+N 68i21
+670 IF TV = 2 OR TY =5 THEN 730
+675 IF TV=! THEN 760
+THE
+680 GOSUB 77 0 :IF TV= l THEN OP=OP+2~:
+GOTO 71.0
+690 IF TY=5 TH EN OP=OP+28:GOTO 710
+n~lQl GO TO 85Q)
+71 i2! GOTO 3(:H~H~)
+720 TN=VAL(RS(l , LL - 1)1:IF TN ) 255 THE
+N GOSUB 770:GOTO 780
+730 IF TY=2 THEN OP=OP+16:GOTO 760
+740 IF TY=1 OR TV=3 OR TY=5 THEN OP=
+o P + 2 QI : GOT 0 7 6 i~!
+751~1 GOTO 85~~i
+7 6 !~) GOT 0 2 i2; ~~! !21
+770 H=INT(TN/256}:L=TN-256*H:RETURN
+780 IF TV=2 THEN OP=OP +24:GOTO 810
+790 IF TY=1 OR TY=3 OR TY=5 THEN OP=
+OF' +28: GO TO 8 i i~l
+8 !Zli2! GOT 0 8 5 (21
+8 1 Q! GOT 0 3 i~H~H2;
+8 2 ~! T N = \) A L ( F: $ )
+830 GOSUB 77(,~!
+84~! GOTO 71 G
+85H PRINT .. {BELL}13;~:t.J:.": GOTO 23121
+1000 REM 1 BYTE INSTRUCTIONS
+1010 POKE SA.OP:SA=SA+l:IF HX=l THEN
+1 QI3 ~~!
+1020 PRINT OP:GOTO 230
+1030 DE=OF':GOSUB 4000:PRINT HS:GOTO
+23l-~1
+2000 REM 2 BYTE INSTRUCTIONS
+2 0 QI 5 1FT N ;-2 5 6 T HE N '") : 'J "E I I 0 .. - - " : T
+N; ">256 ($1 ~~!i2!) .. : GOTO 23lZ1
+2010 POKE SA , OP:POKE SA+l,TN:SA=SA+2
+:IF HX=l THEN 2030
+2!~12y-1 PR I NT OF'; " "; TN: GOTO 23125
+2 ~I 3 y-! D E = 0 F' : GO SUB 4 !2! ~:! 0 : F' R I NTH S: .. .. ,.
+2040 DE=TN:GOSUB 4000:F'RINT H$:GOTO
+23i~!
+234
+Appendix C
+3000 REM 3 BYTE INSTRUCTIONS
+3010 POKE SA.OP:POKE SA+l,L:POKE SA+
+2.H:SA=SA+3:IF HX=1 THEN 3030
+3 !~I 2 f! P R I N TOP;" "; L;" "; H : GOT 0 2 3 ~!
+3 ~~I 3 ~! D E = 0 P : G 0 SUB 4 ~H~H~! : F' R I NTH $ :" ";
+3i~!4Q! DE=L: GOSUB 4i2!Q!i~!: PR I NT H$;" ";
+3050 DE=H:GOSUB 4000:PRINT HS:GOTO 2
+3~~!
+4000 REM DECIMAL TO HEX (DE TO HS)
+4 i~! 1 fl H S = " " : A = I N T ( DEi 2 56) : I FA> QI THE N
+AH=INT(A/16):AL=A-AH*16:HS=HE$
+(AH+l,AH+l):H$(2)=HE$(AL+l,AL+l
+)
+4020 A=DE-A*256:AH=INT(AiI6):AL=A-AH
+*16:H$(LEN(H$)+1)=HE$(AH+l,AH+l
+):H$(LEN(HS)+I}=HES(AL+l,AL+l):
+SI=l:RETURN
+5000 REM HEX TO DECIMAL (HS TO DE)
+5010 D=0:Q=3:FOR M=l TO 4:W=ASC(H$(M
+»-48:IF W>9 THEN W=W-7
+5030 D=D*16+W:NEXT M:DE=INT(D):RETUR
+N
+6000 REM ACCEPT HEX OPCODE INPUT AND
+TRANSLATE IT TO DECIMAL
+6 0 1 i~! I F R $ ( 1 , 1 ) = .. #" THE N H S = " ~~I QI " : H $ (
+3 ) = R $ ( 2) : G 0 SUB 5 !2! f! (:1 : R S = " # " : R S ( 2
+)=STR$(DE):RETURN
+6020 LS=LEN(RS):AZS=RS(I,I):ZA$=R$(L
+S): IF AZ$< ::O " (" THEN 6!215~)
+6 f2! 3f!1 IF Z A$=" Y" THEN HS=" QIQ!" : H$ (3) =F:
+$(2,4) :GOSUB 50~JO:R·$=" (":RS(2)=
+STRS (DE) : R$ (LEN (R$) + 1 ) =" } Y" : RET
+URN
+6 ~~! 4 0 I F Z A $ = " ) " THE N H $ = " 12; Q! .. : H S ( 3 ) = R
+$( 2 , 4 ) : G 0 SUB 5 121 Q!!2! : R S =" ( " : R $ ( 2 ) =
+STRS(DE) :RS(LEN(RS)+l)="X) ":RET
+URN
+6Q!5fl IF ZAS="X" OR ZA$="Y" THEN 6f2!7~!
+6!2!6(! H$="": IF LS<4 THEN H$=ZO$ (1, 4-L
+5)
+6065 H$(LEN(H$)+l)=RS:GOSUB 5000:RS=
+5TRS(DE):RETURN
+235
+AppendixC
+6070 IF LS=5 THEN H$=R$(I,4}:GOTO 60
+9fl
+6 fl 8 QI H $ = If QI QI .. : H $ ( 3 ) = R $ ( 1 ~ 2 )
+6090 GOSUB 5000:R$=STR$(DE):R$(LEN(R
+$)+l)=ZA$:RETURN
+8 ~~li2H21 P R I NT: P R I N T If * S TAR T S If; T A; : S Z =
+3:DE=TA:GOSUB 4(21i!H~!:PRINT If ($";
+H$; ;. ) "
+8 0 1 !Zi P R I NT" END S -:: 3 SPA C E S} " ; SA; : D E =
+SA:SZ=3:GOSUB 4f!~~I~~I:PRINT" ($";
+H$;"}":END
+20000 DATA ADC1097,AND1033,ASL3002,B
+CC8144,BCS8176.BED8240.B IT7036
+~ BM I 8fl48
+20010 DATA BNE8208.BPL8016,BRK0000,B
+VC8080,BVS8112,CLC0024,CLD0216
+, CL I iZH2188
+20020 DATA CLV0184.CMP1193,CPX4224,C
+PY4192,DEC2198~DEX0202,DEY0136
+. EOR 1 (2!65
+20030 DATA INC2230,INX0232.INY0200,J
+MP6076 .JSR4 032.LDA1161,LDX5162
+, LDY516f!
+20040 DATA LSR3066,NOP0234,ORA1001.P
+HA0072, PHP0008,PLA0104. PLP0040
+, ROL3!2!34
+20050 DATA ROR3098,RTI0064.RTS0096,S
+BC1225 ,SEC0056.SED0248,SEI0120
+,STAl129
+20060 DATA STX2134,STY2132.TAX0170,T
+AY0168,TSX0186 ,TXA0138 . TXS0154
+, TYA~~! 15 2
