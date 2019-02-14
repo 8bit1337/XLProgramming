@@ -1,0 +1,42 @@
+REM DRAGON HUNT
+REM ball graphics, a 
+000 DLEN=24,DIM D$(DLEN):D=ADR(D$):D$="/00/00/06/0F/F3/FE/0E/04/04/1E/3F/7F/E3/C3/C3/C7/FF/3C/08/8F/E1/3F/00/00"
+100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*256:FOR I=0 TO 255:POKE P+I,0:NEXT I
+200 GR. 1
+201 POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 704,72
+
+330 Y=P+200
+340 IF STRIG(0)=1 THEN 340
+620 FOR I=0 TO DLEN:POKE Y+I,PEEK(D+I):NEXT I
+630 FOR I=1 to 1000:NEXT I
+640 IF Y>=P+10 THEN END
+645 IF PEEK(53252)>0 THEN END
+647 Y=Y+2
+650 GOTO 620
+
+
+REM PEEK/POKE ADDRESSES EXPLAINED
+REM PEEK(106)    = The current top of memory.  We move it down to make space for the P/M graphics
+REM DPEEK(88)    = The beginning of screen memory, for making the asterisk maze
+REM POKE 752,1   = Turn the cursor on(0) or off(1)
+REM POKE 710,0   = Set BG colour for our text area
+REM POKE 559,62  = Set DMACTL: Single Line & Standard Playfield
+REM POKE 53277,3 = Set GRACTL: Players & Missles
+REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
+REM POKE 53256,1 = Set Player 0 (ball) graphics to double width
+REM POKE 704,72  = Set Player 0 colour to reddish
+REM POKE 708,172 = Set colour of the asterisks to tealish
+
+REM I ignored the exact timing of each note because of space limitations
+REM the first letter is the note
+REM the second letter is the length (e=eighth, q=quarter, h=half, . extends the note by half it's length)
+
+REM   xx   
+REM  xxxx
+REM  xxxx
+REM   xx   
+      
+REM   xxx
+REM  xxxxx
+REM  xxxxx
+REM   xxx
