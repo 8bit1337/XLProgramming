@@ -1,18 +1,25 @@
 REM DRAGON HUNT
 REM ball graphics, a 
-000 DLEN=24,DIM D$(DLEN):D=ADR(D$):D$="/00/00/06/0F/F3/FE/0E/04/04/1E/3F/7F/E3/C3/C3/C7/FF/3C/08/8F/E1/3F/00/00"
-100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*256:FOR I=0 TO 255:POKE P+I,0:NEXT I
-200 GR. 1
-201 POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 704,72
+000 DLEN=24:DIM D$(DLEN):D=ADR(D$):D$="\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00"
+100 N=PEEK(106)-8:POKE 106,N:P=(N+4)*256:GR. 1
 
-330 Y=P+200
-340 IF STRIG(0)=1 THEN 340
+REM FOR I=0 TO 255:POKE P+I,0:NEXT I
+
+REM 200 S=DPEEK(88)
+REM 201 POKE 752,1
+REM 202 POKE 710,0
+203 POKE 559,62:POKE 53277,3:POKE 54279,N:POKE 53256,1:POKE 704,72:POKE 708,172
+REM 204 POSITION 2,5:?#6;"dragon's hunt"
+
+REM 330 IF STRIG(0)=1 THEN 340
+340 Y=P+120
 620 FOR I=0 TO DLEN:POKE Y+I,PEEK(D+I):NEXT I
-630 FOR I=1 to 1000:NEXT I
-640 IF Y>=P+10 THEN END
-645 IF PEEK(53252)>0 THEN END
-647 Y=Y+2
-650 GOTO 620
+630 FOR I=1 to 1500:NEXT I
+631 END
+REM 640 IF Y>=P+10 THEN END
+REM 645 IF PEEK(53252)>0 THEN END
+REM 647 Y=Y+2
+REM 650 GOTO 620
 
 
 REM PEEK/POKE ADDRESSES EXPLAINED
@@ -27,16 +34,23 @@ REM POKE 53256,1 = Set Player 0 (ball) graphics to double width
 REM POKE 704,72  = Set Player 0 colour to reddish
 REM POKE 708,172 = Set colour of the asterisks to tealish
 
-REM I ignored the exact timing of each note because of space limitations
-REM the first letter is the note
-REM the second letter is the length (e=eighth, q=quarter, h=half, . extends the note by half it's length)
-
-REM   xx   
-REM  xxxx
-REM  xxxx
-REM   xx   
-      
-REM   xxx
-REM  xxxxx
-REM  xxxxx
-REM   xxx
+REM      xx
+REM     xxxx
+REM xxxx  xx
+REM xxxxxxx
+REM     xxx
+REM      x
+REM      x
+REM    xxxx
+REM   xxxxxx
+REM  xxxxxxx
+REM xxx   xx
+REM xx    xx
+REM xx    xx
+REM xx   xxx
+REM xxxxxxxx
+REM   xxxx
+REM     x
+REM x   xxxx
+REM xxx    x
+REM   xxxxxx
