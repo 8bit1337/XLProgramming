@@ -1,0 +1,15 @@
+10 SETCOLOR 2,0,0:X=120:Y=48:REM ^^ set background color and player position ^^
+20 A=PEEK(106)-8:POKE 54279,A:PMBASE=256*A:REM ^^ Set player-missile address ^^
+30 POKE 559,46:POKE 53277,3:REM ^^Enable PM graphics with 2-line resolution ^^
+40 POKE 53248,X:REM ^^ Set horizontal position ^^
+50 FOR I=PMBASE+512 TO PMBASE+640:POKE I,0:NEXT I:REM ^^ Clear out player first ^^
+60 POKE 704,216:REM ^Set color to screen ^^
+70 FOR I=PMBASE+512+Y TO PMBASE+516+Y:READ A:POKE I,A:NEXT I:REM ^^ Draw player ^^
+80 DATA 153,189,255,189,153
+90 REM ^^ Now comes the motion routine ^^
+100 A=STICK(0):IF A=15 THEN GOTO 100
+110 IF A=11 THEN X=X-1:POKE 53248,X
+120 IF A=7 THEN X=X+1:POKE 53248,X
+130 IF A=13 THEN FOR I=6 TO 0 STEP -1:POKE PMBASE+512+Y+I,PEEK(PMBASE+511+Y+I):NEXT I:Y=Y+1
+140 IF A=14 THEN FOR I=0 TO 6:POKE PMBASE+511+Y+I,PEEK(PMBASE+512+Y+I):NEXT I:Y=Y-1
+150 GOTO 100
