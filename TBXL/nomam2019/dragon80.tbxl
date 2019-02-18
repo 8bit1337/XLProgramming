@@ -1,0 +1,75 @@
+REM DRAGON HUNT
+REM ball graphics, a 
+000 DLEN=20:DIM D$(127):D=ADR(D$):D$="\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F"
+100 N=PEEK(106)-8:POKE 54279,N:P=N*256+512
+REM A=PEEK(106)-8:POKE 54279,A:PMBASE=256*A:REM ^^ Set player-missile address ^^
+REM Clear memory as it will be muddled
+101 FOR I=0 TO 84:POKE P+I,0:POKE P+I+105,0:NEXT I:FOR I=85 TO 104:POKE P+I,PEEK(D+I-85):NEXT I
+REM FOR I=PMBASE+512 TO PMBASE+640:POKE I,0:NEXT I:REM ^^ Clear out player first ^^
+
+203 POKE 559,46:REM Set to double resolution
+204 POKE 53277,3:REM Enable Player/Missile Graphics
+207 POKE 704,72:REM Dragon colour
+REM 208 POKE 710,0:REM BG colour
+
+
+REM 330 IF STRIG(0)=1 THEN 340
+340 X=125
+REM SETCOLOR 2,0,0:X=120:Y=48:REM ^^ set background color and player position ^^
+
+REM 350 FOR I=0 TO DLEN-1:POKE Y+I,PEEK(D+I):NEXT I
+REM FOR I=PMBASE+512+Y TO PMBASE+516+Y:READ A:POKE I,A:NEXT I:REM ^^ Draw player ^^
+
+375 J=0
+380 T=J-(2*INT(J/5)):J=J+1
+REM 395 POKE 656,0:POKE 657,15:?"X=";:?X;:?"  T=";:?T;:?"  "
+400 POKE 53248,X
+REM POKE 53248,X:REM ^^ Set horizontal position ^^
+410 K=(9-STICK(0))/2:IF ABS(K)=1 THEN X=X+K
+899 IF J=1000 THEN END
+REM 500 IF STRIG(0)=0 THEN END
+900 G.380
+901 END
+
+
+REM PEEK/POKE ADDRESSES EXPLAINED
+REM PEEK(106)    = The current top of memory.  We move it down to make space for the P/M graphics
+REM DPEEK(88)    = The beginning of screen memory, for making the asterisk maze
+REM POKE 752,1   = Turn the cursor on(0) or off(1)
+REM POKE 710,0   = Set BG colour for our text area
+REM POKE 559,62  = Set DMACTL: Single Line & Standard Playfield
+REM POKE 53277,3 = Set GRACTL: Players & Missles
+REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
+REM POKE 53256,1 = Set Player 0 (ball) graphics to double width
+REM POKE 704,72  = Set Player 0 colour to reddish
+REM POKE 708,172 = Set colour of the asterisks to tealish
+
+REM      xx
+REM     xxxx
+REM xxxx  xx
+REM xxxxxxx
+REM     xxx
+REM      x
+REM      x
+REM    xxxx
+REM   xxxxxx
+REM  xxxxxxx
+REM xxx   xx
+REM xx    xx
+REM xx    xx
+REM xx   xxx
+REM xxxxxxxx
+REM   xxxx
+REM     x
+REM x   xxxx
+REM xxx    x
+REM   xxxxxx
+
+REM 001 BatLEN=7:DIM B$(BatLEN):B=ADR(B$):B$="\81\81\C3\C3\FF\5A\66"
+REM x      x /81
+REM x      x /81
+REM xx    xx /C3
+REM xx    xx /C3
+REM xxxxxxxx /FF
+REM  x xx x  /5A
+REM  xx  xx  /66

@@ -1,35 +1,50 @@
 REM DRAGON HUNT
 REM ball graphics, a 
-000 DLEN=20:DIM D$(127):D=ADR(D$):D$="\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F"
-100 N=PEEK(106)-8:POKE 54279,N:P=N*256+512
-REM A=PEEK(106)-8:POKE 54279,A:PMBASE=256*A:REM ^^ Set player-missile address ^^
-REM Clear memory as it will be muddled
-101 FOR I=0 TO 84:POKE P+I,0:POKE P+I+105,0:NEXT I:FOR I=85 TO 104:POKE P+I,PEEK(D+I-85):NEXT I
-REM FOR I=PMBASE+512 TO PMBASE+640:POKE I,0:NEXT I:REM ^^ Clear out player first ^^
+000 DIM B$(9),D$(20),Z$(255)
+001 B$="\00\81\81\C3\C3\FF\5A\66\00"
+002 D$="\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F"
 
-203 POKE 559,46:REM Set to double resolution
-204 POKE 53277,3:REM Enable Player/Missile Graphics
-207 POKE 704,72:REM Dragon colour
+005 POKE 559,46:REM Set to double resolution
+006 POKE 53277,3:REM Enable Player/Missile Graphics
+007 POKE 752,1:CLS:REM Turn the cursor on(0) or off(1)
+REM 207 POKE 704,72:REM Dragon colour
 REM 208 POKE 710,0:REM BG colour
 
+REM N=Page for beginning of P/M Graphics
+100 N=PEEK(106)-8:POKE 54279,N
+REM PMBASE=Address in memory where P/M Graphics start
+110 PMBASE=N*256+512
+130 DY=PMBASE+85
+140 BY=PMBASE+148: REM (128+16)
+REM The Peek addresses for the X of (D)ragon and (B)at
+150 HPOSP0=53248
+160 HPOSP1=53249
 
-REM 330 IF STRIG(0)=1 THEN 340
-340 X=125
-REM SETCOLOR 2,0,0:X=120:Y=48:REM ^^ set background color and player position ^^
+REM Clear memory as it will be muddled
+200 MOVE ADR(Z$),PMBASE,255
+REM Add dragon and bat to proper addresses
+210 MOVE ADR(D$),DY,20
+220 MOVE ADR(B$),BY,9
 
-REM 350 FOR I=0 TO DLEN-1:POKE Y+I,PEEK(D+I):NEXT I
-REM FOR I=PMBASE+512+Y TO PMBASE+516+Y:READ A:POKE I,A:NEXT I:REM ^^ Draw player ^^
+340 DX=125:BX=125
+
 
 375 J=0
-380 T=J-(2*INT(J/5)):J=J+1
-REM 395 POKE 656,0:POKE 657,15:?"X=";:?X;:?"  T=";:?T;:?"  "
-400 POKE 53248,X
-REM POKE 53248,X:REM ^^ Set horizontal position ^^
-410 K=(9-STICK(0))/2:IF ABS(K)=1 THEN X=X+K
-899 IF J=1000 THEN END
-REM 500 IF STRIG(0)=0 THEN END
-900 G.380
-901 END
+
+400 POKE HPOSP0,DX:POKE HPOSP1,BX
+
+REM Move the dragon left/right based on joystick
+410 K=(9-STICK(0))/2:IF ABS(K)=1 THEN DX=DX+K
+REM Move the bat left/right based on J  (value within parenthesis should be -2 to +2)
+420 BX=BX+J-5*INT(J/5)-2
+
+REM If user presses button, end game
+500 IF STRIG(0)=0 THEN 990
+900 J=J+1
+
+980 G.400
+990 POKE 752,0
+999 END
 
 
 REM PEEK/POKE ADDRESSES EXPLAINED
@@ -73,3 +88,13 @@ REM xx    xx /C3
 REM xxxxxxxx /FF
 REM  x xx x  /5A
 REM  xx  xx  /66
+
+REM 01234567
+REM  x  /40
+REM  x  /40
+REM  x  /40
+REM x x /A0
+REM  x  /40
+
+REM xx  /06
+REM xx  /06
