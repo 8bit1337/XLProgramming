@@ -14,11 +14,14 @@ REM N=Page for beginning of P/M Graphics
 100 N=PEEK(106)-8:POKE 54279,N
 REM PMBASE=Address in memory where P/M Graphics start
 110 PMBASE=N*256+512
-130 DY=PMBASE+85
-140 BY=PMBASE+148: REM (128+16)
+130 DY=PMBASE+64
+140 BY=PMBASE+148: REM (128+20)
 REM The Peek addresses for the X of (D)ragon and (B)at
 150 HPOSP0=53248
 160 HPOSP1=53249
+170 HPOSP1=53250
+180 HPOSP1=53251
+190 HPOSM0=53252
 
 REM Clear memory as it will be muddled
 200 MOVE ADR(Z$),PMBASE,255
