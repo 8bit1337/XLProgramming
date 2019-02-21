@@ -3,7 +3,7 @@ REM Joystick routine by Kirk Gregg in "Compute's Second Book of Atari"
 REM DRAGON HUNT
 
 REM G is graphics, L are the X/Y locations for the bat/square
-010 DIM G$(35),L$(14):B=ADR(G$):S=B+7:D=S+7:L=ADR(L$)
+010 DIM G$(36),L$(14):B=ADR(G$):S=B+7:D=S+7:L=ADR(L$)
 
 REM G$="\Bat(0-6)            \Square(7-13)        \Dragon(14-35)                                                    "
 020 G$="\81\81\C3\C3\FF\5A\66\00\00\00\C0\00\00\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00"
@@ -17,7 +17,7 @@ REM L$=" X1Y1  X1Y2  X2Y1  X2Y2  X1Y1  X1Y2  X2Y1
 040 POKE 559,46:REM DMACTL: Set to double resolution
 050 POKE 53277,3:REM GRACTL: Enable P/M Graphics
 060 POKE 752,1:CLS:REM Turn the cursor off and clear the screen
-REM 070 POKE 704,72:REM Dragon colour
+070 POKE 704,72:REM Dragon colour
 REM 208 POKE 710,0:REM BG colour.  For now I'm good with Blue
 
 REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
