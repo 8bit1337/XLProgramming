@@ -1,78 +1,68 @@
+REM Joystick routine by Kirk Gregg in "Compute's Second Book of Atari"
+
 REM DRAGON HUNT
-REM The Peek addresses for the horizontal position of everything
-000 HPOSP0=53248
-001 HPOSP1=53249
-002 HPOSP2=53250
-003 HPOSP3=53251
-004 HPOSM0=53252
 
 REM G is graphics, L are the X/Y locations for the bat/square
-010 DIM G$(28):G=ADR(G$):L$(14):L=ADR(L$)
-REM G$="\Bat(0-6)            \Square(7-13)        \Dragon(14-23)                                              "
-020 G$="\81\81\C3\C3\FF\5A\66\00\00\00\C0\00\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F"
+010 DIM G$(35),L$(14):B=ADR(G$):S=B+7:D=S+7:L=ADR(L$)
+
+REM G$="\Bat(0-6)            \Square(7-13)        \Dragon(14-35)                                                    "
+020 G$="\81\81\C3\C3\FF\5A\66\00\00\00\C0\00\00\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00"
+
+REM X1=50:X2=190:Y1=20:Y2=180
 REM L$=" X1Y1  X1Y2  X2Y1  X2Y2  X1Y1  X1Y2  X2Y1
 030 L$="\32\14\32\B4\BE\14\BE\B4\32\14\32\B4\BE\14"
-REM X1=50:X2=190:Y1=20:Y2=180
 
-040 POKE 559,46:REM Set to double resolution
-050 POKE 53277,3:REM Enable Player/Missile Graphics
-060 POKE 752,1:CLS:REM Turn the cursor on(0) or off(1)
+040 POKE 559,46:REM DMACTL: Set to double resolution
+050 POKE 53277,3:REM GRACTL: Enable P/M Graphics
+060 POKE 752,1:CLS:REM Turn the cursor off and clear the screen
 REM 207 POKE 704,72:REM Dragon colour
-REM 208 POKE 710,0:REM BG colour
+REM 208 POKE 710,0:REM BG colour.  For now I'm good with Blue
 
 REM N=Page for beginning of P/M Graphics
 100 N=PEEK(106)-8:POKE 54279,N
-REM PMBASE=Address in memory where P/M Graphics start
-110 PMBASE=N*256+384:P3BASE=PMBASE+512
-REM Starting X/Y coordinates for the dragon
-130 Xstart=125
-135 Ystart=P3BASE+64
 
+REM PMBASE=Address in memory where P/M Graphics start.  The first 384 bytes are not used
+110 PMBASE=N*256+384
+
+REM Starting X/Y coordinates for the dragon
+130 XSTART=125
+135 YSTART=PMBASE+576:REM (512+65)
 
 
 REM Clear memory where P/M graphics reside
 200 FOR I=0 TO 640:POKE PMBASE+I,0:NEXT I
 
 
-
 REM Add dragon to proper addresses
-205 X=Xstart:Y=Ystart
-210 MOVE G+14,Y,20
+205 X=XSTART:Y=YSTART
 
-375 J=0
+300 J=0
+400 J=J+1
+410 MOVE D,Y,22:POKE 53251,X
 
-400 POKE HPOSP3,X
+REM The Peek addresses for the horizontal position of everything
+REM HPOSP0=53248
+REM HPOSP1=53249
+REM HPOSP2=53250
+REM HPOSP3=53251
+REM HPOSM0=53252
 
-REM Move the dragon left/right based on joystick
-410 K=(9-STICK(0))/2:IF ABS(K)=1 THEN X=X+K
-REM Move the bat left/right based on J  (value within parenthesis should be -2 to +2)
-420 BX=BX+J-5*INT(J/5)-2
+REM Move the dragon based on joystick
+420 K=STICK(0)
+430 DX=(K>4 AND K<8)-(K>8 AND K<12)
+440 DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
+450 X=X+DX:Y=Y+DY
+
 
 REM If user presses button, end game
 500 IF STRIG(0)=0 THEN 990
-900 J=J+1
 
 980 G.400
 990 POKE 752,0
 999 END
 
 
-REM PEEK/POKE ADDRESSES EXPLAINED
-REM PEEK(106)    = The current top of memory.  We move it down to make space for the P/M graphics
-REM DPEEK(88)    = The beginning of screen memory, for making the asterisk maze
-REM POKE 752,1   = Turn the cursor on(0) or off(1)
-REM POKE 710,0   = Set BG colour for our text area
-REM POKE 559,62  = Set DMACTL: Single Line & Standard Playfield
-REM POKE 53277,3 = Set GRACTL: Players & Missles
-REM POKE 54279,N = Telling ANTIC that PMBASE is at address N
-REM POKE 53256,1 = Set Player 0 (ball) graphics to double width
-REM POKE 704,72  = Set Player 0 colour to reddish
-REM POKE 708,172 = Set colour of the asterisks to tealish
-
-
-
-
-
+REM GRAPHICS
 REM      xx
 REM     xxxx
 REM xxxx  xx
@@ -111,5 +101,7 @@ REM  x  /40
 
 REM xx  /C0
 REM xx  /C0
+
+
 
 
