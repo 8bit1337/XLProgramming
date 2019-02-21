@@ -12,42 +12,33 @@ REM X1=50:X2=190:Y1=20:Y2=180
 REM L$=" X1Y1  X1Y2  X2Y1  X2Y2  X1Y1  X1Y2  X2Y1
 030 L$="\32\14\32\B4\BE\14\BE\B4\32\14\32\B4\BE\14"
 
+035 N=PEEK(106)-8:POKE 54279,N:PMBASE=N*256+384
+036 FOR I=0 TO 639:POKE PMBASE+I,0:NEXT I
 040 POKE 559,46:REM DMACTL: Set to double resolution
 050 POKE 53277,3:REM GRACTL: Enable P/M Graphics
 060 POKE 752,1:CLS:REM Turn the cursor off and clear the screen
-070 POKE 704,72:REM Dragon colour
+REM 070 POKE 704,72:REM Dragon colour
 REM 208 POKE 710,0:REM BG colour.  For now I'm good with Blue
 
-REM N=Page for beginning of P/M Graphics
-100 N=PEEK(106)-8:POKE 54279,N
+REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
+
 
 REM PMBASE=Address in memory where P/M Graphics start.  The first 384 bytes are not used
-110 PMBASE=N*256+384
-
 REM Starting X/Y coordinates for the dragon
 130 XSTART=125
 REM 135 YSTART=PMBASE+576:REM (512+65)
-135 YSTART=PMBASE+193:REM (128+65)
+135 YSTART=PMBASE+128+64:REM P0 starts 128 bytes above 384, we want the dragon 64 bytes in from that
 
 
 REM Clear memory where P/M graphics reside
-200 FOR I=0 TO 640:POKE PMBASE+I,0:NEXT I
-202 MOVE D,Y,22
+
+
 
 REM Add dragon to proper addresses
-205 X=XSTART:Y=YSTART
+300 J=0:X=XSTART:Y=YSTART
 
-300 J=0
 400 J=J+1
-REM 410 MOVE D,Y,22:POKE 53251,X
-410 POKE 53248,X
-
-REM The Peek addresses for the horizontal position of everything
-REM HPOSP0=53248
-REM HPOSP1=53249
-REM HPOSP2=53250
-REM HPOSP3=53251
-REM HPOSM0=53252
+410 MOVE D,Y,22:POKE 53248,X
 
 REM Move the dragon based on joystick
 420 K=STICK(0)
@@ -63,6 +54,12 @@ REM If user presses button, end game
 990 POKE 752,0
 999 END
 
+REM The Peek addresses for the horizontal position of everything
+REM HPOSP0=53248
+REM HPOSP1=53249
+REM HPOSP2=53250
+REM HPOSP3=53251
+REM HPOSM0=53252
 
 REM GRAPHICS
 REM      xx
