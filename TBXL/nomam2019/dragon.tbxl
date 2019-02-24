@@ -21,8 +21,11 @@ REM Clear memory where P/M graphics reside
 050 POKE 53277,3:REM GRACTL: Enable P/M Graphics
 060 POKE 752,1:REM Turn the cursor off and clear the screen
 070 POKE 704,72:REM Dragon colour
-075 POKE 705,0:REM Bat colour
-080 POKE 710,10:REM BG colour.  For now I'm good with Blue 148
+071 POKE 705,0:REM Bat colour
+072 POKE 706,0:REM Bat colour
+073 POKE 707,0:REM Bat colour
+074 POKE 708,28:REM Bat colour
+080 POKE 712,10:REM BG colour.  For now I'm good with Blue 148
 
 
 REM Starting X/Y coordinates for the dragon
@@ -37,7 +40,9 @@ REM Add dragon to proper addresses
 400 J=J+1
 410 MOVE D,Y,22:POKE 53248,X
 411 MOVE B,PMBASE+256+20,7:POKE 53249,65
-412 MOVE B,PMBASE+384+20,7:POKE 53250,175
+413 MOVE B,PMBASE+384+20,7:POKE 53250,175
+414 MOVE B,PMBASE+512+100,7:POKE 53251,65
+415 MOVE S,PMBASE+640+100,7:POKE 53252,175
 
 REM Move the dragon based on joystick
 420 K=STICK(0)
