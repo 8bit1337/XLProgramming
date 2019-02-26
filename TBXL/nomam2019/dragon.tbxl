@@ -17,16 +17,22 @@ REM PMBASE=Address in memory where P/M Graphics start.  The first 384 bytes are 
 035 GR.19:N=PEEK(106)-8:POKE 54279,N:PMBASE=N*256+384
 REM Clear memory where P/M graphics reside
 036 FOR I=0 TO 639:POKE PMBASE+I,0:NEXT I
+
+REM SET GPRIOR=623
 040 POKE 559,46:REM DMACTL: Set to double resolution
 050 POKE 53277,3:REM GRACTL: Enable P/M Graphics
+055 POKE 623,16:REM Turn missiles into player 5
 060 POKE 752,1:REM Turn the cursor off and clear the screen
-REM 070 POKE 704,72:REM Dragon colour
+
 REM 071 POKE 705,0:REM Bat colour
-072 POKE 706,28:REM Bat colour
+072 POKE 707,28:REM Yellow for Square
 REM 073 POKE 707,0:REM Bat colour
 REM 074 POKE 708,28:REM Bat colour
-080 POKE 712,10:REM BG colour.  For now I'm good with Blue 148
+076 POKE 711,72:REM Red for Dragon
+080 POKE 712,10:REM Grey for PF
 REM 90 PLAYFLD =DPEEK(88):MOVE B,PLAYFIELD+16,38
+
+REM Player 5 = missiles: This is done by setting bit D4 of the priority control register (PRIOR).
 
 REM Starting X/Y coordinates for the dragon
 130 XSTART=122
@@ -43,6 +49,7 @@ REM Add dragon to proper addresses
 414 MOVE B,PMBASE+384+100,7:POKE 53250,65
 415 MOVE S,PMBASE+512+100,7:POKE 53251,175
 416 MOVE D,Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
+rem 416 MOVE D,Y,24:F.I=0TO3:POKE 53255,2*I+X:N.I
 
 REM Move the dragon based on joystick
 420 K=STICK(0)
