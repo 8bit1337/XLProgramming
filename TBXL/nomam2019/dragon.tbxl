@@ -1,6 +1,6 @@
 REM SQUARE HUNTER
-REM G$ holds the graphics, L$ has the X/Y locations for Players 0-3
-010 DIM G$(38),L$(14):B=ADR(G$):S=B+7:D=S+7:L=ADR(L$):P=128
+REM G$ holds the graphics, L$ has the X/Y locations for Players 0-3, P has the offsets in memory for Players from PMBASE
+010 DIM G$(38),L$(14),P(5):B=ADR(G$):S=B+7:D=S+7:X1=ADR(L$):Y1=X1+7
 
 REM G$="\Bat(0-6)            \Square(7-13)        \Dragon(14-37)                                                    "
 020 G$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00"
@@ -9,14 +9,16 @@ REM There are 7 sets of X/Y coordinates below, listed like this:  1,2,3,4,1,2,3
 REM I will choose a random number from 1-4, and start at that position in the string
 REM The first X/Y will host the square, the remaining 3 will have bats
 REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
-REM L$=" X1Y1  X1Y2  X2Y1  X2Y2  X1Y1  X1Y2  X2Y1
-030 L$="\38\18\38\60\A8\18\A8\60\38\18\38\60\A8\18"
+030 L$="\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
+
+
 
 REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
-REM PMBASE=Address in memory where P/M Graphics start.  The first 384 bytes are not used
-035 GR.19:N=PEEK(106)-8:POKE 54279,N:PMBASE=N*256+384
+REM P=PMBASE, the Address in memory where P/M Graphics start.  The first 384 bytes are not used
+032 GR.19:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
 REM Clear memory where P/M graphics reside
-036 FOR I=0 TO 639:POKE PMBASE+I,0:NEXT I
+036 FOR I=0 TO 639:POKE P+I,0:NEXT I
+
 
 REM Setup
 040 POKE 559,46:REM DMACTL: Set to double resolution
@@ -33,48 +35,41 @@ REM Draw rectangle around our playfield
 085 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
 
 
-
 REM Starting X/Y coordinates for the dragon
-REM Note that 
-130 XSTART=114
-135 YSTART=52
-
+130 XSTART=114:YSTART=52
 
 REM Reset variables
 300 J=0:X=XSTART:Y=YSTART
+
+REM choose which location we're starting square at 
+REM we multiply by 2 because we have X/Y pairs
+310 Z=INT(PEEK(53770)/64)
+REM set the square X (POKE) and Y (MOVE)
+315 MOVE S,P+128+PEEK(Y1+Z),7:POKE 53248,PEEK(X1+Z)
+REM Set the bats
+320 FOR I=1 TO 3
+322   MOVE B,P+128*(I+1)+PEEK(Y1+Z+I),7:POKE 53248+I,PEEK(X1+Z+I)
+324 NEXT I
 
 
 REM GAME LOOP
 400 J=J+1
 
-REM choose which location we're starting square at 
-REM we multiply by 2 because we have X/Y pairs
-410 Z=2*INT(PEEK(53770)/64)
-REM set the square
-415 MOVE S,PMBASE+P+PEEK(L+Z+1),7:POKE 53248,PEEK(L+Z)
-REM Set the bats
-420 FOR I=2 TO 6 STEP 2
-422   Q=P*(I+2):MOVE B,PMBASE+Q+PEEK(L+Z+1),7:POKE 53248,PEEK(L+Z)
-424 NEXT I
 
+REM Display the Dragon
+430 MOVE D,P+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
 
-413 MOVE B,PMBASE+2*P+24,7:POKE 53249,168
-414 MOVE B,PMBASE+3*P+96,7:POKE 53250,56
-415 MOVE B,PMBASE+4*P+96,7:POKE 53251,168
-416 MOVE D,PMBASE+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
-rem 416 MOVE D,Y,24:F.I=0TO3:POKE 53255,2*I+X:N.I
-
-REM Move the dragon based on joystick
+REM Change the Dragon X/Y based on joystick
 REM Joystick routine adapted from Kirk Gregg's routine in "Compute's Second Book of Atari"
 REM The only reason I adapted it was to make it fewer characters
-420 K=STICK(0)
-430 DX=(K>4 AND K<8)-(K>8 AND K<12)
-440 DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
-450 X=X+2*DX:Y=Y+2*DY
+500 K=STICK(0)
+510 DX=(K>4 AND K<8)-(K>8 AND K<12)
+520 DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
+530 X=X+2*DX:Y=Y+2*DY
 
 
 REM If user presses button, end game
-500 IF STRIG(0)=0 THEN 990
+800 IF STRIG(0)=0 THEN 990
 
 980 G.400
 990 POKE 752,0
