@@ -1,16 +1,16 @@
-REM Joystick routine by Kirk Gregg in "Compute's Second Book of Atari"
-
-REM DRAGON HUNT
-
-REM G is graphics, L are the X/Y locations for the bat/square
-010 DIM G$(38),L$(14):B=ADR(G$):S=B+7:D=S+7:L=ADR(L$)
+REM SQUARE HUNTER
+REM G$ holds the graphics, L$ has the X/Y locations for Players 0-3
+010 DIM G$(38),L$(14):B=ADR(G$):S=B+7:D=S+7:L=ADR(L$):P=128
 
 REM G$="\Bat(0-6)            \Square(7-13)        \Dragon(14-37)                                                    "
 020 G$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00"
 
-REM X1=20:X2=100:Y1=65:Y2=175
+REM There are 7 sets of X/Y coordinates below, listed like this:  1,2,3,4,1,2,3
+REM I will choose a random number from 1-4, and start at that position in the string
+REM The first X/Y will host the square, the remaining 3 will have bats
+REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
 REM L$=" X1Y1  X1Y2  X2Y1  X2Y2  X1Y1  X1Y2  X2Y1
-030 L$="\14\41\14\AF\64\41\64\AF\14\41\14\AF\64\41"
+030 L$="\38\18\38\60\A8\18\A8\60\38\18\38\60\A8\18"
 
 REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
 REM PMBASE=Address in memory where P/M Graphics start.  The first 384 bytes are not used
@@ -18,41 +18,55 @@ REM PMBASE=Address in memory where P/M Graphics start.  The first 384 bytes are 
 REM Clear memory where P/M graphics reside
 036 FOR I=0 TO 639:POKE PMBASE+I,0:NEXT I
 
-REM SET GPRIOR=623
+REM Setup
 040 POKE 559,46:REM DMACTL: Set to double resolution
 050 POKE 53277,3:REM GRACTL: Enable P/M Graphics
-055 POKE 623,16:REM Turn missiles into player 5
+055 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
 060 POKE 752,1:REM Turn the cursor off and clear the screen
 
-REM 071 POKE 705,0:REM Bat colour
-072 POKE 707,28:REM Yellow for Square
-REM 073 POKE 707,0:REM Bat colour
-REM 074 POKE 708,28:REM Bat colour
-076 POKE 711,72:REM Red for Dragon
+REM set colours of everything
+065 POKE 704,28:REM Yellow for Square
+070 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for bats
+075 POKE 711,72:REM Red for Dragon
 080 POKE 712,10:REM Grey for PF
-REM 90 PLAYFLD =DPEEK(88):MOVE B,PLAYFIELD+16,38
+REM Draw rectangle around our playfield
 085 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
 
-REM Player 5 = missiles: This is done by setting bit D4 of the priority control register (PRIOR).
+
 
 REM Starting X/Y coordinates for the dragon
+REM Note that 
 130 XSTART=114
-REM 135 YSTART=PMBASE+576:REM (512+65)
-135 YSTART=PMBASE+52:REM P0 starts 128 bytes above 384, we want the dragon 64 bytes in from that
+135 YSTART=52
 
 
-REM Add dragon to proper addresses
+REM Reset variables
 300 J=0:X=XSTART:Y=YSTART
 
+
+REM GAME LOOP
 400 J=J+1
-411 MOVE B,PMBASE+128+24,7:POKE 53248,56
-413 MOVE B,PMBASE+256+24,7:POKE 53249,168
-414 MOVE B,PMBASE+384+96,7:POKE 53250,56
-415 MOVE S,PMBASE+512+96,7:POKE 53251,168
-416 MOVE D,Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
+
+REM choose which location we're starting square at 
+REM we multiply by 2 because we have X/Y pairs
+410 Z=2*INT(PEEK(53770)/64)
+REM set the square
+415 MOVE S,PMBASE+P+PEEK(L+Z+1),7:POKE 53248,PEEK(L+Z)
+REM Set the bats
+420 FOR I=2 TO 6 STEP 2
+422   Q=P*(I+2):MOVE B,PMBASE+Q+PEEK(L+Z+1),7:POKE 53248,PEEK(L+Z)
+424 NEXT I
+
+
+413 MOVE B,PMBASE+2*P+24,7:POKE 53249,168
+414 MOVE B,PMBASE+3*P+96,7:POKE 53250,56
+415 MOVE B,PMBASE+4*P+96,7:POKE 53251,168
+416 MOVE D,PMBASE+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
 rem 416 MOVE D,Y,24:F.I=0TO3:POKE 53255,2*I+X:N.I
 
 REM Move the dragon based on joystick
+REM Joystick routine adapted from Kirk Gregg's routine in "Compute's Second Book of Atari"
+REM The only reason I adapted it was to make it fewer characters
 420 K=STICK(0)
 430 DX=(K>4 AND K<8)-(K>8 AND K<12)
 440 DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
@@ -103,15 +117,6 @@ REM xxxxxxxx /FF
 REM  x xx x  /5A
 REM  xx  xx  /66
 
-REM 01234567
-REM  x  /40
-REM  x  /40
-REM  x  /40
-REM x x /A0
-REM  x  /40
-
-REM xx  /C0
-REM xx  /C0
 
 
 
