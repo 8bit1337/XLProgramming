@@ -6,7 +6,7 @@ REM G$="\Bat(0-6)            \Square(7-13)        \Dragon(14-37)                
 020 G$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00"
 
 REM There are 7 sets of X/Y coordinates below, listed like this:  1,2,3,4,1,2,3
-REM I will choose a random number from 1-4, and start at that position in the string
+REM I will choose a random number from 1-4, start at that position in the string
 REM The first X/Y will host the square, the remaining 3 will have bats
 REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
 030 L$="\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
@@ -33,7 +33,6 @@ REM set colours of everything
 080 POKE 712,10:REM Grey for PF
 REM Draw rectangle around our playfield
 085 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
-090 POS. 35,1:?#6;"HW"
 091 POS. 35,2:?#6;"W"
 
 
