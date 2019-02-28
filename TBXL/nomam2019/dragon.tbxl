@@ -20,7 +20,7 @@ REM L$=" X1 X2 X3 X4 X1 X2 X3 Y1 Y2 Y3 Y4 Y1 Y2 Y3
 
 REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
 REM P=PMBASE+384, which is where the address for Missile 0 starts
-100 GR.19:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
+100 GR.3:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
 REM Clear memory where P/M graphics reside
 REM 110 FOR I=0 TO 639:POKE P+I,0:NEXT I
 
@@ -44,34 +44,34 @@ REM Starting X/Y coordinates for the dragon
 
 
 REM Reset variables.  We only reset Dragon in memory as we'll overwrite the other 4 players automatically
-350 J=0:S=0:F=0
-360 WHILE F=0
+350 SCORE=0:FAILS=0
+360 J=0:REPEAT:J=J+1
 REM   RESET GAME SCREEN
 370   X=XSTART:Y=YSTART:TEST=0
 380   FOR I=0 TO 639:POKE P+I,0:NEXT I
+381   POKE 656,0:POKE 657,0:?J;
 400   Z=INT(PEEK(53770)/64):REM a random number between 0 and 3, which is where Square will be placed
 410   MOVE SQUARE,P+128+PEEK(Y1+Z),7:POKE 53248,PEEK(X1+Z)
 420   FOR I=1 TO 3:REM Set the the the three remaining locations
-430     MOVE BAT,P+128*(I+1)+PEEK(Y1+Z+I),7:POKE 53248+I,PEEK(X1+Z+I)
+430     MOVE BAT,P+128*(I+1)+PEEK(Y1+Z+I),7:POKE 53248  +I,PEEK(X1+Z+I)
 440   NEXT I
 REM   BEGIN GAME LOOP
-500   WHILE TEST=0
-510     J=J+1
+500   REPEAT
 REM     MOVE DRAGON
 520     K=STICK(0)
 530     DX=(K>4 AND K<8)-(K>8 AND K<12):ENDIF
 540     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
 550     X=X+2*DX:Y=Y+2*DY
-600     MOVE DRAGON,P+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6:REM Display the (D)ragon
+REM     DISPLAY DRAGON
+600     POKE 53278,0:REM clear collision registers
+610     MOVE DRAGON,P+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
 REM     CHECK FOR COLLISIONS
-610     TEST=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
-620     IF TEST=1:S=S+1:ENDIF:REM player caught square
-630     IF TEST>1:F=F+1:POS.35,1+2*F:?#6;"F":ENDIF:REM player caught Bat
-631     IF STRIG(0)=0 THEN 1000
-640     POKE 53278,0:REM clear collision registers
-700   WEND
-950  WEND
-1000 POKE 752,0:POKE 623,0:POKE 53277,0:GR.0:?"SCORE: ";:?S:END
+620     TEST=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
+630     IF TEST=1:SCORE=SCORE+1:ENDIF:REM player caught square
+640     IF TEST>1:FAILS=FAILS+1:POS.35,1+2*FAILS:?#6;"F":ENDIF:REM player caught Bat
+700   UNTIL TEST>0
+950  UNTIL FAILS > 0
+1000 POKE 752,0:POKE 623,0:POKE 53277,0:GR.0:?"SCORE: ";:?SCORE:END
 
 REM The Peek addresses for the horizontal position of everything
 REM HPOSP0=53248
