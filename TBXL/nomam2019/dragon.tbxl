@@ -1,83 +1,77 @@
+REM B/Q/D/X1/Y1/I/N/P/XSTART/YSTART/J/S/F/X/Y/Z/TEST/K/DX/DY
+
+
 REM SQUARE HUNTER
 REM G$ holds the graphics, L$ has the X/Y locations for Players 0-3, P has the offsets in memory for Players from PMBASE
-010 DIM G$(38),L$(14),P(5):B=ADR(G$):S=B+7:D=S+7:X1=ADR(L$):Y1=X1+7
+000 DIM G$(36),L$(14)
+010 BAT=ADR(G$)
+020 SQUARE=BAT+7
+030 DRAGON=SQUARE+5:REM we're going to use the fact that the Square and Dragon End/Start with 2 0s to save a couple of characters
+040 X1=ADR(L$)
+050 Y1=X1+7
+060 XSTART=114
+070 YSTART=52
 
-REM G$="\Bat(0-6)            \Square(7-13)        \Dragon(14-37)                                                    "
-020 G$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00"
-
-REM There are 7 sets of X/Y coordinates below, listed like this:  1,2,3,4,1,2,3
-REM I will choose a random number from 1-4, start at that position in the string
-REM The first X/Y will host the square, the remaining 3 will have bats
-REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
-030 L$="\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
-
+REM G$="\Bat(0-6)            \Square(7-13)  \olap \Dragon(12-35)                                                    "
+080 G$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00"
+REM L$=" X1 X2 X3 X4 X1 X2 X3 Y1 Y2 Y3 Y4 Y1 Y2 Y3
+090 L$="\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
 
 
 REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
-REM P=PMBASE, the Address in memory where P/M Graphics start.  The first 384 bytes are not used
-032 GR.3:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
+REM P=PMBASE+384, which is where the address for Missile 0 starts
+100 GR.19:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
 REM Clear memory where P/M graphics reside
-036 FOR I=0 TO 639:POKE P+I,0:NEXT I
+REM 110 FOR I=0 TO 639:POKE P+I,0:NEXT I
 
 
 REM Setup
-040 POKE 559,46:REM DMACTL: Set to double resolution
-050 POKE 53277,3:REM GRACTL: Enable P/M Graphics
-055 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
-060 POKE 752,1:REM Turn the cursor off and clear the screen
+120 POKE 559,46:REM DMACTL: Set to double resolution
+130 POKE 53277,3:REM GRACTL: Enable P/M Graphics
+140 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
+150 POKE 752,1:REM Turn the cursor off and clear the screen
 
 REM set colours of everything
-065 POKE 704,28:REM Yellow for Square
-070 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for bats
-075 POKE 711,72:REM Red for Dragon
-080 POKE 712,10:REM Grey for PF
+200 POKE 704,28:REM Yellow for Square
+210 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for bats
+220 POKE 711,72:REM Red for Dragon
+230 POKE 712,10:REM Grey for PF
 REM Draw rectangle around our playfield
-085 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
-091 POS. 35,2:?#6;"W"
+240 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
 
 
 REM Starting X/Y coordinates for the dragon
-130 XSTART=114:YSTART=52
-
-REM Reset variables
-300 J=0:X=XSTART:Y=YSTART
-
-REM choose which location we're starting square at 
-REM we multiply by 2 because we have X/Y pairs
-310 Z=INT(PEEK(53770)/64)
-REM set the square X (POKE) and Y (MOVE)
-315 MOVE S,P+128+PEEK(Y1+Z),7:POKE 53248,PEEK(X1+Z)
-REM Set the bats
-320 FOR I=1 TO 3
-322   MOVE B,P+128*(I+1)+PEEK(Y1+Z+I),7:POKE 53248+I,PEEK(X1+Z+I)
-324 NEXT I
 
 
-REM GAME LOOP
-400 J=J+1
-
-
-REM Display the Dragon
-430 MOVE D,P+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
-431 POKE 656,0:POKE 657,0:?PEEK(53256);:?" ";:?PEEK(53257);:?" ";:?PEEK(53258);:?" ";:?PEEK(53259)
-REM if any of these registers equal 1, they've hit the square.  If they're not 0 otherwise they hit a bat
-432 POKE 53278,0:REM clear collision registers
-
-REM Change the Dragon X/Y based on joystick
-REM Joystick routine adapted from Kirk Gregg's routine in "Compute's Second Book of Atari"
-REM The only reason I adapted it was to make it fewer characters
-500 K=STICK(0)
-510 DX=(K>4 AND K<8)-(K>8 AND K<12):ENDIF
-520 DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
-530 X=X+2*DX:Y=Y+2*DY
-
-
-REM If user presses button, end game
-800 IF STRIG(0)=0 THEN 990
-
-980 G.400
-990 POKE 752,0
-999 END
+REM Reset variables.  We only reset Dragon in memory as we'll overwrite the other 4 players automatically
+350 J=0:S=0:F=0
+360 WHILE F=0
+REM   RESET GAME SCREEN
+370   X=XSTART:Y=YSTART:TEST=0
+380   FOR I=0 TO 639:POKE P+I,0:NEXT I
+400   Z=INT(PEEK(53770)/64):REM a random number between 0 and 3, which is where Square will be placed
+410   MOVE SQUARE,P+128+PEEK(Y1+Z),7:POKE 53248,PEEK(X1+Z)
+420   FOR I=1 TO 3:REM Set the the the three remaining locations
+430     MOVE BAT,P+128*(I+1)+PEEK(Y1+Z+I),7:POKE 53248+I,PEEK(X1+Z+I)
+440   NEXT I
+REM   BEGIN GAME LOOP
+500   WHILE TEST=0
+510     J=J+1
+REM     MOVE DRAGON
+520     K=STICK(0)
+530     DX=(K>4 AND K<8)-(K>8 AND K<12):ENDIF
+540     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
+550     X=X+2*DX:Y=Y+2*DY
+600     MOVE DRAGON,P+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6:REM Display the (D)ragon
+REM     CHECK FOR COLLISIONS
+610     TEST=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
+620     IF TEST=1:S=S+1:ENDIF:REM player caught square
+630     IF TEST>1:F=F+1:POS.35,1+2*F:?#6;"F":ENDIF:REM player caught Bat
+631     IF STRIG(0)=0 THEN 1000
+640     POKE 53278,0:REM clear collision registers
+700   WEND
+950  WEND
+1000 POKE 752,0:POKE 623,0:POKE 53277,0:GR.0:?"SCORE: ";:?S:END
 
 REM The Peek addresses for the horizontal position of everything
 REM HPOSP0=53248
@@ -143,3 +137,9 @@ REM  xx  xx  /66
 
 
 
+REM There are 7 sets of X/Y coordinates in L$.  All Xs listed first, all Ys listed second
+REM The last 3 X/Y coordinates are repeats of the first 3
+REM The square is placed at a random X/Y coordinate in the first 4.
+REM The bats are placed based on the following 3 coordinates
+REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
+REM L$=" X1 X2 X3 X4 X1 X2 X3 Y1 Y2 Y3 Y4 Y1 Y2 Y3
