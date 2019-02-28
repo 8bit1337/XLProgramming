@@ -15,7 +15,7 @@ REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
 
 REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
 REM P=PMBASE, the Address in memory where P/M Graphics start.  The first 384 bytes are not used
-032 GR.19:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
+032 GR.3:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
 REM Clear memory where P/M graphics reside
 036 FOR I=0 TO 639:POKE P+I,0:NEXT I
 
@@ -33,6 +33,8 @@ REM set colours of everything
 080 POKE 712,10:REM Grey for PF
 REM Draw rectangle around our playfield
 085 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
+090 POS. 35,1:?#6;"HW"
+091 POS. 35,2:?#6;"W"
 
 
 REM Starting X/Y coordinates for the dragon
@@ -58,12 +60,15 @@ REM GAME LOOP
 
 REM Display the Dragon
 430 MOVE D,P+Y,24:POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
+431 POKE 656,0:POKE 657,0:?PEEK(53256);:?" ";:?PEEK(53257);:?" ";:?PEEK(53258);:?" ";:?PEEK(53259)
+REM if any of these registers equal 1, they've hit the square.  If they're not 0 otherwise they hit a bat
+432 POKE 53278,0:REM clear collision registers
 
 REM Change the Dragon X/Y based on joystick
 REM Joystick routine adapted from Kirk Gregg's routine in "Compute's Second Book of Atari"
 REM The only reason I adapted it was to make it fewer characters
 500 K=STICK(0)
-510 DX=(K>4 AND K<8)-(K>8 AND K<12)
+510 DX=(K>4 AND K<8)-(K>8 AND K<12):ENDIF
 520 DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
 530 X=X+2*DX:Y=Y+2*DY
 
@@ -91,6 +96,29 @@ REM     xxx
 REM      x
 REM      x
 REM    xxxx
+REM   xxxxxx
+REM  xxxxxxx
+REM xxx   xx
+REM xx    xx
+REM xx    xx
+REM xx   xxx
+REM xxxxxxxx
+REM   xxxx
+REM     x
+REM x   xxxx
+REM xxx    x
+REM   xxxxxx
+
+REM x
+REM  x
+REM   x  xx
+REM    xxxxx
+REM    x  xx
+REM     xxx
+REM    xxxx
+REM   x  x
+REM  x   x
+REM x  xxxx
 REM   xxxxxx
 REM  xxxxxxx
 REM xxx   xx
