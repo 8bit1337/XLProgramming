@@ -1,58 +1,53 @@
-REM B/Q/D/X1/Y1/I/N/P/XSTART/YSTART/J/S/F/X/Y/Z/TEST/K/DX/DY
-
-
 REM SQUARE HUNTER
 REM G$ holds the graphics, L$ has the X/Y locations for Players 0-3, P has the offsets in memory for Players from PMBASE
 000 DIM G$(36),L$(14)
-010 BAT=ADR(G$)
-020 SQUARE=BAT+7
-030 DRAGON=SQUARE+5:REM we're going to use the fact that the Square and Dragon End/Start with 2 0s to save a couple of characters
+010 B=ADR(G$)
+020 S=B+7
+030 D=S+5:REM we're going to use the fact that the Square and Dragon End/Start with 2 0s to save a couple of characters
 040 X1=ADR(L$)
 050 Y1=X1+7
-060 XSTART=114
-070 YSTART=52
+060 XS=114
+070 YS=52
 
 REM G$="\Bat(0-6)            \Square(7-13)  \olap \Dragon(12-35)                                                    "
 080 G$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00"
 REM L$=" X1 X2 X3 X4 X1 X2 X3 Y1 Y2 Y3 Y4 Y1 Y2 Y3
-090 L$="\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
+100 L$="\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
 
 
 REM N=Page for top of memory.  N*256 is beginning address for P/M Graphics
 REM P=PMBASE+384, which is where the address for Missile 0 starts
-100 GR.19:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
-REM Clear memory where P/M graphics reside
-REM 110 FOR I=0 TO 639:POKE P+I,0:NEXT I
-
-
-REM Setup
+110 GR.19:N=PEEK(106)-8:POKE 54279,N:P=N*256+384
 120 POKE 559,46:REM DMACTL: Set to double resolution
 130 POKE 53277,3:REM GRACTL: Enable P/M Graphics
-140 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
-150 POKE 752,1:REM Turn the cursor off and clear the screen
+200 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
+210 POKE 752,1:REM Turn the cursor off and clear the screen
+220 POKE 704,28:REM Yellow for Square
+310 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for bats
+240 POKE 711,72:REM Red for Dragon
+250 POKE 712,10:REM Grey for PF
 
-REM set colours of everything
-200 POKE 704,28:REM Yellow for Square
-210 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for bats
-220 POKE 711,72:REM Red for Dragon
-230 POKE 712,10:REM Grey for PF
-REM Draw rectangle around our playfield
-240 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0:PAINT 35,0:TEXT 33,1,S1:TEXT 33,9,S2
+REM BEGINNING OF GAME KERNAL
 
-REM Starting X/Y coordinates for the dragon
+REM Draw rectangle around our playfield, use PAINT to fill in the right, and TEXT to set score to 0
+300 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
+310 PAINT 35,0
+320 TEXT 33,1,S1:TEXT 33,9,S2
+
+REM Reset variables.
+330 S1=0:S2=0:WHILE STRIG(0)=1:WEND:REM Press button to start
 
 
-REM Reset variables.  We only reset Dragon in memory as we'll overwrite the other 4 players automatically
-350 S1=0:S2=0:WHILE STRIG(0)=1:WEND:REM Press button to start
-360 REPEAT
-REM   RESET GAME SCREEN
-370   X=XSTART:Y=YSTART:TEST=0
-375   COLOR 0:PLOT 34,20:DRAWTO 38,20
-380   FOR I=0 TO 639:POKE P+I,0:NEXT I
-400   Z=INT(PEEK(53770)/64):REM a random number between 0 and 3, which is where Square will be placed
-410   MOVE SQUARE,P+128+PEEK(Y1+Z),7:POKE 53248,PEEK(X1+Z)
-420   FOR I=1 TO 3:REM Set the the the three remaining locations
-430     MOVE BAT,P+128*(I+1)+PEEK(Y1+Z+I),7:POKE 53248  +I,PEEK(X1+Z+I)
+
+340 REPEAT
+REM RESET SCREEN
+400   X=XS:Y=YS:REM reset dragon to default X/Y
+375   COLOR 0:PLOT 34,20:DRAWTO 38,20:REM clear space for the timer
+380   FOR I=0 TO 639:POKE P+I,0:NEXT I:REM clear space in memory for dragon
+400   Z=INT(PEEK(53770)/64):REM determine whicih location the square will appear in
+410   MOVE SQUARE,P+128+PEEK(Y1+Z),7:POKE 53248,PEEK(X1+Z):REM draw square
+420   FOR I=1 TO 3
+430     MOVE BAT,P+128*(I+1)+PEEK(Y1+Z+I),7:POKE 53248+I,PEEK(X1+Z+I):REM draw bats
 440   NEXT I
 
 REM   BEGIN GAME LOOP
