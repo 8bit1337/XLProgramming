@@ -74,16 +74,16 @@ REM     clear collision registers
 710     POKE 53278,0
 REM     display dragon - since it's a missle we have multiple pokes for X position
 720     MOVE D,P+Y,24
-REM     POKE 53255,X:POKE 53254,X+2:POKE 53253,X+4:POKE 53252,X+6
 730     FOR I=0 TO 3:POKE 53255-I,X+2*I:NEXT I
 REM     check the timer
 800     IF Q>=104
 REM       timer has expired, so just update T higher than 1 to indicate game has ended
 810       T=2
 820     ELSE
-REM       if any one of these Peeks != 0, this bitwise OR will return 1
+REM       this bitwise OR tells me which player the dragon hit
 830       T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
 840     ENDIF
+
 REM     if dragon hit square increase our score
 850     IF T=1
 860       S2=S2+1
