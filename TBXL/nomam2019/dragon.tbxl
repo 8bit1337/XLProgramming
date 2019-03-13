@@ -62,32 +62,31 @@ REM   draw bats
 REM   BEGIN GAME LOOP
 550   J=TIME
 560   REPEAT
+REM     check the timer
 570     Q=TIME-J
-600     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
-REM     determine how dragon will move
-610     K=STICK(0)
-620     DX=(K>4 AND K<8)-(K>8 AND K<12):ENDIF
-630     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
-700     X=X+2*DX:Y=Y+2*DY
+600     IF Q>=104
+610       T=2
+620       GOTO 900
+630     ENDIF
+640     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
 
 REM     clear collision registers
-710     POKE 53278,0
-REM     display dragon - since it's a missle we have multiple pokes for X position
-720     MOVE D,P+Y,24
-730     FOR I=0 TO 3:POKE 53255-I,X+2*I:NEXT I
-REM     check the timer
-800     IF Q>=104
-REM       timer has expired, so just update T higher than 1 to indicate game has ended
-810       T=2
-820     ELSE
-REM       this bitwise OR tells me which player the dragon hit
-830       T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
-840     ENDIF
+650     POKE 53278,0
 
-REM     if dragon hit square increase our score
-850     IF T=1
-860       S2=S2+1
-870     ENDIF
+REM     move the dragon
+700     K=STICK(0)
+710     DX=(K>4 AND K<8)-(K>8 AND K<12):ENDIF
+720     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
+730     X=X+2*DX:Y=Y+2*DY
+800     MOVE D,P+Y,24
+810     FOR I=0 TO 3:POKE 53255-I,X+2*I:NEXT I
+
+REM     check for a collision
+820     T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
+830     IF T=1
+840       S2=S2+1
+850     ENDIF
+
 900   UNTIL T>0:REM if T>0 then time has expired or the player has collided with a bat or the square
 REM   ensure our 2 digit scoring is correct
 910   IF S2=10
