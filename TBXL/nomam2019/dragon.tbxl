@@ -63,29 +63,29 @@ REM   BEGIN GAME LOOP
 550   J=TIME
 560   REPEAT
 REM     check the timer
-570     Q=TIME-J
-600     IF Q>=104
-610       T=2
-620       GOTO 900
-630     ENDIF
-640     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
+600     Q=TIME-J
+610     IF Q>=104
+620       T=2
+630       GOTO 900
+640     ENDIF
+650     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
 
 REM     clear collision registers
-650     POKE 53278,0
+660     POKE 53278,0
 
 REM     move the dragon
-700     K=STICK(0)
-710     DX=(K>4 AND K<8)-(K>8 AND K<12):ENDIF
-720     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
-730     X=X+2*DX:Y=Y+2*DY
-800     MOVE D,P+Y,24
-810     FOR I=0 TO 3:POKE 53255-I,X+2*I:NEXT I
+670     K=STICK(0)
+680     DX=(K>4 AND K<8)-(K>8 AND K<12)
+700     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
+710     X=X+2*DX:Y=Y+2*DY
+720     MOVE D,P+Y,24
+730     FOR I=0 TO 3:POKE 53255-I,X+2*I:NEXT I
 
 REM     check for a collision
-820     T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
-830     IF T=1
-840       S2=S2+1
-850     ENDIF
+800     T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
+810     IF T=1
+820       S2=S2+1
+830     ENDIF
 
 900   UNTIL T>0:REM if T>0 then time has expired or the player has collided with a bat or the square
 REM   ensure our 2 digit scoring is correct
