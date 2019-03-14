@@ -25,66 +25,69 @@ REM P=PMBASE+384, which is where the address for Missile 0 starts
 130 POKE 53277,3:REM GRACTL: Enable P/M Graphics
 200 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
 220 POKE 704,28:REM Yellow for Square
-230 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for the three bats
-240 POKE 711,72:REM Red for Dragon
-250 POKE 712,10:REM Grey for background
+230 POKE 711,72:REM Red for Dragon
+240 POKE 712,10:REM Grey for background
+250 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for the three bats
 
 REM BEGINNING OF GAME LOOP
 
 REM Draw playfield
 REM Start with gold rectangle, use PAINT to fill in the right, and then TEXT to display our score
 REM I don't need to do this full bit before each game, but because it has to fit on 10 lines it works
-300 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
-310 PAINT 35,0
-320 TEXT 33,1,S1:TEXT 33,9,S2
+260 COLOR 1:PLOT 0,0:DRAWTO 0,23:DRAWTO 33,23:DRAWTO 33,0:DRAWTO 0,0
+300 PAINT 35,0
+310 TEXT 33,1,S1:TEXT 33,9,S2
 
 REM Reset scores and wait for player to press button to start
-330 S1=0:S2=0
-340 WHILE STRIG(0)=1:WEND
+320 S1=0:S2=0
+330 WHILE STRIG(0)=1:WEND
 
 REM Now start the game loop until we miss timer or hit a bat
-350 REPEAT
-400   X=XS:Y=YS:REM reset dragon to default X/Y
-410   COLOR 0:PLOT 34,20:DRAWTO 38,20:REM rest timer bar
-420   FOR I=0 TO 639:POKE P+I,0:NEXT I:REM clear P/M graphics
+340 REPEAT
+350   X=XS:Y=YS:REM reset dragon to default X/Y
+360   COLOR 0:PLOT 34,20:DRAWTO 38,20:REM rest timer bar
+400   FOR I=0 TO 639:POKE P+I,0:NEXT I:REM clear P/M graphics
 REM   Z=which of the 4 spots the square will appear in
-430   Z=INT(PEEK(53770)/64)
+410   Z=INT(PEEK(53770)/64)
 REM   draw square
-440   MOVE S,P+128+PEEK(Y1+Z),7
-500   POKE 53248,PEEK(X1+Z)
+420   MOVE S,P+128+PEEK(Y1+Z),7
+430   POKE 53248,PEEK(X1+Z)
 REM   draw bats
-510   FOR I=1 TO 3:REM draw bats
-520     MOVE B,P+128*(I+1)+PEEK(Y1+Z+I),7
-530     POKE 53248+I,PEEK(X1+Z+I)
-540   NEXT I
+440   FOR I=1 TO 3:REM draw bats
+500     MOVE B,P+128*(I+1)+PEEK(Y1+Z+I),7
+510     POKE 53248+I,PEEK(X1+Z+I)
+520   NEXT I
 
 REM   BEGIN GAME LOOP
-550   J=TIME
-560   REPEAT
+530   J=TIME
+540   REPEAT
 REM     check the timer
-600     Q=TIME-J
-610     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
-620     IF Q>=104:REM if timer has expired we don't need to do anything else
-630       T=9
-640       GOTO 900
-650     ENDIF
+550     Q=TIME-J
+560     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
+600     IF Q>=104:REM if timer has expired we don't need to do anything else
+610       T=9
+620       GOTO 900
+630     ENDIF
 
 REM     clear collision registers
-660     POKE 53278,0
+640     POKE 53278,0
 
 REM     move the dragon
-670     K=STICK(0)
-680     DX=(K>4 AND K<8)-(K>8 AND K<12)
-700     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
-710     X=X+2*DX:Y=Y+2*DY
-720     MOVE D,P+Y,24
-730     FOR I=0 TO 3:POKE 53255-I,X+2*I:NEXT I
+
+650     K=STICK(0)
+660     DX=(K>4 AND K<8)-(K>8 AND K<12)
+670     DY=((K-5) MOD 4=0)-((K-6) MOD 4=0)
+700     X=X+2*DX:Y=Y+2*DY
+710     MOVE D,P+Y,24
+720     FOR I=0 TO 3:POKE 53255-I,X+2*I:NEXT I
 
 REM     check for a collision
-800     T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
-810     IF T=1
-820       S2=S2+1
-830     ENDIF
+730     T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
+800     IF T=1
+810       S2=S2+1
+820     ENDIF
+REM     update score on the screen
+830     TEXT 33,1,S1:TEXT 33,9,S2
 
 900   UNTIL T>0:REM if T>0 then time has expired or the player has collided with a bat or the square
 REM   ensure our 2 digit scoring is correct
@@ -92,9 +95,8 @@ REM   ensure our 2 digit scoring is correct
 920     S1=S1+1
 930     S2=0
 940   ENDIF
-REM   update score on the screen
-950   TEXT 33,1,S1:TEXT 33,9,S2
-960 UNTIL T>1:REM if T>1 then the game is over.  If T=1 then the player hit the square and gets to try again
+
+950 UNTIL T>1:REM if T>1 then the game is over.  If T=1 then the player hit the square and gets to try again
 REM game has ended - this loops us back to resetting the score's colours and waiting for player to start game again
 999 GOTO 300
 
