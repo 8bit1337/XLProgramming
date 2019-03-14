@@ -24,11 +24,10 @@ REM P=PMBASE+384, which is where the address for Missile 0 starts
 120 POKE 559,46:REM DMACTL: Set to double resolution
 130 POKE 53277,3:REM GRACTL: Enable P/M Graphics
 200 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
-210 POKE 752,1:REM Turn the cursor off and clear the screen
 220 POKE 704,28:REM Yellow for Square
 230 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for the three bats
 240 POKE 711,72:REM Red for Dragon
-250 POKE 712,10:REM Grey for PF
+250 POKE 712,10:REM Grey for background
 
 REM BEGINNING OF GAME LOOP
 
@@ -64,11 +63,11 @@ REM   BEGIN GAME LOOP
 560   REPEAT
 REM     check the timer
 600     Q=TIME-J
-610     IF Q>=104
-620       T=2
-630       GOTO 900
-640     ENDIF
-650     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
+610     COLOR 3:PLOT 34,20:DRAWTO 34+INT(Q/26),20:REM update timer bar
+620     IF Q>=104:REM if timer has expired we don't need to do anything else
+630       T=9
+640       GOTO 900
+650     ENDIF
 
 REM     clear collision registers
 660     POKE 53278,0
@@ -99,12 +98,12 @@ REM   update score on the screen
 REM game has ended - this loops us back to resetting the score's colours and waiting for player to start game again
 999 GOTO 300
 
-REM The Peek addresses for the horizontal position of everything
-REM HPOSP0=53248
-REM HPOSP1=53249
-REM HPOSP2=53250
-REM HPOSP3=53251
-REM HPOSM0=53252
+REM There are 7 sets of X/Y coordinates in L$.  All Xs listed first, all Ys listed second
+REM The last 3 X/Y coordinates are repeats of the first 3
+REM The square is placed at a random X/Y coordinate in the first 4.
+REM The bats are placed based on the following 3 coordinates
+REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
+REM L$=" X1 X2 X3 X4 X1 X2 X3 Y1 Y2 Y3 Y4 Y1 Y2 Y3
 
 REM GRAPHICS
 REM      xx
@@ -133,7 +132,6 @@ REM  x
 REM   x  xx
 REM    xxxxx
 REM    x  xx
-REM     xxx
 REM    xxxx
 REM   x  x
 REM  x   x
@@ -158,14 +156,3 @@ REM xx    xx /C3
 REM xxxxxxxx /FF
 REM  x xx x  /5A
 REM  xx  xx  /66
-
-
-
-
-
-REM There are 7 sets of X/Y coordinates in L$.  All Xs listed first, all Ys listed second
-REM The last 3 X/Y coordinates are repeats of the first 3
-REM The square is placed at a random X/Y coordinate in the first 4.
-REM The bats are placed based on the following 3 coordinates
-REM X1=56:X2=168:Y1=24:Y2=96 (in decimal)
-REM L$=" X1 X2 X3 X4 X1 X2 X3 Y1 Y2 Y3 Y4 Y1 Y2 Y3
