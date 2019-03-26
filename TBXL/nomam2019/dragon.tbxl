@@ -15,10 +15,12 @@ REM TL=is the time limit in .017 second increments
 050 Y1=X1+7
 060 XS=114
 070 YS=52
+080 TL=116
 
+REM Data for graphics and locations for the square/bats.  'olap' indicates I overlapped the square and dragon to save a couple of characters
 REM D$="\Bat(0-6)            \Square(7-13)  \olap \Dragon(12-35)                                                    \XY Location strings for the 4 corners (36)"
-080 D$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
-100 TL=104
+100 D$="\81\81\C3\C3\FF\5A\66\00\00\1C\1C\1C\00\00\06\0F\F3\FE\0E\04\04\1E\3F\7F\E3\C3\C3\C7\FF\3C\08\8F\E1\3F\00\00\38\38\A8\A8\38\38\A8\18\60\18\60\18\60\18"
+
 
 REM ***SETUP***
 110 GRAPHICS 19
@@ -76,19 +78,21 @@ REM       move the dragon
 REM       check for a collision
 720       T=PEEK(53256)!PEEK(53257)!PEEK(53258)!PEEK(53259)
 730       IF T=1
+REM         increase score and make sound
 740         S2=S2+1
+745         E=15:F=E:G=E:REPEAT:SOUND 0,20,8,E:SOUND 2,40,8,F:SOUND 2,70,8,G:E=E*.8:F=F*(.85):G=G*(.88):UNTIL G<1:DSOUND
 750       ENDIF
 REM       update score on the screen
-800       TEXT 33,1,S1:TEXT 33,9,S2
+900       TEXT 33,1,S1:TEXT 33,9,S2
 
-810     UNTIL T>0:REM time has expired or the dragon has touched the square or a bat
+910     UNTIL T>0:REM time has expired or the dragon has touched the square or a bat
 
-910     IF S2=10:REM update variables for the score
-920       S1=S1+1
-930       S2=0
-940     ENDIF
+920     IF S2=10:REM update variables for the score
+930       S1=S1+1
+940       S2=0
+950     ENDIF
 
-950   UNTIL T>1:REM game is over
+960   UNTIL T>1:REM game is over
 999 LOOP
 
 REM ***GRAPHICS***
