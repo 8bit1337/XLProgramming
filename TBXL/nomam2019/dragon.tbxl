@@ -29,7 +29,8 @@ REM ***SETUP***
 140 POKE 53277,3:REM GRACTL: Enable P/M Graphics
 150 POKE 623,16:REM Turn missiles into player 5 so that we can use a 5th colour
 160 POKE 704,28:REM Yellow for Square
-170 POKE 711,72:REM Red for Dragon
+170 POKE 711,64:REM Red for Dragon
+180 POKE 708,16:REM Rusty colour for BG
 200 POKE 712,10:REM Grey for background
 210 FOR I=705 TO 707:POKE I,0:NEXT I:REM Black for the three bats
 
